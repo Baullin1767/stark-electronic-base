@@ -26,6 +26,30 @@ const transcript = `Новый клиент: ${DEMO_CLIENT.fullName}, после
 const confirmationStepIndex = DEMO_STEPS.findIndex(
   ({ id }) => id === "confirmation",
 );
+const confirmationScrollWeight = 1.75;
+const demoScrollUnits =
+  DEMO_STEPS.length + confirmationScrollWeight - 1;
+
+function getStepPosition(progress: number) {
+  const weightedPosition = progress * demoScrollUnits;
+
+  if (weightedPosition <= confirmationStepIndex) {
+    return weightedPosition;
+  }
+
+  const confirmationEnd =
+    confirmationStepIndex + confirmationScrollWeight;
+
+  if (weightedPosition < confirmationEnd) {
+    return (
+      confirmationStepIndex +
+      (weightedPosition - confirmationStepIndex) /
+        confirmationScrollWeight
+    );
+  }
+
+  return weightedPosition - (confirmationScrollWeight - 1);
+}
 
 function syncConfirmationChat(
   frame: HTMLElement | null,
@@ -86,12 +110,20 @@ function syncScrollDrivenMotion(
   const localProgress = Math.max(0, Math.min(1, stepPosition - stepIndex));
   const isFirstFrameAtStart = stepIndex === 0 && stepPosition < 0.01;
   const isLastFrame = stepIndex === DEMO_STEPS.length - 1;
+  const frameExitStart =
+    stepIndex === confirmationStepIndex ? 0.9 : 0.74;
   const frameEnter = isFirstFrameAtStart
     ? 1
     : Math.max(0, Math.min(1, localProgress / 0.24));
   const frameExit = isLastFrame
     ? 0
-    : Math.max(0, Math.min(1, (localProgress - 0.74) / 0.26));
+    : Math.max(
+        0,
+        Math.min(
+          1,
+          (localProgress - frameExitStart) / (1 - frameExitStart),
+        ),
+      );
   const frameVisibility = Math.min(frameEnter, 1 - frameExit);
   const copyItems = [...copy.querySelectorAll<HTMLElement>("[data-demo-copy]")];
 
@@ -685,13 +717,13 @@ export function DemoSection() {
             340,
             Math.min(460, window.innerHeight * 0.5),
           );
-          return `+=${stepDistance * DEMO_STEPS.length}`;
+          return `+=${stepDistance * demoScrollUnits}`;
         },
         pin: stageRef.current,
         scrub: 0.12,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
-          const stepPosition = self.progress * DEMO_STEPS.length;
+          const stepPosition = getStepPosition(self.progress);
           demoProgressRef.current = stepPosition;
           scrollDirectionRef.current = self.direction;
           let index = Math.min(

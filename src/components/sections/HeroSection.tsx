@@ -2,7 +2,6 @@ import {
   ArrowDown,
   AudioLines,
   Check,
-  FileSpreadsheet,
   MessageCircleMore,
   Sparkles,
 } from "lucide-react";
@@ -48,10 +47,6 @@ export function HeroSection() {
           <AudioLines size={17} />
           Голосовая заметка
         </div>
-        <div className="floating-note note-two">
-          <Sparkles size={17} />
-          Данные разобраны
-        </div>
         <div className="assistant-card">
           <div className="assistant-card-head">
             <div className="assistant-icon">
@@ -65,34 +60,44 @@ export function HeroSection() {
             </div>
             <span className="online-label">online</span>
           </div>
-          <div className="assistant-message user-message">
-            <span className="audio-play">▶</span>
-            <div className="wave mini-wave" aria-hidden="true">
-              {Array.from({ length: 18 }, (_, index) => (
-                <i key={index} style={{ height: `${10 + (index % 5) * 4}px` }} />
-              ))}
+          <div className="hero-chat-feed">
+            <div className="assistant-message user-message">
+              <span className="audio-play">▶</span>
+              <div className="wave mini-wave" aria-hidden="true">
+                {Array.from({ length: 18 }, (_, index) => (
+                  <i key={index} style={{ height: `${10 + (index % 5) * 4}px` }} />
+                ))}
+              </div>
+              <small>0:38</small>
             </div>
-            <small>0:38</small>
+            <div className="assistant-message ai-message">
+              <span className="hero-gpt-label">
+                <Sparkles size={13} /> GPT
+              </span>
+              <p className="ai-summary">
+                Нашёл Анну Петрову. Последний визит — обработка ногтевой
+                пластины. Следующий приём запланирован через две недели.
+              </p>
+            </div>
+            <div className="assistant-message user-message secondary-message">
+              <span className="audio-play">▶</span>
+              <div className="wave mini-wave" aria-hidden="true">
+                {Array.from({ length: 13 }, (_, index) => (
+                  <i key={index} style={{ height: `${9 + (index % 4) * 4}px` }} />
+                ))}
+              </div>
+              <small>0:12</small>
+            </div>
+            <div className="assistant-message ai-message compact">
+              <span className="hero-gpt-label">
+                <Sparkles size={13} /> GPT
+              </span>
+              <p className="ai-summary">
+                Понял. Добавил рекомендацию и напоминание перед следующим
+                визитом.
+              </p>
+            </div>
           </div>
-          <div className="assistant-message ai-message">
-            <span className="message-kicker">Данные подготовлены</span>
-            <p className="ai-summary">
-              <strong>Анна Сергеевна Петрова.</strong> Особенность — болезненность
-              большого пальца правой стопы. Последний визит: обработка ногтевой
-              пластины. Следующий визит через две недели.
-            </p>
-            <button type="button">
-              <Check size={15} /> Сохранить в Excel
-            </button>
-          </div>
-        </div>
-        <div className="database-pill">
-          <FileSpreadsheet size={19} />
-          <span>
-            Excel обновлён
-            <small>Листы «Клиенты» и «Визиты»</small>
-          </span>
-          <Check size={15} />
         </div>
       </div>
     </section>
