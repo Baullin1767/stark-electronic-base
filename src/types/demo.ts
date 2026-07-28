@@ -5,7 +5,7 @@ export type DemoStepId =
   | "attachments"
   | "message-sent"
   | "processing-client"
-  | "client-preview"
+  | "summary-preview"
   | "confirmation"
   | "saving"
   | "saved"

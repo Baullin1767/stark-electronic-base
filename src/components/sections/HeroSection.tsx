@@ -2,7 +2,7 @@ import {
   ArrowDown,
   AudioLines,
   Check,
-  Database,
+  FileSpreadsheet,
   MessageCircleMore,
   Sparkles,
 } from "lucide-react";
@@ -75,28 +75,22 @@ export function HeroSection() {
             <small>0:38</small>
           </div>
           <div className="assistant-message ai-message">
-            <span className="message-kicker">Карточка готова</span>
-            <strong>Анна Сергеевна Петрова</strong>
-            <dl>
-              <div>
-                <dt>Процедура</dt>
-                <dd>Обработка ногтевой пластины</dd>
-              </div>
-              <div>
-                <dt>Следующий визит</dt>
-                <dd>Через две недели</dd>
-              </div>
-            </dl>
+            <span className="message-kicker">Данные подготовлены</span>
+            <p className="ai-summary">
+              <strong>Анна Сергеевна Петрова.</strong> Особенность — болезненность
+              большого пальца правой стопы. Последний визит: обработка ногтевой
+              пластины. Следующий визит через две недели.
+            </p>
             <button type="button">
-              <Check size={15} /> Подтвердить сохранение
+              <Check size={15} /> Сохранить в Excel
             </button>
           </div>
         </div>
         <div className="database-pill">
-          <Database size={19} />
+          <FileSpreadsheet size={19} />
           <span>
-            Запись №00482
-            <small>Сохранена в базе</small>
+            Excel обновлён
+            <small>Листы «Клиенты» и «Визиты»</small>
           </span>
           <Check size={15} />
         </div>

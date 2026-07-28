@@ -5,7 +5,7 @@ import {
   ArrowUpRight,
   Check,
   CirclePause,
-  Database,
+  ChevronDown,
   ImageIcon,
   Mic2,
   Paperclip,
@@ -14,7 +14,7 @@ import {
   Sparkles,
   X,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { DEMO_CLIENT, DEMO_STEPS } from "@/lib/constants";
@@ -30,7 +30,7 @@ const processingCopy: Partial<Record<DemoStepId, string[]>> = {
   "message-sent": [
     "Анализирую сообщение…",
     "Проверяю структуру данных…",
-    "Подготавливаю карточку клиента…",
+    "Подготавливаю строки для Excel…",
   ],
   "processing-client": [
     "Имя и контакт определены",
@@ -38,8 +38,8 @@ const processingCopy: Partial<Record<DemoStepId, string[]>> = {
     "Рекомендации добавлены",
   ],
   saving: [
-    "Создаю карточку клиента…",
-    "Сохраняю посещение…",
+    "Добавляю клиента в таблицу…",
+    "Добавляю визит во второй лист…",
     "Связываю фотографии…",
   ],
   "search-processing": [
@@ -127,47 +127,19 @@ function Attachments() {
   );
 }
 
-function ClientCard({ result = false }: { result?: boolean }) {
+function ClientSummaryMessage({ draft = false }: { draft?: boolean }) {
   return (
-    <div className={`client-preview ${result ? "search-card" : ""}`}>
-      <div className="client-preview-head">
-        <div>
-          <span>{result ? "Найден один клиент" : "Новая запись"}</span>
-          <strong>{DEMO_CLIENT.fullName}</strong>
-        </div>
-        <span className="client-id">ID 00482</span>
-      </div>
-      <dl>
-        <div>
-          <dt>Телефон</dt>
-          <dd>{DEMO_CLIENT.phone}</dd>
-        </div>
-        <div>
-          <dt>{result ? "Последнее посещение" : "Дата обращения"}</dt>
-          <dd>{DEMO_CLIENT.date}</dd>
-        </div>
-        <div>
-          <dt>Проведено</dt>
-          <dd>{DEMO_CLIENT.procedure}</dd>
-        </div>
-        <div>
-          <dt>Рекомендации</dt>
-          <dd>{DEMO_CLIENT.recommendation}</dd>
-        </div>
-        <div>
-          <dt>Следующий визит</dt>
-          <dd>{DEMO_CLIENT.nextVisit}</dd>
-        </div>
-      </dl>
-      {!result && (
-        <div className="preview-actions">
-          <button type="button">
-            <Check size={15} /> Подтвердить
-          </button>
-          <button type="button">Изменить</button>
-          <button type="button">Отменить</button>
-        </div>
-      )}
+    <div className="client-summary-message">
+      <p>
+        {draft ? "Проверьте, всё ли верно: " : ""}
+        <strong>{DEMO_CLIENT.fullName}</strong>, телефон заканчивается на 4821.
+      </p>
+      <p>Особенности: болезненность в области большого пальца правой стопы.</p>
+      <p>
+        Последний визит — {DEMO_CLIENT.date}. Проведена обработка ногтевой
+        пластины и бокового валика. Рекомендованы ежедневная обработка и
+        свободная обувь. Следующий визит — через две недели.
+      </p>
     </div>
   );
 }
@@ -191,79 +163,135 @@ function Processing({ step }: { step: DemoStepId }) {
   );
 }
 
-function DatabaseView({ step }: { step: DemoStepId }) {
-  if (step === "visit-details") {
-    return (
-      <div className="demo-window database-window visit-card">
-        <div className="database-head">
-          <span>
-            <Database size={17} /> Посещение №V-1208
-          </span>
-          <button type="button">Открыть карточку</button>
-        </div>
-        <ClientCard result />
-        <Attachments />
-      </div>
-    );
-  }
+const clientRows = [
+  [
+    "Анна Сергеевна Петрова",
+    "4821",
+    "Болезненность большого пальца правой стопы",
+    "28.07.2026",
+    "Свободная обувь",
+  ],
+  [
+    "Марина Алексеевна Орлова",
+    "1164",
+    "Восстановление после травмы ногтя",
+    "26.07.2026",
+    "Повторный осмотр",
+  ],
+  [
+    "Елена Викторовна Волкова",
+    "7732",
+    "Трещины и сухость кожи стоп",
+    "25.07.2026",
+    "Домашний уход",
+  ],
+];
 
+const visitRows = [
+  [
+    "Анна Сергеевна Петрова (4821)",
+    "28.07.2026",
+    "Обработка ногтевой пластины и бокового валика",
+    "Ежедневная обработка, свободная обувь",
+    "11.08.2026",
+  ],
+  [
+    "Марина Алексеевна Орлова (1164)",
+    "26.07.2026",
+    "Обработка и консультация",
+    "Не травмировать ногтевую пластину",
+    "09.08.2026",
+  ],
+  [
+    "Елена Викторовна Волкова (7732)",
+    "25.07.2026",
+    "Аппаратная обработка стоп",
+    "Крем два раза в день",
+    "08.08.2026",
+  ],
+];
+
+function ExcelWorkbook({ step }: { step: "clients-table" | "visits-table" }) {
   const visits = step === "visits-table";
+  const headings = visits
+    ? ["Клиент", "Дата визита", "Проведённые процедуры", "Рекомендации", "Следующий визит"]
+    : ["ФИО", "Последние цифры номера", "Особенности и диагнозы", "Дата первого обращения", "Комментарий"];
+  const rows = visits ? visitRows : clientRows;
+
   return (
-    <div className="demo-window database-window">
-      <div className="database-head">
-        <span>
-          <Database size={17} /> Stark Base
-        </span>
-        <div>
-          <button className={!visits ? "active" : ""} type="button">
-            Клиенты
-          </button>
-          <button className={visits ? "active" : ""} type="button">
-            Посещения
-          </button>
+    <div className="demo-window excel-window">
+      <div className="excel-titlebar">
+        <span className="excel-app-icon">X</span>
+        <strong>База клиентов.xlsx</strong>
+        <small>Сохранено</small>
+        <span className="excel-window-controls">—　□　×</span>
+      </div>
+      <div className="excel-ribbon">
+        <div className="excel-ribbon-tabs">
+          <b>Файл</b>
+          <span>Главная</span>
+          <span>Вставка</span>
+          <span>Разметка страницы</span>
+          <span>Данные</span>
+        </div>
+        <div className="excel-tools" aria-hidden="true">
+          <strong>Буфер обмена</strong>
+          <i />
+          <i />
+          <i />
+          <span />
+          <span />
+          <span />
         </div>
       </div>
-      <div className="table-wrap">
+      <div className="excel-formula">
+        <span>A1</span>
+        <b>fx</b>
+        <p>{visits ? "Клиент" : "ФИО"}</p>
+      </div>
+      <div className="excel-sheet">
         <table>
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Клиент</th>
-              <th>Дата</th>
-              <th>{visits ? "Процедура" : "Телефон"}</th>
-              <th>Статус</th>
+              <th className="excel-corner" />
+              {headings.map((_, index) => (
+                <th className="excel-column-letter" key={index}>
+                  {String.fromCharCode(65 + index)}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
-            <tr className="new-row">
-              <td>{visits ? "V-1208" : "00482"}</td>
-              <td>{DEMO_CLIENT.fullName}</td>
-              <td>{DEMO_CLIENT.date}</td>
-              <td>{visits ? "Обработка ногтевой…" : DEMO_CLIENT.phone}</td>
-              <td>
-                <span className="status-chip">Активен</span>
-              </td>
+            <tr className="excel-heading-row">
+              <th>1</th>
+              {headings.map((heading, index) => (
+                <td className={index === 0 ? "selected-cell" : ""} key={heading}>
+                  {heading}
+                </td>
+              ))}
             </tr>
-            <tr>
-              <td>{visits ? "V-1207" : "00481"}</td>
-              <td>Марина Алексеева</td>
-              <td>26 июля 2026</td>
-              <td>{visits ? "Консультация" : "•••• 1164"}</td>
-              <td>
-                <span className="status-chip neutral">Архив</span>
-              </td>
-            </tr>
-            <tr>
-              <td>{visits ? "V-1206" : "00480"}</td>
-              <td>Елена Волкова</td>
-              <td>25 июля 2026</td>
-              <td>{visits ? "Повторный осмотр" : "•••• 7732"}</td>
-              <td>
-                <span className="status-chip">Активен</span>
-              </td>
-            </tr>
+            {rows.map((row, rowIndex) => (
+              <tr className={rowIndex === 0 ? "new-excel-row" : ""} key={row[0]}>
+                <th>{rowIndex + 2}</th>
+                {row.map((cell) => (
+                  <td key={cell}>{cell}</td>
+                ))}
+              </tr>
+            ))}
           </tbody>
         </table>
+      </div>
+      <div className="excel-statusbar">
+        <button type="button">＋</button>
+        <button className={!visits ? "active" : ""} type="button">
+          Клиенты
+        </button>
+        <button className={visits ? "active" : ""} type="button">
+          Визиты
+        </button>
+        <ChevronDown size={13} />
+        <span>Готово</span>
+        <small>100%</small>
       </div>
     </div>
   );
@@ -272,10 +300,22 @@ function DatabaseView({ step }: { step: DemoStepId }) {
 function DemoFrame({ step }: { step: DemoStepId }) {
   if (
     step === "clients-table" ||
-    step === "visits-table" ||
-    step === "visit-details"
+    step === "visits-table"
   ) {
-    return <DatabaseView step={step} />;
+    return <ExcelWorkbook step={step} />;
+  }
+
+  if (step === "visit-details") {
+    return (
+      <ChatShell status="Данные из таблицы найдены">
+        <div className="chat-bubble user compact">
+          Покажи последний визит Анны Петровой, телефон заканчивается на 4821.
+        </div>
+        <div className="chat-bubble assistant client-summary-bubble">
+          <ClientSummaryMessage />
+        </div>
+      </ChatShell>
+    );
   }
 
   if (step === "voice-recording") {
@@ -323,12 +363,11 @@ function DemoFrame({ step }: { step: DemoStepId }) {
     );
   }
 
-  if (step === "client-preview") {
+  if (step === "summary-preview") {
     return (
-      <ChatShell status="Карточка готова">
-        <div className="chat-bubble assistant">
-          <p>Я подготовил новую запись.</p>
-          <ClientCard />
+      <ChatShell status="Запись подготовлена">
+        <div className="chat-bubble assistant client-summary-bubble">
+          <ClientSummaryMessage draft />
         </div>
       </ChatShell>
     );
@@ -337,7 +376,7 @@ function DemoFrame({ step }: { step: DemoStepId }) {
   if (step === "confirmation") {
     return (
       <ChatShell status="Ожидаю подтверждение">
-        <div className="chat-bubble assistant compact">Карточка готова к сохранению.</div>
+        <div className="chat-bubble assistant compact">Данные готовы к сохранению в Excel.</div>
         <div className="chat-bubble user compact confirm-message">
           Подтверждаю сохранение.
           <Check size={15} />
@@ -357,7 +396,7 @@ function DemoFrame({ step }: { step: DemoStepId }) {
           <strong>{DEMO_CLIENT.fullName}</strong>
           <p>Клиент №00482 · {DEMO_CLIENT.date}</p>
           <button type="button">
-            Открыть карточку <ArrowUpRight size={16} />
+            Открыть Excel <ArrowUpRight size={16} />
           </button>
         </div>
       </ChatShell>
@@ -381,12 +420,8 @@ function DemoFrame({ step }: { step: DemoStepId }) {
   if (step === "search-result") {
     return (
       <ChatShell status="Клиент найден">
-        <div className="chat-bubble assistant search-result">
-          <ClientCard result />
-          <div className="result-buttons">
-            <button type="button">Открыть полную карточку</button>
-            <button type="button">Добавить посещение</button>
-          </div>
+        <div className="chat-bubble assistant client-summary-bubble">
+          <ClientSummaryMessage />
         </div>
       </ChatShell>
     );
@@ -408,6 +443,9 @@ function DemoFrame({ step }: { step: DemoStepId }) {
 export function DemoSection() {
   const rootRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
+  const copyRef = useRef<HTMLDivElement>(null);
+  const frameRef = useRef<HTMLDivElement>(null);
+  const previousIndex = useRef(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const viewed = useRef(false);
   const completed = useRef(false);
@@ -450,6 +488,67 @@ export function DemoSection() {
 
   const activeStep = DEMO_STEPS[activeIndex];
 
+  useLayoutEffect(() => {
+    if (!copyRef.current || !frameRef.current) {
+      return;
+    }
+
+    const direction = activeIndex >= previousIndex.current ? 1 : -1;
+    previousIndex.current = activeIndex;
+    const copyItems = copyRef.current.querySelectorAll("[data-demo-copy]");
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      gsap.set([...copyItems, frameRef.current], {
+        autoAlpha: 1,
+        y: 0,
+        scale: 1,
+      });
+      return;
+    }
+
+    const transition = gsap.timeline({
+      defaults: {
+        ease: "power3.out",
+        overwrite: "auto",
+      },
+    });
+
+    transition
+      .fromTo(
+        copyItems,
+        {
+          autoAlpha: 0,
+          y: 11 * direction,
+        },
+        {
+          autoAlpha: 1,
+          duration: 0.32,
+          stagger: 0.035,
+          y: 0,
+        },
+        0,
+      )
+      .fromTo(
+        frameRef.current,
+        {
+          autoAlpha: 0,
+          scale: 0.985,
+          y: 18 * direction,
+        },
+        {
+          autoAlpha: 1,
+          duration: 0.4,
+          scale: 1,
+          y: 0,
+        },
+        0.015,
+      );
+
+    return () => {
+      transition.kill();
+    };
+  }, [activeIndex]);
+
   return (
     <section className="demo-section" id="demo" ref={rootRef}>
       <div className="demo-stage" ref={stageRef}>
@@ -461,11 +560,21 @@ export function DemoSection() {
             вашей заметкой.
           </p>
         </div>
-        <div className="demo-layout desktop-demo">
-          <div className="demo-copy">
-            <span>{activeStep.eyebrow}</span>
-            <h3 key={`title-${activeStep.id}`}>{activeStep.title}</h3>
-            <p key={`copy-${activeStep.id}`}>{activeStep.description}</p>
+        <div
+          className={`demo-layout desktop-demo ${
+            activeStep.id === "clients-table" || activeStep.id === "visits-table"
+              ? "frame-right"
+              : "frame-left"
+          }`}
+        >
+          <div className="demo-copy" ref={copyRef}>
+            <span data-demo-copy>{activeStep.eyebrow}</span>
+            <h3 data-demo-copy key={`title-${activeStep.id}`}>
+              {activeStep.title}
+            </h3>
+            <p data-demo-copy key={`copy-${activeStep.id}`}>
+              {activeStep.description}
+            </p>
             <div className="demo-progress">
               <span style={{ width: `${((activeIndex + 1) / DEMO_STEPS.length) * 100}%` }} />
             </div>
@@ -473,7 +582,7 @@ export function DemoSection() {
               {String(activeIndex + 1).padStart(2, "0")} / {DEMO_STEPS.length}
             </small>
           </div>
-          <div className="demo-frame" key={activeStep.id}>
+          <div className="demo-frame" ref={frameRef} key={activeStep.id}>
             <DemoFrame step={activeStep.id} />
           </div>
         </div>

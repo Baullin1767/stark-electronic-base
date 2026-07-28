@@ -474,32 +474,15 @@ img {
   text-transform: uppercase;
 }
 
-.ai-message > strong {
-  font-family: var(--font-display), sans-serif;
-  font-size: 16px;
-}
-
-.ai-message dl {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin: 15px 0;
-}
-
-.ai-message dl div {
-  display: grid;
-  gap: 2px;
-}
-
-.ai-message dt {
-  color: #86948f;
-  font-size: 9px;
-}
-
-.ai-message dd {
-  margin: 0;
+.ai-summary {
+  margin: 9px 0 14px;
+  color: var(--ink-soft);
   font-size: 11px;
-  font-weight: 650;
+  line-height: 1.55;
+}
+
+.ai-summary strong {
+  color: var(--ink);
 }
 
 .ai-message button {
@@ -891,6 +874,27 @@ img {
   padding-top: 34px;
 }
 
+.demo-layout.frame-left {
+  grid-template-columns: minmax(390px, 0.82fr) minmax(0, 1.18fr);
+}
+
+.demo-layout.frame-left .demo-frame {
+  grid-column: 1;
+  grid-row: 1;
+  justify-items: start;
+}
+
+.demo-layout.frame-left .demo-copy {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+  width: min(100%, 520px);
+}
+
+.demo-layout.frame-right .demo-frame {
+  justify-items: end;
+}
+
 .demo-copy > span {
   color: var(--lime);
   font-size: 11px;
@@ -905,7 +909,6 @@ img {
   font-size: clamp(34px, 3.4vw, 50px);
   letter-spacing: -0.045em;
   line-height: 1.05;
-  animation: rise-in 380ms ease-out;
 }
 
 .demo-copy > p {
@@ -914,14 +917,10 @@ img {
   color: rgba(255, 255, 255, 0.61);
   font-size: 16px;
   line-height: 1.7;
-  animation: rise-in 430ms ease-out;
 }
 
-@keyframes rise-in {
-  from {
-    transform: translateY(9px);
-    opacity: 0;
-  }
+.demo-copy [data-demo-copy] {
+  will-change: transform, opacity;
 }
 
 .demo-progress {
@@ -953,14 +952,7 @@ img {
   display: grid;
   min-height: 525px;
   place-items: center;
-  animation: window-in 420ms ease-out;
-}
-
-@keyframes window-in {
-  from {
-    transform: translateY(14px) scale(0.99);
-    opacity: 0.2;
-  }
+  will-change: transform, opacity;
 }
 
 .demo-window {
@@ -974,6 +966,7 @@ img {
 }
 
 .chat-window {
+  width: min(100%, 455px);
   min-height: 500px;
   padding: 13px;
 }
@@ -1231,96 +1224,21 @@ img {
   color: var(--green);
 }
 
-.client-preview {
-  width: 100%;
-  margin-top: 8px;
-  padding: 16px;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  background: #fafcf9;
+.client-summary-bubble {
+  width: min(100%, 390px);
+  max-width: 100%;
 }
 
-.client-preview-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 15px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--line);
+.client-summary-message p {
+  margin: 0;
 }
 
-.client-preview-head span {
-  display: block;
-  margin-bottom: 4px;
-  color: var(--green);
-  font-size: 8px;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+.client-summary-message p + p {
+  margin-top: 10px;
 }
 
-.client-preview-head strong {
-  font-family: var(--font-display);
-  font-size: 16px;
-}
-
-.client-id {
-  flex: 0 0 auto;
-  padding: 5px 7px;
-  border-radius: 7px;
-  background: var(--mint);
-}
-
-.client-preview dl {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 11px 18px;
-  margin: 15px 0;
-}
-
-.client-preview dl div:nth-child(3),
-.client-preview dl div:nth-child(4) {
-  grid-column: span 2;
-}
-
-.client-preview dt {
-  color: #899792;
-  font-size: 8px;
-}
-
-.client-preview dd {
-  margin: 3px 0 0;
-  font-size: 10px;
-  font-weight: 650;
-}
-
-.preview-actions,
-.result-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-}
-
-.preview-actions button,
-.result-buttons button {
-  min-height: 32px;
-  padding: 0 11px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: white;
-  color: var(--ink);
-  font-size: 9px;
-  font-weight: 700;
-}
-
-.preview-actions button:first-child,
-.result-buttons button:first-child {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  border-color: var(--green-dark);
-  background: var(--green-dark);
-  color: white;
+.client-summary-message strong {
+  color: var(--green-dark);
 }
 
 .confirm-message {
@@ -1472,28 +1390,6 @@ img {
   color: #74827e;
 }
 
-.visit-card {
-  display: grid;
-  gap: 5px;
-}
-
-.visit-card .client-preview {
-  margin-top: 12px;
-}
-
-.visit-card .client-preview dl {
-  grid-template-columns: repeat(3, 1fr);
-}
-
-.visit-card .client-preview dl div:nth-child(3),
-.visit-card .client-preview dl div:nth-child(4) {
-  grid-column: auto;
-}
-
-.visit-card .demo-attachments figure {
-  width: 180px;
-}
-
 .search-compose {
   display: flex;
   align-items: center;
@@ -1525,15 +1421,301 @@ img {
   color: white;
 }
 
-.search-result {
-  width: 100%;
-  max-width: 100%;
+.excel-window {
+  width: min(100%, 760px);
+  min-height: 468px;
+  border: 0;
+  border-radius: 9px;
+  background: #f4f4f4;
+  box-shadow: 0 34px 90px rgba(0, 0, 0, 0.31);
 }
 
-.search-result .client-preview {
-  border: 0;
-  padding: 0;
+.excel-titlebar {
+  display: flex;
+  height: 36px;
+  align-items: center;
+  gap: 9px;
+  padding: 0 12px;
+  background: #217346;
+  color: white;
+  font-size: 10px;
+}
+
+.excel-titlebar strong {
+  font-weight: 600;
+}
+
+.excel-titlebar small {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 8px;
+}
+
+.excel-app-icon {
+  display: grid;
+  width: 21px;
+  height: 21px;
+  place-items: center;
+  background: #185c37;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.excel-window-controls {
+  margin-left: auto;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 9px;
+  letter-spacing: 2px;
+}
+
+.excel-ribbon {
+  height: 72px;
+  border-bottom: 1px solid #cfcfcf;
   background: white;
+}
+
+.excel-ribbon-tabs {
+  display: flex;
+  height: 29px;
+  align-items: center;
+  gap: 20px;
+  padding: 0 12px;
+  border-bottom: 1px solid #e5e5e5;
+  color: #383838;
+  font-size: 8px;
+}
+
+.excel-ribbon-tabs b {
+  color: #217346;
+}
+
+.excel-ribbon-tabs span:first-of-type {
+  height: 29px;
+  padding-top: 10px;
+  border-bottom: 2px solid #217346;
+}
+
+.excel-tools {
+  display: flex;
+  height: 43px;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 13px;
+  color: #777;
+}
+
+.excel-tools strong {
+  margin-right: 3px;
+  font-size: 7px;
+  font-weight: 500;
+}
+
+.excel-tools i {
+  width: 14px;
+  height: 25px;
+  border: 1px solid #bdbdbd;
+  background: linear-gradient(#fff 45%, #dce9df 46%);
+}
+
+.excel-tools span {
+  width: 52px;
+  height: 9px;
+  border: 1px solid #d2d2d2;
+  background: #fafafa;
+}
+
+.excel-formula {
+  display: grid;
+  grid-template-columns: 50px 32px 1fr;
+  height: 25px;
+  align-items: center;
+  border-bottom: 1px solid #cfcfcf;
+  background: #fff;
+  color: #555;
+  font-size: 8px;
+}
+
+.excel-formula span,
+.excel-formula b {
+  height: 100%;
+  padding-top: 7px;
+  border-right: 1px solid #d8d8d8;
+  text-align: center;
+}
+
+.excel-formula b {
+  color: #777;
+  font-family: serif;
+  font-style: italic;
+  font-weight: 500;
+}
+
+.excel-formula p {
+  margin: 0;
+  padding: 0 8px;
+}
+
+.excel-sheet {
+  height: 294px;
+  overflow: hidden;
+  background:
+    linear-gradient(#d9d9d9 1px, transparent 1px),
+    linear-gradient(90deg, #d9d9d9 1px, transparent 1px),
+    white;
+  background-size: 24px 24px, 90px 24px;
+}
+
+.excel-sheet table {
+  width: 100%;
+  min-width: 690px;
+  border-collapse: collapse;
+  table-layout: fixed;
+  background: white;
+  color: #202020;
+  font-family: Arial, sans-serif;
+  font-size: 8px;
+  text-align: left;
+}
+
+.excel-sheet th,
+.excel-sheet td {
+  height: 48px;
+  padding: 5px 7px;
+  overflow: hidden;
+  border-right: 1px solid #d4d4d4;
+  border-bottom: 1px solid #d4d4d4;
+  line-height: 1.25;
+  vertical-align: middle;
+}
+
+.excel-sheet tr > :first-child {
+  width: 28px;
+  padding: 0;
+  background: #f3f3f3;
+  color: #666;
+  font-weight: 400;
+  text-align: center;
+}
+
+.excel-sheet tr > :nth-child(2) {
+  width: 155px;
+}
+
+.excel-sheet tr > :nth-child(3) {
+  width: 105px;
+}
+
+.excel-sheet tr > :nth-child(4) {
+  width: 190px;
+}
+
+.excel-sheet tr > :nth-child(5) {
+  width: 125px;
+}
+
+.excel-sheet tr > :nth-child(6) {
+  width: 120px;
+}
+
+.excel-sheet thead th {
+  height: 21px;
+  padding: 0;
+  background: #f3f3f3;
+  color: #555;
+  font-size: 7px;
+  font-weight: 400;
+  text-align: center;
+}
+
+.excel-sheet .excel-heading-row th,
+.excel-sheet .excel-heading-row td {
+  height: 42px;
+}
+
+.excel-heading-row td {
+  background: #d9e8d5;
+  font-size: 8px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.excel-heading-row td:nth-child(4) {
+  background: #d9e3f4;
+}
+
+.excel-heading-row td:nth-child(5) {
+  background: #dbe5f1;
+}
+
+.excel-heading-row td:nth-child(6) {
+  background: #e7e6e6;
+}
+
+.excel-sheet .selected-cell {
+  position: relative;
+  box-shadow: inset 0 0 0 2px #217346;
+}
+
+.excel-sheet .selected-cell::after {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 5px;
+  height: 5px;
+  background: #217346;
+  content: "";
+}
+
+.excel-sheet .new-excel-row td {
+  background: #f4fbf5;
+  font-weight: 600;
+}
+
+.excel-statusbar {
+  display: flex;
+  height: 41px;
+  align-items: end;
+  gap: 3px;
+  padding: 0 8px;
+  background: #f4f4f4;
+  color: #4f4f4f;
+}
+
+.excel-statusbar button {
+  height: 29px;
+  padding: 0 14px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: #444;
+  font-size: 8px;
+}
+
+.excel-statusbar button:first-child {
+  padding: 0 7px;
+  font-size: 15px;
+}
+
+.excel-statusbar button.active {
+  border-bottom-color: #217346;
+  color: #185c37;
+  font-weight: 700;
+}
+
+.excel-statusbar > svg {
+  align-self: center;
+  margin-left: 3px;
+}
+
+.excel-statusbar > span {
+  align-self: center;
+  margin-left: auto;
+  font-size: 7px;
+}
+
+.excel-statusbar > small {
+  align-self: center;
+  margin-left: 12px;
+  font-size: 7px;
 }
 
 .mobile-demo {
@@ -2411,10 +2593,6 @@ img {
     left: auto;
   }
 
-  .ai-message dl {
-    grid-template-columns: 1fr;
-  }
-
   .problem,
   .benefits,
   .pricing {
@@ -2516,19 +2694,6 @@ img {
   .demo-attachments figure {
     width: 125px;
     height: 85px;
-  }
-
-  .client-preview dl {
-    grid-template-columns: 1fr;
-  }
-
-  .client-preview dl div:nth-child(3),
-  .client-preview dl div:nth-child(4) {
-    grid-column: auto;
-  }
-
-  .visit-card .client-preview dl {
-    grid-template-columns: 1fr;
   }
 
   .benefits-grid,

@@ -14,7 +14,7 @@ export function StorySection() {
           </p>
           <p>
             Тогда появилась простая идея: пусть специалист расскажет обо всём
-            обычными словами, а система сама подготовит понятную карточку.
+            обычными словами, а система сама подготовит строки для Excel.
           </p>
           <div className="story-quote">
             <Lightbulb size={24} />
@@ -31,7 +31,7 @@ export function StorySection() {
             </span>
             <div>
               <small>Было</small>
-              <strong>Заполнять карточки после приёма</strong>
+              <strong>Заполнять таблицу после приёма</strong>
             </div>
           </article>
           <ArrowRight className="story-arrow" aria-hidden="true" />
