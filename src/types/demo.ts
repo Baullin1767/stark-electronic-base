@@ -7,14 +7,10 @@ export type DemoStepId =
   | "processing-client"
   | "summary-preview"
   | "confirmation"
-  | "saving"
   | "saved"
   | "clients-table"
   | "visits-table"
-  | "visit-details"
-  | "search-request"
-  | "search-processing"
-  | "search-result";
+  | "visit-details";
 
 export type DemoStep = {
   id: DemoStepId;

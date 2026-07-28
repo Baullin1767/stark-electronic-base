@@ -20,13 +20,22 @@ import {
 
 type SubmitState = "idle" | "sending" | "success" | "error" | "rate-limited";
 
+const professionOptions = [
+  "Подолог",
+  "Косметолог",
+  "Массажист",
+  "Мастер красоты",
+  "Врач",
+  "Тренер",
+  "Консультант",
+] as const;
+
 function getTimestamp() {
   return Date.now();
 }
 
 export function ContactSection() {
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
-  const [profession, setProfession] = useState("");
   const [selectedPlan, setSelectedPlan] = useState("");
   const [hasStarted, setHasStarted] = useState(false);
 
@@ -99,7 +108,6 @@ export function ContactSection() {
           website: "",
           formStartedAt: nextStart,
         });
-        setProfession("");
         setSelectedPlan("");
         setHasStarted(false);
         return;
@@ -211,35 +219,21 @@ export function ContactSection() {
 
           <label>
             <span>Род деятельности</span>
-            <select
-              value={profession}
-              onChange={(event) => {
-                setProfession(event.target.value);
-                if (event.target.value !== "Другое") {
-                  setValue("profession", event.target.value);
-                } else {
-                  setValue("profession", "");
-                }
-              }}
-            >
-              <option value="">Выберите вариант</option>
-              <option>Подолог</option>
-              <option>Косметолог</option>
-              <option>Массажист</option>
-              <option>Мастер красоты</option>
-              <option>Врач</option>
-              <option>Тренер</option>
-              <option>Консультант</option>
-              <option>Другое</option>
-            </select>
+            <input
+              {...register("profession")}
+              list="profession-options"
+              autoComplete="organization-title"
+              placeholder="Начните вводить профессию"
+            />
+            <datalist id="profession-options">
+              {professionOptions.map((option) => (
+                <option value={option} key={option} />
+              ))}
+            </datalist>
+            <small className="field-hint">
+              Выберите подсказку или укажите свой вариант
+            </small>
           </label>
-
-          {profession === "Другое" && (
-            <label>
-              <span>Укажите профессию</span>
-              <input {...register("profession")} placeholder="Например, фотограф" />
-            </label>
-          )}
 
           <div className="form-grid">
             <label>

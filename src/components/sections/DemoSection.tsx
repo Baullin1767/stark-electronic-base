@@ -2,14 +2,11 @@
 
 import Image from "next/image";
 import {
-  ArrowUpRight,
-  Check,
   CirclePause,
   ChevronDown,
   ImageIcon,
   Mic2,
   Paperclip,
-  Search,
   Send,
   Sparkles,
   X,
@@ -26,35 +23,17 @@ gsap.registerPlugin(ScrollTrigger);
 const transcript =
   "Новый клиент: Анна Сергеевна Петрова, последние цифры телефона — 4821. Сегодня первое обращение. Проведена обработка ногтевой пластины и бокового валика. Рекомендована ежедневная обработка и свободная обувь.";
 
-const processingCopy: Partial<Record<DemoStepId, string[]>> = {
-  "message-sent": [
-    "Анализирую сообщение…",
-    "Проверяю структуру данных…",
-    "Подготавливаю строки для Excel…",
-  ],
-  "processing-client": [
-    "Имя и контакт определены",
-    "Процедура структурирована",
-    "Рекомендации добавлены",
-  ],
-  saving: [
-    "Добавляю клиента в таблицу…",
-    "Добавляю визит во второй лист…",
-    "Связываю фотографии…",
-  ],
-  "search-processing": [
-    "Ищу клиента в базе…",
-    "Проверяю историю посещений…",
-    "Формирую краткую сводку…",
-  ],
-};
+const recordPreviewSource =
+  "Olga Shepetko, последние цифры телефона 549. Бородавка на стопе. Сегодня выполнена третья обработка бородавки и выдана разгрузка. Прикреплена одна фотография до процедуры.";
 
 function ChatShell({
   children,
   status = "Готов к работе",
+  composer,
 }: {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   status?: string;
+  composer?: React.ReactNode;
 }) {
   return (
     <div className="demo-window chat-window">
@@ -71,14 +50,34 @@ function ChatShell({
         <span className="window-dots">•••</span>
       </div>
       <div className="chat-body">{children}</div>
-      <div className="chat-input" aria-hidden="true">
-        <Paperclip size={18} />
-        <span>Сообщение для ассистента…</span>
-        <Mic2 size={18} />
-        <b>
-          <Send size={16} />
-        </b>
+      {composer ?? <MessageComposer />}
+    </div>
+  );
+}
+
+function MessageComposer({
+  message,
+  attachments = false,
+}: {
+  message?: string;
+  attachments?: boolean;
+}) {
+  return (
+    <div
+      className={`chat-input${message ? " has-message" : ""}${
+        attachments ? " has-attachments" : ""
+      }`}
+      aria-hidden="true"
+    >
+      <Paperclip size={18} />
+      <div className="chat-input-copy">
+        <span>{message ?? "Сообщение для ассистента…"}</span>
+        {attachments && <Attachments />}
       </div>
+      <Mic2 size={18} />
+      <b>
+        <Send size={16} />
+      </b>
     </div>
   );
 }
@@ -127,11 +126,10 @@ function Attachments() {
   );
 }
 
-function ClientSummaryMessage({ draft = false }: { draft?: boolean }) {
+function ClientSummaryMessage() {
   return (
     <div className="client-summary-message">
       <p>
-        {draft ? "Проверьте, всё ли верно: " : ""}
         <strong>{DEMO_CLIENT.fullName}</strong>, телефон заканчивается на 4821.
       </p>
       <p>Особенности: болезненность в области большого пальца правой стопы.</p>
@@ -144,21 +142,75 @@ function ClientSummaryMessage({ draft = false }: { draft?: boolean }) {
   );
 }
 
-function Processing({ step }: { step: DemoStepId }) {
-  const items = processingCopy[step] ?? [];
+function StructuredRecordPreview() {
   return (
-    <div className="processing-list">
-      <span className="thinking">
+    <div className="structured-record-preview">
+      <section>
+        <h4>Новый клиент</h4>
+        <p>ФИО: Olga Shepetko</p>
+        <p>Последние цифры телефона: 549</p>
+        <p>Особенности и диагнозы: бородавка на стопе</p>
+        <p>Дата первого обращения: 27.07.2026</p>
+        <p>Комментарий: текущая обработка бородавки — третья.</p>
+      </section>
+
+      <section>
+        <h4>Первый визит в базе</h4>
+        <p>Клиент: Olga Shepetko (549)</p>
+        <p>Дата визита: 27.07.2026</p>
+      </section>
+
+      <section>
+        <h4>Проведённые процедуры:</h4>
+        <p>Выполнена третья обработка бородавки. Сделана и выдана разгрузка.</p>
+      </section>
+
+      <section>
+        <h4>Рекомендации:</h4>
+        <p>Не указаны.</p>
+      </section>
+
+      <section>
+        <h4>Следующий визит:</h4>
+        <p>Не назначен.</p>
+      </section>
+
+      <section>
+        <h4>Фотографии:</h4>
+        <p>До процедуры: 1</p>
+        <p>После процедуры: 0</p>
+        <p>Дополнительные: 0</p>
+      </section>
+
+      <p className="record-confirmation">Подтвердите сохранение записи.</p>
+    </div>
+  );
+}
+
+function SavedRecordMessage() {
+  return (
+    <div className="saved-record-message">
+      <strong>Запись сохранена.</strong>
+      <p>Клиент: Olga Shepetko (549)</p>
+      <p>Дата визита: 27.07.2026</p>
+      <p>Следующий визит: не назначен</p>
+      <p>Фотографий до: 1</p>
+      <p>Фотографий после: 0</p>
+      <p>Дополнительных фотографий: 0</p>
+    </div>
+  );
+}
+
+function AssistantThinking() {
+  return (
+    <div className="assistant-thinking" aria-label="Ассистент думает">
+      <Sparkles size={15} />
+      <span>Thinking</span>
+      <span className="assistant-thinking-dots" aria-hidden="true">
         <i />
         <i />
         <i />
       </span>
-      {items.map((item, index) => (
-        <p key={item} className={index < items.length - 1 ? "done" : "active"}>
-          {index < items.length - 1 ? <Check size={14} /> : <Sparkles size={14} />}
-          {item}
-        </p>
-      ))}
     </div>
   );
 }
@@ -187,39 +239,118 @@ const clientRows = [
   ],
 ];
 
-const visitRows = [
-  [
-    "Анна Сергеевна Петрова (4821)",
-    "28.07.2026",
-    "Обработка ногтевой пластины и бокового валика",
-    "Ежедневная обработка, свободная обувь",
-    "11.08.2026",
-  ],
-  [
-    "Марина Алексеевна Орлова (1164)",
-    "26.07.2026",
-    "Обработка и консультация",
-    "Не травмировать ногтевую пластину",
-    "09.08.2026",
-  ],
-  [
-    "Елена Викторовна Волкова (7732)",
-    "25.07.2026",
-    "Аппаратная обработка стоп",
-    "Крем два раза в день",
-    "08.08.2026",
-  ],
+const visitColumns = [
+  {
+    client: "Olga Shepetko (549)",
+    visits: [
+      {
+        date: "27.07.2026",
+        procedures:
+          "Выполнена третья обработка бородавки. Сделана и выдана разгрузка.",
+        recommendations: "Не указаны.",
+        nextVisit: "Не назначен.",
+        photos: "До: 1 · После: 0 · Дополнительные: 0",
+      },
+      {
+        date: "10.08.2026",
+        procedures: "Контроль состояния стопы и повторная обработка.",
+        recommendations: "Продолжить разгрузку обрабатываемой зоны.",
+        nextVisit: "24.08.2026",
+        photos: "До: 1 · После: 1 · Дополнительные: 0",
+      },
+    ],
+  },
+  {
+    client: "Анна Петрова (4821)",
+    visits: [
+      {
+        date: "28.07.2026",
+        procedures: "Обработка ногтевой пластины и бокового валика.",
+        recommendations: "Ежедневная обработка, свободная обувь.",
+        nextVisit: "11.08.2026",
+        photos: "До: 1 · После: 1 · Дополнительные: 0",
+      },
+    ],
+  },
+  {
+    client: "Марина Орлова (1164)",
+    visits: [
+      {
+        date: "26.07.2026",
+        procedures: "Обработка и консультация после травмы ногтя.",
+        recommendations: "Не травмировать ногтевую пластину.",
+        nextVisit: "09.08.2026",
+        photos: "До: 1 · После: 0 · Дополнительные: 1",
+      },
+    ],
+  },
 ];
+
+function VisitCell({
+  visit,
+}: {
+  visit?: (typeof visitColumns)[number]["visits"][number];
+}) {
+  if (!visit) {
+    return null;
+  }
+
+  return (
+    <div className="visit-cell-copy">
+      <p><strong>Дата визита:</strong> {visit.date}</p>
+      <p><strong>Проведённые процедуры:</strong> {visit.procedures}</p>
+      <p><strong>Рекомендации:</strong> {visit.recommendations}</p>
+      <p><strong>Следующий визит:</strong> {visit.nextVisit}</p>
+      <p><strong>Фотографии:</strong> {visit.photos}</p>
+    </div>
+  );
+}
+
+function VisitsMatrix() {
+  const visitIndexes = [0, 1] as const;
+
+  return (
+    <table className="visits-matrix">
+      <thead>
+        <tr>
+          <th className="excel-corner" />
+          {Array.from({ length: visitColumns.length + 1 }, (_, index) => (
+            <th className="excel-column-letter" key={index}>
+              {String.fromCharCode(65 + index)}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        <tr className="excel-heading-row visits-heading-row">
+          <th>1</th>
+          <td className="selected-cell">Клиенты</td>
+          {visitColumns.map(({ client }) => (
+            <td key={client}>{client}</td>
+          ))}
+        </tr>
+        {visitIndexes.map((visitIndex) => (
+          <tr className="visit-matrix-row" key={visitIndex}>
+            <th>{visitIndex + 2}</th>
+            <td className="visit-row-label">Визит {visitIndex + 1}</td>
+            {visitColumns.map(({ client, visits }) => (
+              <td key={client}>
+                <VisitCell visit={visits[visitIndex]} />
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
 
 function ExcelWorkbook({ step }: { step: "clients-table" | "visits-table" }) {
   const visits = step === "visits-table";
-  const headings = visits
-    ? ["Клиент", "Дата визита", "Проведённые процедуры", "Рекомендации", "Следующий визит"]
-    : ["ФИО", "Последние цифры номера", "Особенности и диагнозы", "Дата первого обращения", "Комментарий"];
-  const rows = visits ? visitRows : clientRows;
+  const headings = ["ФИО", "Последние цифры номера", "Особенности и диагнозы", "Дата первого обращения", "Комментарий"];
 
   return (
-    <div className="demo-window excel-window">
+    <div className={`demo-window excel-window${visits ? " visits-workbook" : ""}`}>
       <div className="excel-titlebar">
         <span className="excel-app-icon">X</span>
         <strong>База клиентов.xlsx</strong>
@@ -247,10 +378,13 @@ function ExcelWorkbook({ step }: { step: "clients-table" | "visits-table" }) {
       <div className="excel-formula">
         <span>A1</span>
         <b>fx</b>
-        <p>{visits ? "Клиент" : "ФИО"}</p>
+        <p>{visits ? "Клиенты" : "ФИО"}</p>
       </div>
-      <div className="excel-sheet">
-        <table>
+      <div className={`excel-sheet${visits ? " visits-sheet" : ""}`}>
+        {visits ? (
+          <VisitsMatrix />
+        ) : (
+          <table>
           <thead>
             <tr>
               <th className="excel-corner" />
@@ -270,7 +404,7 @@ function ExcelWorkbook({ step }: { step: "clients-table" | "visits-table" }) {
                 </td>
               ))}
             </tr>
-            {rows.map((row, rowIndex) => (
+            {clientRows.map((row, rowIndex) => (
               <tr className={rowIndex === 0 ? "new-excel-row" : ""} key={row[0]}>
                 <th>{rowIndex + 2}</th>
                 {row.map((cell) => (
@@ -279,7 +413,8 @@ function ExcelWorkbook({ step }: { step: "clients-table" | "visits-table" }) {
               </tr>
             ))}
           </tbody>
-        </table>
+          </table>
+        )}
       </div>
       <div className="excel-statusbar">
         <button type="button">＋</button>
@@ -311,7 +446,7 @@ function DemoFrame({ step }: { step: DemoStepId }) {
         <div className="chat-bubble user compact">
           Покажи последний визит Анны Петровой, телефон заканчивается на 4821.
         </div>
-        <div className="chat-bubble assistant client-summary-bubble">
+        <div className="chat-bubble assistant client-summary-bubble visit-result-message">
           <ClientSummaryMessage />
         </div>
       </ChatShell>
@@ -320,7 +455,10 @@ function DemoFrame({ step }: { step: DemoStepId }) {
 
   if (step === "voice-recording") {
     return (
-      <ChatShell status="Записываю голос">
+      <ChatShell
+        status="Записываю голос"
+        composer={<VoiceRecorder />}
+      >
         <div className="empty-chat">
           <span className="mic-halo">
             <Mic2 />
@@ -328,37 +466,37 @@ function DemoFrame({ step }: { step: DemoStepId }) {
           <strong>Говорите свободно</strong>
           <p>Мы покажем текст перед отправкой</p>
         </div>
-        <VoiceRecorder />
       </ChatShell>
     );
   }
 
-  if (step === "transcription" || step === "attachments") {
+  if (step === "transcription") {
     return (
-      <ChatShell status={step === "transcription" ? "Распознаю сообщение" : "2 файла готовы"}>
-        <div className="chat-bubble user transcript">
-          <small>{step === "transcription" ? "Текст готов к отправке" : "Новый клиент"}</small>
-          <p>{transcript}</p>
-          {step === "attachments" && <Attachments />}
-        </div>
-      </ChatShell>
+      <ChatShell
+        status="Распознаю сообщение"
+        composer={<MessageComposer message={transcript} />}
+      />
     );
   }
 
-  if (
-    step === "message-sent" ||
-    step === "processing-client" ||
-    step === "saving" ||
-    step === "search-processing"
-  ) {
+  if (step === "attachments") {
+    return (
+      <ChatShell
+        status="2 файла готовы"
+        composer={
+          <MessageComposer message={transcript} attachments />
+        }
+      />
+    );
+  }
+
+  if (step === "message-sent" || step === "processing-client") {
     return (
       <ChatShell status="Работаю с данными">
-        {step === "search-processing" && (
-          <div className="chat-bubble user compact">
-            Покажи Анну Петрову, последние цифры 4821.
-          </div>
-        )}
-        <Processing step={step} />
+        <div className="chat-bubble user sent-message">
+          {transcript}
+        </div>
+        <AssistantThinking />
       </ChatShell>
     );
   }
@@ -366,8 +504,11 @@ function DemoFrame({ step }: { step: DemoStepId }) {
   if (step === "summary-preview") {
     return (
       <ChatShell status="Запись подготовлена">
-        <div className="chat-bubble assistant client-summary-bubble">
-          <ClientSummaryMessage draft />
+        <div className="chat-bubble user summary-source-message">
+          {recordPreviewSource}
+        </div>
+        <div className="chat-bubble assistant structured-summary-bubble">
+          <StructuredRecordPreview />
         </div>
       </ChatShell>
     );
@@ -376,10 +517,11 @@ function DemoFrame({ step }: { step: DemoStepId }) {
   if (step === "confirmation") {
     return (
       <ChatShell status="Ожидаю подтверждение">
-        <div className="chat-bubble assistant compact">Данные готовы к сохранению в Excel.</div>
+        <div className="chat-bubble assistant structured-summary-bubble confirmation-summary-bubble">
+          <StructuredRecordPreview />
+        </div>
         <div className="chat-bubble user compact confirm-message">
-          Подтверждаю сохранение.
-          <Check size={15} />
+          Подтверждаю
         </div>
       </ChatShell>
     );
@@ -388,40 +530,11 @@ function DemoFrame({ step }: { step: DemoStepId }) {
   if (step === "saved") {
     return (
       <ChatShell status="Готово">
-        <div className="success-state">
-          <span>
-            <Check size={29} />
-          </span>
-          <small>Запись успешно сохранена</small>
-          <strong>{DEMO_CLIENT.fullName}</strong>
-          <p>Клиент №00482 · {DEMO_CLIENT.date}</p>
-          <button type="button">
-            Открыть Excel <ArrowUpRight size={16} />
-          </button>
+        <div className="chat-bubble user compact saved-user-message">
+          Подтверждаю
         </div>
-      </ChatShell>
-    );
-  }
-
-  if (step === "search-request") {
-    return (
-      <ChatShell>
-        <div className="search-compose">
-          <Search size={18} />
-          <span>Покажи информацию по Анне Петровой, последние цифры 4821.</span>
-          <button type="button">
-            <Send size={16} />
-          </button>
-        </div>
-      </ChatShell>
-    );
-  }
-
-  if (step === "search-result") {
-    return (
-      <ChatShell status="Клиент найден">
-        <div className="chat-bubble assistant client-summary-bubble">
-          <ClientSummaryMessage />
+        <div className="chat-bubble assistant saved-record-bubble">
+          <SavedRecordMessage />
         </div>
       </ChatShell>
     );
