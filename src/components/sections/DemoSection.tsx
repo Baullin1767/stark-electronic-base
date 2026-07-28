@@ -682,8 +682,8 @@ export function DemoSection() {
         start: "top top",
         end: () => {
           const stepDistance = Math.max(
-            280,
-            Math.min(380, window.innerHeight * 0.42),
+            340,
+            Math.min(460, window.innerHeight * 0.5),
           );
           return `+=${stepDistance * DEMO_STEPS.length}`;
         },
