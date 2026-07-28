@@ -838,7 +838,7 @@ img {
 
 .demo-stage {
   min-height: 100svh;
-  padding: 70px max(24px, calc((100vw - 1200px) / 2));
+  padding: 36px max(24px, calc((100vw - 1200px) / 2));
   background:
     radial-gradient(circle at 80% 25%, rgba(88, 142, 126, 0.35), transparent 36%),
     var(--green-dark);
@@ -848,21 +848,24 @@ img {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 40px;
-  padding-bottom: 45px;
+  gap: 28px;
+  padding-bottom: 24px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .demo-intro h2 {
-  max-width: 610px;
-  margin-top: 14px;
-  font-size: clamp(37px, 4vw, 56px);
+  max-width: 680px;
+  margin-top: 7px;
+  font-size: clamp(34px, 3.2vw, 44px);
+  line-height: 0.98;
 }
 
 .demo-intro > p {
-  max-width: 330px;
+  max-width: 300px;
+  margin-top: 8px;
   color: rgba(255, 255, 255, 0.55);
-  font-size: 14px;
+  font-size: 13px;
+  line-height: 1.55;
 }
 
 .demo-layout {
@@ -870,8 +873,9 @@ img {
   grid-template-columns: 0.7fr 1.3fr;
   gap: clamp(45px, 7vw, 100px);
   align-items: center;
-  min-height: calc(100svh - 235px);
-  padding-top: 34px;
+  min-height: calc(100svh - 180px);
+  margin-top: -18px;
+  padding-top: 0;
 }
 
 .demo-layout.frame-left {
@@ -923,6 +927,89 @@ img {
   will-change: transform, opacity;
 }
 
+.demo-flexibility {
+  display: grid;
+  width: min(calc(100% - 48px), 1200px);
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: clamp(45px, 7vw, 100px);
+  align-items: center;
+  margin: 0 auto;
+  padding: 90px 0 110px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.demo-flexibility-copy > span {
+  color: var(--lime);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.demo-flexibility-copy h3 {
+  max-width: 520px;
+  margin: 14px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(34px, 4vw, 52px);
+  letter-spacing: -0.045em;
+  line-height: 1.05;
+}
+
+.demo-flexibility-copy p {
+  max-width: 530px;
+  margin: 20px 0 0;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.demo-flexibility-card {
+  padding: clamp(24px, 4vw, 38px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.16);
+  backdrop-filter: blur(12px);
+}
+
+.demo-flexibility-card > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.demo-flexibility-card > div:first-child svg {
+  color: var(--lime);
+}
+
+.demo-flexibility-card > div:first-child strong {
+  font-family: var(--font-display);
+  font-size: 18px;
+}
+
+.demo-flexibility-card > p {
+  margin: 15px 0 0;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.demo-flexibility-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.demo-flexibility-fields span {
+  padding: 8px 11px;
+  border: 1px solid rgba(217, 248, 115, 0.25);
+  border-radius: 999px;
+  background: rgba(217, 248, 115, 0.08);
+  color: #eef9d0;
+  font-size: 10px;
+}
+
 .demo-progress {
   width: min(280px, 100%);
   height: 3px;
@@ -937,7 +1024,7 @@ img {
   height: 100%;
   border-radius: inherit;
   background: var(--lime);
-  transition: width 280ms ease-out;
+  will-change: width;
 }
 
 .demo-copy > small {
@@ -1018,17 +1105,32 @@ img {
 
 .chat-input.has-message .chat-input-copy > span {
   color: var(--ink);
+  overflow: visible;
+  line-height: 1.5;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.chat-input.has-message:not(.has-attachments) {
+  min-height: 124px;
+  align-items: flex-end;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.chat-window:has(> .chat-input.has-message:not(.has-attachments)) .chat-body {
+  min-height: 283px;
 }
 
 .chat-input.has-attachments {
-  min-height: 138px;
+  min-height: 216px;
   align-items: flex-end;
   padding-top: 10px;
   padding-bottom: 10px;
 }
 
 .chat-window:has(> .chat-input.has-attachments) .chat-body {
-  min-height: 270px;
+  min-height: 192px;
 }
 
 .chat-input.has-attachments .demo-attachments {
@@ -1202,33 +1304,44 @@ img {
   font-weight: 700;
 }
 
-.confirmation-summary-bubble {
-  padding: 9px 12px;
+.confirmation-chat-wrap {
+  position: relative;
+  width: min(100%, 455px);
 }
 
-.chat-body:has(> .confirmation-summary-bubble) {
-  gap: 8px;
-  padding-top: 10px;
-  padding-bottom: 10px;
+.confirmation-chat-wrap .chat-window {
+  width: 100%;
 }
 
-.confirmation-summary-bubble .structured-record-preview {
-  font-size: 8.5px;
-  line-height: 1.3;
+.chat-scroll-hint {
+  position: absolute;
+  top: 105px;
+  left: 14px;
+  z-index: 2;
+  display: grid;
+  grid-auto-flow: column;
+  width: auto;
+  place-items: center;
+  gap: 7px;
+  padding: 6px 9px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--green);
+  font-size: 10px;
+  line-height: 1.25;
+  text-align: center;
+  transition: opacity 180ms ease;
 }
 
-.confirmation-summary-bubble .structured-record-preview section + section {
-  margin-top: 5px;
+.chat-scroll-hint svg {
+  animation: chat-scroll-hint 900ms ease-in-out infinite alternate;
 }
 
-.confirmation-summary-bubble .structured-record-preview h4 {
-  margin-bottom: 2px;
-  font-size: 8.5px;
-  line-height: 1.3;
-}
-
-.confirmation-summary-bubble .structured-record-preview .record-confirmation {
-  margin-top: 6px;
+@keyframes chat-scroll-hint {
+  to {
+    transform: translateY(7px);
+  }
 }
 
 .assistant-thinking {
@@ -2488,6 +2601,188 @@ img {
   text-underline-offset: 3px;
 }
 
+/*
+ * Keep the main landing-page chapters within one desktop viewport.
+ * Mobile and tablet layouts remain content-driven because their stacked
+ * composition is intentionally taller than a single screen.
+ */
+@media (min-width: 1024px) and (min-height: 760px) {
+  .hero,
+  .problem,
+  .story,
+  .benefits,
+  .pricing,
+  .contact-section,
+  .demo-flexibility {
+    min-height: 100svh;
+  }
+
+  .hero {
+    height: 100svh;
+    gap: clamp(42px, 5vw, 76px);
+    padding-top: clamp(100px, 11svh, 116px);
+    padding-bottom: clamp(28px, 4svh, 44px);
+  }
+
+  .hero h1 {
+    margin-top: 18px;
+    font-size: clamp(54px, 7.2svh, 68px);
+  }
+
+  .hero-lead {
+    margin-top: 20px;
+    font-size: clamp(17px, 2.05svh, 19px);
+    line-height: 1.5;
+  }
+
+  .hero-actions {
+    margin-top: 24px;
+  }
+
+  .hero-trust {
+    margin-top: 18px;
+  }
+
+  .hero-visual {
+    min-height: min(62svh, 590px);
+  }
+
+  .problem {
+    padding-top: clamp(48px, 7svh, 72px);
+    padding-bottom: clamp(48px, 7svh, 72px);
+  }
+
+  .story {
+    display: flex;
+    align-items: center;
+    padding: clamp(48px, 7svh, 72px) 0;
+  }
+
+  .demo-flexibility {
+    padding-top: clamp(48px, 7svh, 72px);
+    padding-bottom: clamp(48px, 7svh, 72px);
+  }
+
+  .benefits,
+  .pricing {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: clamp(28px, 5svh, 54px);
+    padding-bottom: clamp(28px, 5svh, 54px);
+  }
+
+  .pricing {
+    padding-top: clamp(24px, 3svh, 36px);
+    padding-bottom: clamp(24px, 3svh, 36px);
+  }
+
+  .benefits .section-heading h2,
+  .pricing .section-heading h2 {
+    margin-top: 14px;
+    font-size: clamp(38px, 5.1svh, 48px);
+  }
+
+  .benefits .section-heading > p,
+  .pricing .section-heading > p {
+    margin-top: 14px;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  .benefits-grid,
+  .pricing-grid {
+    margin-top: clamp(24px, 3.2svh, 34px);
+  }
+
+  .benefits-grid article {
+    min-height: 190px;
+    padding: 22px;
+  }
+
+  .benefits-grid h3 {
+    margin-top: 20px;
+  }
+
+  .connection-note {
+    margin-top: 24px;
+    padding: 15px 20px;
+  }
+
+  .price-card {
+    min-height: min(49svh, 465px);
+    padding: 22px;
+  }
+
+  .price {
+    margin-top: 16px;
+  }
+
+  .plan-description {
+    min-height: 54px;
+    margin-top: 12px;
+  }
+
+  .price-card ul {
+    gap: 9px;
+    margin: 18px 0;
+    padding: 17px 0;
+  }
+
+  .price-card .button {
+    min-height: 46px;
+  }
+
+  .currency-note {
+    margin-top: 16px;
+    line-height: 1.45;
+  }
+
+  .contact-section {
+    display: flex;
+    align-items: center;
+    padding: clamp(40px, 5svh, 56px) 0;
+  }
+
+  .contact-copy h2 {
+    font-size: clamp(40px, 5.4svh, 51px);
+  }
+
+  .contact-copy > p {
+    margin-top: 18px;
+    line-height: 1.55;
+  }
+
+  .contact-list {
+    margin-top: 24px;
+  }
+
+  .contact-list a {
+    padding: 10px 12px;
+  }
+
+  .contact-form {
+    padding: 25px 28px;
+  }
+
+  .form-head {
+    margin-bottom: 18px;
+  }
+
+  .contact-form label:not(.consent, .honeypot) {
+    margin-bottom: 10px;
+  }
+
+  .contact-form textarea {
+    min-height: 82px;
+  }
+
+  .submit-button {
+    min-height: 46px;
+    margin-top: 14px;
+  }
+}
+
 @media (max-width: 1080px) {
   .hero {
     grid-template-columns: 0.9fr 1.1fr;
@@ -2503,6 +2798,7 @@ img {
     grid-template-columns: 1fr 1.2fr;
     gap: 40px;
   }
+
 }
 
 @media (max-width: 1023px) {
@@ -2619,6 +2915,12 @@ img {
 
   .mobile-demo-step .chat-window {
     min-height: 440px;
+  }
+
+  .demo-flexibility {
+    grid-template-columns: 1fr;
+    padding-top: 70px;
+    padding-bottom: 90px;
   }
 
   .benefits-grid,
@@ -2786,6 +3088,17 @@ img {
 
   .demo-intro > p {
     margin-top: 18px;
+  }
+
+  .demo-flexibility {
+    width: min(100% - 30px, 1200px);
+    gap: 30px;
+    padding-top: 60px;
+    padding-bottom: 75px;
+  }
+
+  .demo-flexibility-copy h3 {
+    font-size: 36px;
   }
 
   .mobile-demo-step {

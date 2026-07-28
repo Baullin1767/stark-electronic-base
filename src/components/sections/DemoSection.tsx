@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import {
+  ArrowDown,
   CirclePause,
   ChevronDown,
   ImageIcon,
@@ -20,20 +21,112 @@ import type { DemoStepId } from "@/types/demo";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const transcript =
-  "Новый клиент: Анна Сергеевна Петрова, последние цифры телефона — 4821. Сегодня первое обращение. Проведена обработка ногтевой пластины и бокового валика. Рекомендована ежедневная обработка и свободная обувь.";
+const transcript = `Новый клиент: ${DEMO_CLIENT.fullName}, последние цифры телефона — ${DEMO_CLIENT.phoneLastDigits}. Сегодня первое обращение. Особенность: ${DEMO_CLIENT.issue.toLowerCase()}. Проведена обработка ногтевой пластины и бокового валика. Рекомендована ежедневная обработка и свободная обувь.`;
 
-const recordPreviewSource =
-  "Olga Shepetko, последние цифры телефона 549. Бородавка на стопе. Сегодня выполнена третья обработка бородавки и выдана разгрузка. Прикреплена одна фотография до процедуры.";
+const confirmationStepIndex = DEMO_STEPS.findIndex(
+  ({ id }) => id === "confirmation",
+);
+
+function syncConfirmationChat(
+  frame: HTMLElement | null,
+  stepPosition: number,
+  direction: number,
+) {
+  const scrollArea = frame?.querySelector<HTMLElement>(
+    ".confirmation-chat-scroll",
+  );
+  if (!scrollArea) {
+    return false;
+  }
+
+  const maxScroll = scrollArea.scrollHeight - scrollArea.clientHeight;
+  const localProgress = Math.max(
+    0,
+    Math.min(1, stepPosition - confirmationStepIndex),
+  );
+  const targetScroll = maxScroll * Math.min(1, localProgress / 0.85);
+
+  scrollArea.scrollTop =
+    direction >= 0
+      ? Math.max(scrollArea.scrollTop, targetScroll)
+      : Math.min(scrollArea.scrollTop, targetScroll);
+
+  const hint = frame?.querySelector<HTMLElement>(".chat-scroll-hint");
+  if (hint) {
+    hint.style.opacity = scrollArea.scrollTop >= maxScroll - 1 ? "0" : "1";
+  }
+
+  return scrollArea.scrollTop >= maxScroll - 1;
+}
+
+function isConfirmationChatAtEnd(frame: HTMLElement | null) {
+  const scrollArea = frame?.querySelector<HTMLElement>(
+    ".confirmation-chat-scroll",
+  );
+  if (!scrollArea) {
+    return false;
+  }
+
+  return (
+    scrollArea.scrollTop >=
+    scrollArea.scrollHeight - scrollArea.clientHeight - 1
+  );
+}
+
+function syncScrollDrivenMotion(
+  copy: HTMLElement | null,
+  frame: HTMLElement | null,
+  stepPosition: number,
+  stepIndex: number,
+) {
+  if (!copy || !frame) {
+    return;
+  }
+
+  const localProgress = Math.max(0, Math.min(1, stepPosition - stepIndex));
+  const isFirstFrameAtStart = stepIndex === 0 && stepPosition < 0.01;
+  const isLastFrame = stepIndex === DEMO_STEPS.length - 1;
+  const frameEnter = isFirstFrameAtStart
+    ? 1
+    : Math.max(0, Math.min(1, localProgress / 0.24));
+  const frameExit = isLastFrame
+    ? 0
+    : Math.max(0, Math.min(1, (localProgress - 0.74) / 0.26));
+  const frameVisibility = Math.min(frameEnter, 1 - frameExit);
+  const copyItems = [...copy.querySelectorAll<HTMLElement>("[data-demo-copy]")];
+
+  copyItems.forEach((item, itemIndex) => {
+    const itemEnter = isFirstFrameAtStart
+      ? 1
+      : Math.max(
+          0,
+          Math.min(1, (localProgress - itemIndex * 0.025) / 0.22),
+        );
+    const visibility = Math.min(itemEnter, 1 - frameExit);
+
+    gsap.set(item, {
+      autoAlpha: 0.12 + visibility * 0.88,
+      y: (1 - itemEnter) * 18 - frameExit * 14,
+    });
+  });
+
+  gsap.set(frame, {
+    autoAlpha: 0.12 + frameVisibility * 0.88,
+    scale: 0.975 + frameVisibility * 0.025,
+    y: (1 - frameEnter) * 26 - frameExit * 20,
+  });
+}
 
 function ChatShell({
   children,
   status = "Готов к работе",
   composer,
+  bodyClassName,
 }: {
   children?: React.ReactNode;
   status?: string;
   composer?: React.ReactNode;
+  bodyClassName?: string;
 }) {
   return (
     <div className="demo-window chat-window">
@@ -49,7 +142,9 @@ function ChatShell({
         </div>
         <span className="window-dots">•••</span>
       </div>
-      <div className="chat-body">{children}</div>
+      <div className={`chat-body${bodyClassName ? ` ${bodyClassName}` : ""}`}>
+        {children}
+      </div>
       {composer ?? <MessageComposer />}
     </div>
   );
@@ -130,13 +225,15 @@ function ClientSummaryMessage() {
   return (
     <div className="client-summary-message">
       <p>
-        <strong>{DEMO_CLIENT.fullName}</strong>, телефон заканчивается на 4821.
+        <strong>{DEMO_CLIENT.fullName}</strong>, телефон заканчивается на{" "}
+        {DEMO_CLIENT.phoneLastDigits}.
       </p>
-      <p>Особенности: болезненность в области большого пальца правой стопы.</p>
+      <p>Особенности: {DEMO_CLIENT.issue.toLowerCase()}.</p>
       <p>
-        Последний визит — {DEMO_CLIENT.date}. Проведена обработка ногтевой
-        пластины и бокового валика. Рекомендованы ежедневная обработка и
-        свободная обувь. Следующий визит — через две недели.
+        Последний визит — {DEMO_CLIENT.date}. Проведена{" "}
+        {DEMO_CLIENT.procedure.toLowerCase()}. Рекомендованы{" "}
+        {DEMO_CLIENT.recommendation.toLowerCase()}. Следующий визит —{" "}
+        {DEMO_CLIENT.nextVisit}.
       </p>
     </div>
   );
@@ -147,39 +244,41 @@ function StructuredRecordPreview() {
     <div className="structured-record-preview">
       <section>
         <h4>Новый клиент</h4>
-        <p>ФИО: Olga Shepetko</p>
-        <p>Последние цифры телефона: 549</p>
-        <p>Особенности и диагнозы: бородавка на стопе</p>
-        <p>Дата первого обращения: 27.07.2026</p>
-        <p>Комментарий: текущая обработка бородавки — третья.</p>
+        <p>ФИО: {DEMO_CLIENT.fullName}</p>
+        <p>Последние цифры телефона: {DEMO_CLIENT.phoneLastDigits}</p>
+        <p>Особенности и диагнозы: {DEMO_CLIENT.issue.toLowerCase()}</p>
+        <p>Дата первого обращения: {DEMO_CLIENT.dateNumeric}</p>
+        <p>Комментарий: {DEMO_CLIENT.comment.toLowerCase()}</p>
       </section>
 
       <section>
         <h4>Первый визит в базе</h4>
-        <p>Клиент: Olga Shepetko (549)</p>
-        <p>Дата визита: 27.07.2026</p>
+        <p>
+          Клиент: {DEMO_CLIENT.fullName} ({DEMO_CLIENT.phoneLastDigits})
+        </p>
+        <p>Дата визита: {DEMO_CLIENT.dateNumeric}</p>
       </section>
 
       <section>
         <h4>Проведённые процедуры:</h4>
-        <p>Выполнена третья обработка бородавки. Сделана и выдана разгрузка.</p>
+        <p>{DEMO_CLIENT.procedure}.</p>
       </section>
 
       <section>
         <h4>Рекомендации:</h4>
-        <p>Не указаны.</p>
+        <p>{DEMO_CLIENT.recommendation}.</p>
       </section>
 
       <section>
         <h4>Следующий визит:</h4>
-        <p>Не назначен.</p>
+        <p>{DEMO_CLIENT.nextVisit}.</p>
       </section>
 
       <section>
         <h4>Фотографии:</h4>
-        <p>До процедуры: 1</p>
-        <p>После процедуры: 0</p>
-        <p>Дополнительные: 0</p>
+        <p>До процедуры: {DEMO_CLIENT.photos.before}</p>
+        <p>После процедуры: {DEMO_CLIENT.photos.after}</p>
+        <p>Дополнительные: {DEMO_CLIENT.photos.additional}</p>
       </section>
 
       <p className="record-confirmation">Подтвердите сохранение записи.</p>
@@ -191,12 +290,14 @@ function SavedRecordMessage() {
   return (
     <div className="saved-record-message">
       <strong>Запись сохранена.</strong>
-      <p>Клиент: Olga Shepetko (549)</p>
-      <p>Дата визита: 27.07.2026</p>
-      <p>Следующий визит: не назначен</p>
-      <p>Фотографий до: 1</p>
-      <p>Фотографий после: 0</p>
-      <p>Дополнительных фотографий: 0</p>
+      <p>
+        Клиент: {DEMO_CLIENT.fullName} ({DEMO_CLIENT.phoneLastDigits})
+      </p>
+      <p>Дата визита: {DEMO_CLIENT.dateNumeric}</p>
+      <p>Следующий визит: {DEMO_CLIENT.nextVisit}</p>
+      <p>Фотографий до: {DEMO_CLIENT.photos.before}</p>
+      <p>Фотографий после: {DEMO_CLIENT.photos.after}</p>
+      <p>Дополнительных фотографий: {DEMO_CLIENT.photos.additional}</p>
     </div>
   );
 }
@@ -217,11 +318,11 @@ function AssistantThinking() {
 
 const clientRows = [
   [
-    "Анна Сергеевна Петрова",
-    "4821",
-    "Болезненность большого пальца правой стопы",
-    "28.07.2026",
-    "Свободная обувь",
+    DEMO_CLIENT.fullName,
+    DEMO_CLIENT.phoneLastDigits,
+    DEMO_CLIENT.issue,
+    DEMO_CLIENT.dateNumeric,
+    DEMO_CLIENT.comment,
   ],
   [
     "Марина Алексеевна Орлова",
@@ -241,6 +342,18 @@ const clientRows = [
 
 const visitColumns = [
   {
+    client: `${DEMO_CLIENT.shortName} (${DEMO_CLIENT.phoneLastDigits})`,
+    visits: [
+      {
+        date: DEMO_CLIENT.dateNumeric,
+        procedures: `${DEMO_CLIENT.procedure}.`,
+        recommendations: `${DEMO_CLIENT.recommendation}.`,
+        nextVisit: DEMO_CLIENT.nextVisit,
+        photos: `До: ${DEMO_CLIENT.photos.before} · После: ${DEMO_CLIENT.photos.after} · Дополнительные: ${DEMO_CLIENT.photos.additional}`,
+      },
+    ],
+  },
+  {
     client: "Olga Shepetko (549)",
     visits: [
       {
@@ -250,25 +363,6 @@ const visitColumns = [
         recommendations: "Не указаны.",
         nextVisit: "Не назначен.",
         photos: "До: 1 · После: 0 · Дополнительные: 0",
-      },
-      {
-        date: "10.08.2026",
-        procedures: "Контроль состояния стопы и повторная обработка.",
-        recommendations: "Продолжить разгрузку обрабатываемой зоны.",
-        nextVisit: "24.08.2026",
-        photos: "До: 1 · После: 1 · Дополнительные: 0",
-      },
-    ],
-  },
-  {
-    client: "Анна Петрова (4821)",
-    visits: [
-      {
-        date: "28.07.2026",
-        procedures: "Обработка ногтевой пластины и бокового валика.",
-        recommendations: "Ежедневная обработка, свободная обувь.",
-        nextVisit: "11.08.2026",
-        photos: "До: 1 · После: 1 · Дополнительные: 0",
       },
     ],
   },
@@ -444,7 +538,8 @@ function DemoFrame({ step }: { step: DemoStepId }) {
     return (
       <ChatShell status="Данные из таблицы найдены">
         <div className="chat-bubble user compact">
-          Покажи последний визит Анны Петровой, телефон заканчивается на 4821.
+          Покажи последний визит {DEMO_CLIENT.shortName}, телефон заканчивается
+          на {DEMO_CLIENT.phoneLastDigits}.
         </div>
         <div className="chat-bubble assistant client-summary-bubble visit-result-message">
           <ClientSummaryMessage />
@@ -490,7 +585,7 @@ function DemoFrame({ step }: { step: DemoStepId }) {
     );
   }
 
-  if (step === "message-sent" || step === "processing-client") {
+  if (step === "message-sent") {
     return (
       <ChatShell status="Работаю с данными">
         <div className="chat-bubble user sent-message">
@@ -505,7 +600,7 @@ function DemoFrame({ step }: { step: DemoStepId }) {
     return (
       <ChatShell status="Запись подготовлена">
         <div className="chat-bubble user summary-source-message">
-          {recordPreviewSource}
+          {transcript}
         </div>
         <div className="chat-bubble assistant structured-summary-bubble">
           <StructuredRecordPreview />
@@ -516,14 +611,23 @@ function DemoFrame({ step }: { step: DemoStepId }) {
 
   if (step === "confirmation") {
     return (
-      <ChatShell status="Ожидаю подтверждение">
-        <div className="chat-bubble assistant structured-summary-bubble confirmation-summary-bubble">
-          <StructuredRecordPreview />
+      <div className="confirmation-chat-wrap">
+        <div className="chat-scroll-hint" aria-hidden="true">
+          <span>Прокрутите чат</span>
+          <ArrowDown size={22} />
         </div>
-        <div className="chat-bubble user compact confirm-message">
-          Подтверждаю
-        </div>
-      </ChatShell>
+        <ChatShell
+          status="Ожидаю подтверждение"
+          bodyClassName="confirmation-chat-scroll"
+        >
+          <div className="chat-bubble assistant structured-summary-bubble confirmation-summary-bubble">
+            <StructuredRecordPreview />
+          </div>
+          <div className="chat-bubble user compact confirm-message">
+            Подтверждаю
+          </div>
+        </ChatShell>
+      </div>
     );
   }
 
@@ -558,7 +662,9 @@ export function DemoSection() {
   const stageRef = useRef<HTMLDivElement>(null);
   const copyRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLDivElement>(null);
-  const previousIndex = useRef(0);
+  const activeIndexRef = useRef(0);
+  const demoProgressRef = useRef(0);
+  const scrollDirectionRef = useRef(1);
   const [activeIndex, setActiveIndex] = useState(0);
   const viewed = useRef(false);
   const completed = useRef(false);
@@ -574,16 +680,81 @@ export function DemoSection() {
       ScrollTrigger.create({
         trigger: rootRef.current,
         start: "top top",
-        end: () => `+=${window.innerHeight * 11}`,
+        end: () => {
+          const stepDistance = Math.max(
+            280,
+            Math.min(380, window.innerHeight * 0.42),
+          );
+          return `+=${stepDistance * DEMO_STEPS.length}`;
+        },
         pin: stageRef.current,
-        scrub: 0.35,
+        scrub: 0.12,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
-          const index = Math.min(
+          const stepPosition = self.progress * DEMO_STEPS.length;
+          demoProgressRef.current = stepPosition;
+          scrollDirectionRef.current = self.direction;
+          let index = Math.min(
             DEMO_STEPS.length - 1,
-            Math.floor(self.progress * DEMO_STEPS.length),
+            Math.floor(stepPosition),
           );
-          setActiveIndex(index);
+
+          if (
+            self.direction > 0 &&
+            index > confirmationStepIndex &&
+            activeIndexRef.current < confirmationStepIndex
+          ) {
+            index = confirmationStepIndex;
+          }
+
+          const confirmationAtEnd =
+            index === confirmationStepIndex
+              ? syncConfirmationChat(
+                  frameRef.current,
+                  stepPosition,
+                  self.direction,
+                )
+              : false;
+
+          if (
+            self.direction > 0 &&
+            index > confirmationStepIndex &&
+            activeIndexRef.current === confirmationStepIndex &&
+            !isConfirmationChatAtEnd(frameRef.current)
+          ) {
+            syncConfirmationChat(
+              frameRef.current,
+              confirmationStepIndex + 1,
+              self.direction,
+            );
+            index = confirmationStepIndex;
+          } else if (
+            index === confirmationStepIndex &&
+            self.direction > 0 &&
+            stepPosition >= confirmationStepIndex + 1 &&
+            !confirmationAtEnd
+          ) {
+            index = confirmationStepIndex;
+          }
+
+          if (activeIndexRef.current !== index) {
+            activeIndexRef.current = index;
+            setActiveIndex(index);
+          }
+
+          syncScrollDrivenMotion(
+            copyRef.current,
+            frameRef.current,
+            stepPosition,
+            index,
+          );
+          const progressBar = copyRef.current?.querySelector<HTMLElement>(
+            ".demo-progress span",
+          );
+          if (progressBar) {
+            gsap.set(progressBar, { width: `${self.progress * 100}%` });
+          }
+
           if (!viewed.current && self.progress > 0.02) {
             viewed.current = true;
             trackEvent("demo_view");
@@ -606,11 +777,17 @@ export function DemoSection() {
       return;
     }
 
-    const direction = activeIndex >= previousIndex.current ? 1 : -1;
-    previousIndex.current = activeIndex;
-    const copyItems = copyRef.current.querySelectorAll("[data-demo-copy]");
+    if (DEMO_STEPS[activeIndex].id === "confirmation") {
+      syncConfirmationChat(
+        frameRef.current,
+        demoProgressRef.current,
+        scrollDirectionRef.current,
+      );
+    }
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      const copyItems =
+        copyRef.current.querySelectorAll<HTMLElement>("[data-demo-copy]");
       gsap.set([...copyItems, frameRef.current], {
         autoAlpha: 1,
         y: 0,
@@ -619,47 +796,12 @@ export function DemoSection() {
       return;
     }
 
-    const transition = gsap.timeline({
-      defaults: {
-        ease: "power3.out",
-        overwrite: "auto",
-      },
-    });
-
-    transition
-      .fromTo(
-        copyItems,
-        {
-          autoAlpha: 0,
-          y: 11 * direction,
-        },
-        {
-          autoAlpha: 1,
-          duration: 0.32,
-          stagger: 0.035,
-          y: 0,
-        },
-        0,
-      )
-      .fromTo(
-        frameRef.current,
-        {
-          autoAlpha: 0,
-          scale: 0.985,
-          y: 18 * direction,
-        },
-        {
-          autoAlpha: 1,
-          duration: 0.4,
-          scale: 1,
-          y: 0,
-        },
-        0.015,
-      );
-
-    return () => {
-      transition.kill();
-    };
+    syncScrollDrivenMotion(
+      copyRef.current,
+      frameRef.current,
+      demoProgressRef.current,
+      activeIndex,
+    );
   }, [activeIndex]);
 
   return (
@@ -689,7 +831,7 @@ export function DemoSection() {
               {activeStep.description}
             </p>
             <div className="demo-progress">
-              <span style={{ width: `${((activeIndex + 1) / DEMO_STEPS.length) * 100}%` }} />
+              <span />
             </div>
             <small>
               {String(activeIndex + 1).padStart(2, "0")} / {DEMO_STEPS.length}
@@ -712,6 +854,40 @@ export function DemoSection() {
               <DemoFrame step={step.id} />
             </article>
           ))}
+        </div>
+      </div>
+      <div className="demo-flexibility">
+        <div className="demo-flexibility-copy">
+          <span>Настраивается под вас</span>
+          <h3>Форма таблицы может быть любой</h3>
+          <p>
+            Вы сами определяете, какие листы, поля и данные нужны в работе.
+            Структура базы подстраивается под ваш процесс, а не наоборот.
+          </p>
+        </div>
+        <div className="demo-flexibility-card">
+          <div>
+            <Sparkles size={20} />
+            <strong>Любые нужные данные</strong>
+          </div>
+          <p>
+            Добавим ваши названия колонок, категории, статусы, даты,
+            рекомендации, ссылки на файлы и другие параметры.
+          </p>
+          <div className="demo-flexibility-fields" aria-label="Примеры полей">
+            {[
+              "Контакты",
+              "Диагнозы",
+              "Процедуры",
+              "Рекомендации",
+              "Статусы",
+              "Фотографии",
+              "Следующий визит",
+              "Свои поля",
+            ].map((field) => (
+              <span key={field}>{field}</span>
+            ))}
+          </div>
         </div>
       </div>
     </section>

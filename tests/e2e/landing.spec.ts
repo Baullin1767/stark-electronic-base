@@ -9,6 +9,9 @@ test("landing page, navigation and privacy route are available", async ({
       name: /Клиентская база, которую можно вести/,
     }),
   ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Форма таблицы может быть любой" }),
+  ).toBeAttached();
 
   await page.getByRole("link", { name: "Посмотреть, как это работает" }).click();
   await expect(page.locator("#demo")).toBeInViewport();
@@ -61,5 +64,17 @@ test("mobile layout has no horizontal overflow", async ({ page }) => {
 test("reduced motion keeps the demonstration readable", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/#demo");
-  await expect(page.locator(".mobile-demo-step")).toHaveCount(12);
+  await expect(page.locator(".mobile-demo-step")).toHaveCount(11);
+});
+
+test("the demo keeps the same client throughout the scenario", async ({
+  page,
+}) => {
+  await page.goto("/#demo");
+  const steps = page.locator(".mobile-demo-step");
+
+  for (let index = 2; index <= 8; index += 1) {
+    await expect(steps.nth(index)).toContainText("Анна");
+    await expect(steps.nth(index)).toContainText("4821");
+  }
 });
