@@ -23,41 +23,39 @@ gsap.registerPlugin(ScrollTrigger);
 
 const transcript = `Новый клиент: ${DEMO_CLIENT.fullName}, последние цифры телефона — ${DEMO_CLIENT.phoneLastDigits}. Сегодня первое обращение. Особенность: ${DEMO_CLIENT.issue.toLowerCase()}. Проведена обработка ногтевой пластины и бокового валика. Рекомендована ежедневная обработка и свободная обувь.`;
 
-const confirmationStepIndex = DEMO_STEPS.findIndex(
-  ({ id }) => id === "confirmation",
+const reviewStepIndex = DEMO_STEPS.findIndex(
+  ({ id }) => id === "summary-preview",
 );
-const confirmationScrollWeight = 1.75;
+const reviewScrollWeight = 1.75;
 const demoScrollUnits =
-  DEMO_STEPS.length + confirmationScrollWeight - 1;
+  DEMO_STEPS.length + reviewScrollWeight - 1;
 
 function getStepPosition(progress: number) {
   const weightedPosition = progress * demoScrollUnits;
 
-  if (weightedPosition <= confirmationStepIndex) {
+  if (weightedPosition <= reviewStepIndex) {
     return weightedPosition;
   }
 
-  const confirmationEnd =
-    confirmationStepIndex + confirmationScrollWeight;
+  const reviewEnd = reviewStepIndex + reviewScrollWeight;
 
-  if (weightedPosition < confirmationEnd) {
+  if (weightedPosition < reviewEnd) {
     return (
-      confirmationStepIndex +
-      (weightedPosition - confirmationStepIndex) /
-        confirmationScrollWeight
+      reviewStepIndex +
+      (weightedPosition - reviewStepIndex) / reviewScrollWeight
     );
   }
 
-  return weightedPosition - (confirmationScrollWeight - 1);
+  return weightedPosition - (reviewScrollWeight - 1);
 }
 
-function syncConfirmationChat(
+function syncReviewChat(
   frame: HTMLElement | null,
   stepPosition: number,
   direction: number,
 ) {
   const scrollArea = frame?.querySelector<HTMLElement>(
-    ".confirmation-chat-scroll",
+    ".review-chat-scroll",
   );
   if (!scrollArea) {
     return false;
@@ -66,7 +64,7 @@ function syncConfirmationChat(
   const maxScroll = scrollArea.scrollHeight - scrollArea.clientHeight;
   const localProgress = Math.max(
     0,
-    Math.min(1, stepPosition - confirmationStepIndex),
+    Math.min(1, stepPosition - reviewStepIndex),
   );
   const targetScroll = maxScroll * Math.min(1, localProgress / 0.85);
 
@@ -83,9 +81,9 @@ function syncConfirmationChat(
   return scrollArea.scrollTop >= maxScroll - 1;
 }
 
-function isConfirmationChatAtEnd(frame: HTMLElement | null) {
+function isReviewChatAtEnd(frame: HTMLElement | null) {
   const scrollArea = frame?.querySelector<HTMLElement>(
-    ".confirmation-chat-scroll",
+    ".review-chat-scroll",
   );
   if (!scrollArea) {
     return false;
@@ -111,7 +109,7 @@ function syncScrollDrivenMotion(
   const isFirstFrameAtStart = stepIndex === 0 && stepPosition < 0.01;
   const isLastFrame = stepIndex === DEMO_STEPS.length - 1;
   const frameExitStart =
-    stepIndex === confirmationStepIndex ? 0.9 : 0.74;
+    stepIndex === reviewStepIndex ? 0.9 : 0.74;
   const frameEnter = isFirstFrameAtStart
     ? 1
     : Math.max(0, Math.min(1, localProgress / 0.24));
@@ -630,27 +628,32 @@ function DemoFrame({ step }: { step: DemoStepId }) {
 
   if (step === "summary-preview") {
     return (
-      <ChatShell status="Запись подготовлена">
-        <div className="chat-bubble user summary-source-message">
-          {transcript}
-        </div>
-        <div className="chat-bubble assistant structured-summary-bubble">
-          <StructuredRecordPreview />
-        </div>
-      </ChatShell>
-    );
-  }
-
-  if (step === "confirmation") {
-    return (
       <div className="confirmation-chat-wrap">
         <div className="chat-scroll-hint" aria-hidden="true">
           <span>Прокрутите чат</span>
           <ArrowDown size={22} />
         </div>
         <ChatShell
+          status="Запись подготовлена"
+          bodyClassName="review-chat-scroll"
+        >
+          <div className="chat-bubble user summary-source-message">
+            {transcript}
+          </div>
+          <div className="chat-bubble assistant structured-summary-bubble">
+            <StructuredRecordPreview />
+          </div>
+        </ChatShell>
+      </div>
+    );
+  }
+
+  if (step === "confirmation") {
+    return (
+      <div className="confirmation-chat-wrap">
+        <ChatShell
           status="Ожидаю подтверждение"
-          bodyClassName="confirmation-chat-scroll"
+          bodyClassName="review-chat-scroll"
         >
           <div className="chat-bubble assistant structured-summary-bubble confirmation-summary-bubble">
             <StructuredRecordPreview />
@@ -733,15 +736,15 @@ export function DemoSection() {
 
           if (
             self.direction > 0 &&
-            index > confirmationStepIndex &&
-            activeIndexRef.current < confirmationStepIndex
+            index > reviewStepIndex &&
+            activeIndexRef.current < reviewStepIndex
           ) {
-            index = confirmationStepIndex;
+            index = reviewStepIndex;
           }
 
-          const confirmationAtEnd =
-            index === confirmationStepIndex
-              ? syncConfirmationChat(
+          const reviewAtEnd =
+            index === reviewStepIndex
+              ? syncReviewChat(
                   frameRef.current,
                   stepPosition,
                   self.direction,
@@ -750,23 +753,23 @@ export function DemoSection() {
 
           if (
             self.direction > 0 &&
-            index > confirmationStepIndex &&
-            activeIndexRef.current === confirmationStepIndex &&
-            !isConfirmationChatAtEnd(frameRef.current)
+            index > reviewStepIndex &&
+            activeIndexRef.current === reviewStepIndex &&
+            !isReviewChatAtEnd(frameRef.current)
           ) {
-            syncConfirmationChat(
+            syncReviewChat(
               frameRef.current,
-              confirmationStepIndex + 1,
+              reviewStepIndex + 1,
               self.direction,
             );
-            index = confirmationStepIndex;
+            index = reviewStepIndex;
           } else if (
-            index === confirmationStepIndex &&
+            index === reviewStepIndex &&
             self.direction > 0 &&
-            stepPosition >= confirmationStepIndex + 1 &&
-            !confirmationAtEnd
+            stepPosition >= reviewStepIndex + 1 &&
+            !reviewAtEnd
           ) {
-            index = confirmationStepIndex;
+            index = reviewStepIndex;
           }
 
           if (activeIndexRef.current !== index) {
@@ -809,12 +812,14 @@ export function DemoSection() {
       return;
     }
 
-    if (DEMO_STEPS[activeIndex].id === "confirmation") {
-      syncConfirmationChat(
+    if (DEMO_STEPS[activeIndex].id === "summary-preview") {
+      syncReviewChat(
         frameRef.current,
         demoProgressRef.current,
         scrollDirectionRef.current,
       );
+    } else if (DEMO_STEPS[activeIndex].id === "confirmation") {
+      syncReviewChat(frameRef.current, reviewStepIndex + 1, 1);
     }
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {

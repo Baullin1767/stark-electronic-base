@@ -533,6 +533,24 @@ img {
   transform: rotate(4deg);
 }
 
+.note-storage {
+  bottom: 2%;
+  left: 0;
+  transform: rotate(-3deg);
+}
+
+.storage-note-icons {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.storage-note-icons svg:last-child {
+  padding-left: 4px;
+  border-left: 1px solid var(--line);
+  box-sizing: content-box;
+}
+
 .problem {
   display: grid;
   grid-template-columns: 0.78fr 1.22fr;
@@ -618,25 +636,21 @@ img {
 .chaos-a {
   top: 3%;
   left: 10%;
-  transform: rotate(-5deg);
 }
 
 .chaos-b {
   top: 12%;
   right: 1%;
-  transform: rotate(4deg);
 }
 
 .chaos-c {
   bottom: 6%;
   left: 2%;
-  transform: rotate(3deg);
 }
 
 .chaos-d {
   right: 6%;
   bottom: 2%;
-  transform: rotate(-4deg);
 }
 
 .chaos-center {
@@ -2949,7 +2963,7 @@ img {
   }
 
   .hero-visual {
-    min-height: 510px;
+    min-height: 640px;
   }
 
   .assistant-card {
@@ -2961,6 +2975,10 @@ img {
   .note-one {
     top: 1%;
     right: 0;
+  }
+
+  .note-storage {
+    left: 4px;
   }
 
   .problem,

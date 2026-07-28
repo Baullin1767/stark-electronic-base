@@ -2,6 +2,8 @@ import {
   ArrowDown,
   AudioLines,
   Check,
+  CloudUpload,
+  FileSpreadsheet,
   MessageCircleMore,
   Sparkles,
 } from "lucide-react";
@@ -46,6 +48,13 @@ export function HeroSection() {
         <div className="floating-note note-one">
           <AudioLines size={17} />
           Голосовая заметка
+        </div>
+        <div className="floating-note note-storage">
+          <span className="storage-note-icons" aria-hidden="true">
+            <CloudUpload size={16} />
+            <FileSpreadsheet size={16} />
+          </span>
+          Google Диск + Excel
         </div>
         <div className="assistant-card">
           <div className="assistant-card-head">
