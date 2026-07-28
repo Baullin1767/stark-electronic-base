@@ -1,36 +1,166 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Stark Electronic Base
 
-## Getting Started
+Интерактивный лендинг сервиса голосового ведения клиентской базы. Проект
+создан на Next.js App Router, TypeScript и Tailwind CSS, использует GSAP для
+скролл-сцены и серверный Route Handler для отправки заявок через Telegram.
 
-First, run the development server:
+## Локальный запуск
+
+Требования: Node.js 20.9 или новее и npm.
 
 ```bash
+npm install
+copy .env.example .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Сайт будет доступен по адресу `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Проверки и production-запуск:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run lint
+npm test
+npm run build
+npm run start
+```
 
-## Learn More
+Для browser smoke-тестов сначала один раз установите Chromium:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npx playwright install chromium
+npm run test:e2e
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Переменные окружения
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```env
+TELEGRAM_BOT_TOKEN=
+TELEGRAM_CHAT_ID=
+NEXT_PUBLIC_SITE_URL=
+```
 
-## Deploy on Vercel
+- `TELEGRAM_BOT_TOKEN` используется только серверным маршрутом и не должен
+  иметь префикс `NEXT_PUBLIC_`.
+- `TELEGRAM_CHAT_ID` — ID пользователя, группы или канала для получения заявок.
+- `NEXT_PUBLIC_SITE_URL` — полный production URL без завершающего `/`, например
+  `https://stark-electronic-base.vercel.app`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Файлы `.env.local` и остальные `.env*` исключены из Git. `.env.example`
+содержит только названия переменных и безопасно хранится в репозитории.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Настройка Telegram
+
+1. Откройте `@BotFather` в Telegram и выполните `/newbot`.
+2. Сохраните полученный токен в `TELEGRAM_BOT_TOKEN`.
+3. Напишите созданному боту любое сообщение.
+4. Откройте в браузере
+   `https://api.telegram.org/bot<ТОКЕН>/getUpdates`.
+5. Найдите `message.chat.id` и сохраните значение в `TELEGRAM_CHAT_ID`.
+6. Для группы добавьте бота в группу, отправьте сообщение и снова вызовите
+   `getUpdates`. ID группы обычно отрицательный.
+7. Перезапустите локальный сервер после изменения `.env.local`.
+
+Не публикуйте токен, ответ `getUpdates` или содержимое реальных заявок.
+
+## Форма и защита
+
+`POST /api/contact` валидирует данные через Zod и отправляет их в Telegram Bot
+API. В коде реализованы:
+
+- honeypot;
+- проверка минимального времени заполнения и same-origin;
+- ограничение размера запроса;
+- блокировка дублей и до трёх запросов за десять минут на одном тёплом
+  серверном инстансе;
+- безопасное логирование без контактов и текста заявки.
+
+Память Vercel Functions не является общей и постоянной. Поэтому встроенный
+лимит — best effort. Для строгого глобального ограничения настройте Vercel
+Firewall или подключите внешний Redis/Upstash.
+
+## Изменение содержимого
+
+- Контакты, тарифы, преимущества и 16 этапов демонстрации находятся в
+  `src/lib/constants.ts`.
+- Основные стили и дизайн-токены находятся в `src/app/globals.css`.
+- Схема формы — в `src/lib/validation/contact-schema.ts`.
+- Демонстрационные изображения — в `public/images/demo`.
+- Open Graph-карточка — `public/og.png`.
+
+При изменении порядка этапов сохраняйте уникальный `id` и проверяйте
+демонстрацию при прокрутке вперёд и назад. Все сведения о клиентах на сайте
+должны оставаться вымышленными.
+
+## Первая публикация на Vercel
+
+1. Создайте новый репозиторий проекта на GitHub.
+2. Загрузите исходный код:
+
+   ```bash
+   git remote add origin <URL_РЕПОЗИТОРИЯ>
+   git push -u origin main
+   ```
+
+3. В Vercel выберите **Add New → Project** и импортируйте репозиторий.
+4. Убедитесь, что Vercel автоматически определил фреймворк **Next.js**.
+5. В **Settings → Environment Variables** добавьте:
+
+   ```env
+   TELEGRAM_BOT_TOKEN=
+   TELEGRAM_CHAT_ID=
+   NEXT_PUBLIC_SITE_URL=
+   ```
+
+6. Выполните первый deployment.
+7. Скопируйте полученный production URL вида `https://....vercel.app` и
+   запишите его в `NEXT_PUBLIC_SITE_URL` для Production.
+8. Выполните Redeploy: новые значения переменных не применяются к уже
+   созданным deployment.
+9. Откройте опубликованный сайт и отправьте тестовую заявку.
+10. Убедитесь, что сообщение пришло в нужный Telegram-чат.
+11. При необходимости подключите домен в **Settings → Domains**, замените
+    `NEXT_PUBLIC_SITE_URL` на пользовательский URL и снова выполните Redeploy.
+
+После подключения домена проверьте `/privacy`, `/robots.txt`, `/sitemap.xml`,
+исходный canonical URL и Open Graph-изображение.
+
+## Preview и Production
+
+Vercel позволяет задавать отдельные значения переменных для Development,
+Preview и Production. Если тестовые заявки не должны поступать в основной чат,
+создайте отдельного бота или Telegram-чат для Preview и задайте соответствующие
+`TELEGRAM_BOT_TOKEN` и `TELEGRAM_CHAT_ID` только для этого окружения.
+
+Для Preview можно указать branch-specific переменные. `NEXT_PUBLIC_SITE_URL` в
+Production должен указывать на основной домен; для сгенерированных Preview URL
+приложение имеет безопасный fallback на системные переменные Vercel.
+
+## Последующие обновления
+
+Зафиксируйте изменения и отправьте их в `main`:
+
+```bash
+npm run lint
+npm test
+npm run build
+git add .
+git commit -m "Update landing"
+git push origin main
+```
+
+Vercel автоматически создаст новый Production Deployment. Изменения в других
+ветках и pull request создают Preview Deployment. Если менялись переменные
+окружения или домен, после сохранения значений запустите Redeploy вручную.
+
+## Финальная проверка опубликованного сайта
+
+- главная и `/privacy` открываются напрямую без 404;
+- меню, CTA и карточки тарифов приводят к нужным разделам;
+- скролл-сцена работает вперёд и назад на desktop;
+- мобильная версия не имеет горизонтальной прокрутки;
+- reduced-motion показывает читаемую последовательность;
+- форма валидирует поля и отправляет заявку;
+- сообщение приходит в правильный Telegram-чат;
+- в консоли браузера нет ошибок;
+- canonical, sitemap, robots и Open Graph используют production URL.
