@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { PRICING, PRICING_ADD_ONS } from "@/lib/constants";
 import { trackEvent } from "@/lib/analytics";
+import { contentProps, formatText, text } from "@/lib/content";
 
 const addOnIcons = [DatabaseBackup, SlidersHorizontal, UserRoundCheck];
 
@@ -23,12 +24,9 @@ export function PricingSection() {
   return (
     <section className="pricing section-shell" id="pricing">
       <div className="section-heading centered">
-        <span className="section-number">05 / Стоимость</span>
-        <h2>Понятная стоимость подключения и поддержки</h2>
-        <p>
-          Начните с готовой базы, а формат дальнейшей помощи выберите под свой
-          рабочий процесс.
-        </p>
+        <span className="section-number" {...contentProps("pricing.section")}>{text("pricing.section")}</span>
+        <h2 {...contentProps("pricing.title")}>{text("pricing.title")}</h2>
+        <p {...contentProps("pricing.description")}>{text("pricing.description")}</p>
       </div>
       <div className="pricing-grid">
         {PRICING.map((plan) => (
@@ -36,18 +34,18 @@ export function PricingSection() {
             className={`price-card ${plan.featured ? "featured" : ""}`}
             key={plan.id}
           >
-            {plan.featured && <span className="popular">Быстрый старт</span>}
-            <p className="plan-name">{plan.name}</p>
+            {plan.featured && <span className="popular" {...contentProps("pricing.popular")}>{text("pricing.popular")}</span>}
+            <p className="plan-name" {...contentProps(plan.nameKey)}>{plan.name}</p>
             <div className="price">
-              <strong>{plan.price}</strong>
-              <span>{plan.euro}</span>
+              <strong {...contentProps(plan.priceKey)}>{plan.price}</strong>
+              <span {...contentProps(plan.euroKey)}>{plan.euro}</span>
             </div>
-            <p className="plan-description">{plan.description}</p>
+            <p className="plan-description" {...contentProps(plan.descriptionKey)}>{plan.description}</p>
             <ul>
               {plan.features.map((feature) => (
-                <li key={feature}>
+                <li key={feature.value} {...contentProps(feature.key)}>
                   <Check size={16} />
-                  {feature}
+                  {feature.value}
                 </li>
               ))}
             </ul>
@@ -55,6 +53,7 @@ export function PricingSection() {
               className={`button ${plan.featured ? "button-primary" : "button-secondary"}`}
               href="#contact"
               onClick={() => choosePlan(plan.name)}
+              {...contentProps(plan.ctaKey)}
             >
               {plan.cta}
               <ArrowRight size={17} />
@@ -64,8 +63,8 @@ export function PricingSection() {
       </div>
       <div className="pricing-add-ons">
         <div className="add-ons-heading">
-          <p>Дополнительные опции</p>
-          <span>Можно добавить к первичному подключению</span>
+          <p {...contentProps("pricing.addons_title")}>{text("pricing.addons_title")}</p>
+          <span {...contentProps("pricing.addons_note")}>{text("pricing.addons_note")}</span>
         </div>
         <div className="add-ons-grid">
           {PRICING_ADD_ONS.map((addOn, index) => {
@@ -77,20 +76,21 @@ export function PricingSection() {
                   <Icon size={21} />
                 </span>
                 <div className="add-on-copy">
-                  <h3>{addOn.name}</h3>
-                  <p>{addOn.description}</p>
+                  <h3 {...contentProps(addOn.nameKey)}>{addOn.name}</h3>
+                  <p {...contentProps(addOn.descriptionKey)}>{addOn.description}</p>
                 </div>
                 <div className="add-on-action">
                   <p>
-                    <strong>{addOn.price}</strong>
-                    {addOn.priceNote && <span>{addOn.priceNote}</span>}
+                    <strong {...contentProps(addOn.priceKey)}>{addOn.price}</strong>
+                    {addOn.priceNote && addOn.priceNoteKey && <span {...contentProps(addOn.priceNoteKey)}>{addOn.priceNote}</span>}
                   </p>
                   <a
                     href="#contact"
-                    aria-label={`Добавить опцию «${addOn.name}»`}
+                    aria-label={formatText("pricing.addon_aria", { name: addOn.name })}
                     onClick={() => choosePlan(addOn.name)}
+                    {...contentProps("pricing.addon_cta")}
                   >
-                    Добавить
+                    {text("pricing.addon_cta")}
                     <ArrowRight size={15} />
                   </a>
                 </div>
@@ -99,11 +99,7 @@ export function PricingSection() {
           })}
         </div>
       </div>
-      <p className="currency-note">
-        Эквивалент в евро указан ориентировочно. Оплата производится в сербских
-        динарах по согласованным условиям. Значительные изменения
-        функциональности оцениваются отдельно.
-      </p>
+      <p className="currency-note" {...contentProps("pricing.currency_note")}>{text("pricing.currency_note")}</p>
     </section>
   );
 }

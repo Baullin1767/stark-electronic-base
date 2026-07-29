@@ -4,11 +4,27 @@ import Link from "next/link";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { CONTACTS } from "@/lib/constants";
+import { contentProps, text, type ContentKey } from "@/lib/content";
+
+function ContactTemplate({ contentKey }: { contentKey: ContentKey }) {
+  const links = {
+    "{email}": <a href={CONTACTS.emailUrl}>{CONTACTS.email}</a>,
+    "{telegram}": <a href={CONTACTS.telegramUrl}>{CONTACTS.telegram}</a>,
+    "{phone}": <a href={CONTACTS.phoneUrl}>{CONTACTS.phone}</a>,
+  } as const;
+
+  return text(contentKey)
+    .split(/(\{email\}|\{telegram\}|\{phone\})/g)
+    .map((part, index) => (
+      <span key={`${part}-${index}`}>
+        {part in links ? links[part as keyof typeof links] : part}
+      </span>
+    ));
+}
 
 export const metadata: Metadata = {
-  title: "Политика конфиденциальности",
-  description:
-    "Как Stark Electronic Base обрабатывает данные, отправленные через форму заявки.",
+  title: text("privacy.meta_title"),
+  description: text("privacy.meta_description"),
   alternates: { canonical: "/privacy" },
 };
 
@@ -18,86 +34,53 @@ export default function PrivacyPage() {
       <Header />
       <main className="privacy-page section-shell">
         <Link className="back-link" href="/">
-          <ArrowLeft size={17} /> На главную
+          <ArrowLeft size={17} /> <span {...contentProps("privacy.back")}>{text("privacy.back")}</span>
         </Link>
         <header>
-          <span className="section-number">Политика конфиденциальности</span>
-          <h1>Ваши контактные данные используются только для связи по заявке</h1>
-          <p>Последнее обновление: 28 июля 2026 года</p>
+          <span className="section-number" {...contentProps("privacy.section")}>{text("privacy.section")}</span>
+          <h1 {...contentProps("privacy.title")}>{text("privacy.title")}</h1>
+          <p {...contentProps("privacy.updated")}>{text("privacy.updated")}</p>
         </header>
 
         <div className="privacy-layout">
           <aside>
-            <strong>Коротко</strong>
-            <p>
-              Мы не продаём данные и не используем их для рекламных рассылок.
-              Заявка поступает владельцу Stark Electronic Base через Telegram.
-            </p>
+            <strong {...contentProps("privacy.short_title")}>{text("privacy.short_title")}</strong>
+            <p {...contentProps("privacy.short_text")}>{text("privacy.short_text")}</p>
             <a href={CONTACTS.emailUrl}>
-              <Mail size={17} /> Запросить удаление
+              <Mail size={17} /> <span {...contentProps("privacy.delete_request")}>{text("privacy.delete_request")}</span>
             </a>
           </aside>
           <article className="legal-copy">
             <section>
-              <h2>1. Какие данные мы собираем</h2>
-              <p>
-                Через форму можно передать имя, фамилию, профессию, Telegram,
-                номер телефона, выбранный формат услуги и текст сообщения.
-                Обязательны имя, один способ связи и согласие на обработку.
+              <h2 {...contentProps("privacy.data.title")}>{text("privacy.data.title")}</h2>
+              <p {...contentProps("privacy.data.text")}>{text("privacy.data.text")}</p>
+            </section>
+            <section>
+              <h2 {...contentProps("privacy.purpose.title")}>{text("privacy.purpose.title")}</h2>
+              <p {...contentProps("privacy.purpose.text")}>{text("privacy.purpose.text")}</p>
+            </section>
+            <section>
+              <h2 {...contentProps("privacy.destination.title")}>{text("privacy.destination.title")}</h2>
+              <p {...contentProps("privacy.destination.text")}>{text("privacy.destination.text")}</p>
+            </section>
+            <section>
+              <h2 {...contentProps("privacy.retention.title")}>{text("privacy.retention.title")}</h2>
+              <p {...contentProps("privacy.retention.text")}>{text("privacy.retention.text")}</p>
+            </section>
+            <section>
+              <h2 {...contentProps("privacy.delete.title")}>{text("privacy.delete.title")}</h2>
+              <p {...contentProps("privacy.delete.text")}>
+                <ContactTemplate contentKey="privacy.delete.text" />
               </p>
             </section>
             <section>
-              <h2>2. Для чего используются данные</h2>
-              <p>
-                Данные нужны, чтобы ответить на заявку, уточнить задачу,
-                обсудить подключение и при необходимости подготовить
-                предложение. Они не используются для автоматических рекламных
-                рассылок.
-              </p>
+              <h2 {...contentProps("privacy.warning.title")}>{text("privacy.warning.title")}</h2>
+              <p {...contentProps("privacy.warning.text")}>{text("privacy.warning.text")}</p>
             </section>
             <section>
-              <h2>3. Куда отправляется заявка</h2>
-              <p>
-                Заявка передаётся сервером сайта владельцу Stark Electronic
-                Base через Telegram Bot API. Токен бота хранится только в
-                защищённых переменных окружения хостинга и не передаётся в
-                браузер.
-              </p>
-            </section>
-            <section>
-              <h2>4. Срок хранения</h2>
-              <p>
-                Контактные данные хранятся до завершения общения по заявке, но
-                не более 12 месяцев, если более длительное хранение не требуется
-                для исполнения договора или соблюдения закона.
-              </p>
-            </section>
-            <section>
-              <h2>5. Как удалить данные</h2>
-              <p>
-                Напишите на{" "}
-                <a href={CONTACTS.emailUrl}>{CONTACTS.email}</a> с контакта,
-                указанного в заявке. После проверки запроса данные будут удалены
-                из доступных владельцу сообщений и рабочих записей, если закон
-                не требует их сохранить.
-              </p>
-            </section>
-            <section>
-              <h2>6. Важное ограничение</h2>
-              <p>
-                Не отправляйте через форму медицинские сведения, фотографии
-                клиентов, документы или другие чувствительные персональные
-                данные. Демонстрационные сведения на сайте полностью
-                вымышлены.
-              </p>
-            </section>
-            <section>
-              <h2>7. Контакты владельца</h2>
-              <p>
-                Владелец сайта: Stark Electronic Base. Email:{" "}
-                <a href={CONTACTS.emailUrl}>{CONTACTS.email}</a>, Telegram:{" "}
-                <a href={CONTACTS.telegramUrl}>{CONTACTS.telegram}</a>,
-                телефон: <a href={CONTACTS.phoneUrl}>{CONTACTS.phone}</a>.
+              <h2 {...contentProps("privacy.owner.title")}>{text("privacy.owner.title")}</h2>
+              <p {...contentProps("privacy.owner.text")}>
+                <ContactTemplate contentKey="privacy.owner.text" />
               </p>
             </section>
           </article>

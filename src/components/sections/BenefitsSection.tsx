@@ -7,6 +7,7 @@ import {
   WandSparkles,
 } from "lucide-react";
 import { BENEFITS } from "@/lib/constants";
+import { contentProps, text } from "@/lib/content";
 
 const icons = [Mic2, WandSparkles, CheckCheck, History, Search, Settings2];
 
@@ -14,33 +15,27 @@ export function BenefitsSection() {
   return (
     <section className="benefits section-shell">
       <div className="section-heading centered">
-        <span className="section-number">04 / Возможности</span>
-        <h2>Клиентская база без сложных форм</h2>
-        <p>
-          Знакомый формат диалога помогает сохранять историю работы и быстро
-          возвращаться к ней перед следующим приёмом.
-        </p>
+        <span className="section-number" {...contentProps("benefits.section")}>{text("benefits.section")}</span>
+        <h2 {...contentProps("benefits.title")}>{text("benefits.title")}</h2>
+        <p {...contentProps("benefits.description")}>{text("benefits.description")}</p>
       </div>
       <div className="benefits-grid">
-        {BENEFITS.map(([title, text], index) => {
+        {BENEFITS.map((benefit, index) => {
           const Icon = icons[index];
           return (
-            <article key={title}>
+            <article key={benefit.title}>
               <span>
                 <Icon />
               </span>
-              <h3>{title}</h3>
-              <p>{text}</p>
+              <h3 {...contentProps(benefit.titleKey)}>{benefit.title}</h3>
+              <p {...contentProps(benefit.descriptionKey)}>{benefit.description}</p>
             </article>
           );
         })}
       </div>
       <div className="connection-note">
-        <span>30–60 минут</span>
-        <p>
-          Обычно столько занимает базовое подключение после согласования
-          структуры. Более сложные сценарии оцениваются отдельно.
-        </p>
+        <span {...contentProps("benefits.connection_time")}>{text("benefits.connection_time")}</span>
+        <p {...contentProps("benefits.connection_note")}>{text("benefits.connection_note")}</p>
       </div>
     </section>
   );

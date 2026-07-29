@@ -1,10 +1,11 @@
 import { z } from "zod";
+import { formatText, text } from "@/lib/content";
 
 const optionalTrimmed = (max: number) =>
   z
     .string()
     .trim()
-    .max(max, `Не больше ${max} символов`)
+    .max(max, formatText("validation.max", { max }))
     .optional()
     .default("");
 
@@ -16,8 +17,8 @@ export const contactSchema = z
     firstName: z
       .string()
       .trim()
-      .min(2, "Укажите имя")
-      .max(60, "Не больше 60 символов"),
+      .min(2, text("validation.first_name_required"))
+      .max(60, formatText("validation.max", { max: 60 })),
     lastName: optionalTrimmed(60),
     profession: optionalTrimmed(80),
     telegram: optionalTrimmed(33),
@@ -26,13 +27,13 @@ export const contactSchema = z
     selectedPlan: optionalTrimmed(80),
     consent: z
       .boolean()
-      .refine((value) => value, { message: "Необходимо согласие" }),
+      .refine((value) => value, { message: text("validation.consent_required") }),
     website: optionalTrimmed(120),
     formStartedAt: z.number().int().positive(),
   })
   .superRefine((data, context) => {
     if (!data.telegram && !data.phone) {
-      const message = "Укажите Telegram или телефон";
+      const message = text("validation.contact_required");
       context.addIssue({
         code: "custom",
         path: ["telegram"],
@@ -45,7 +46,7 @@ export const contactSchema = z
       context.addIssue({
         code: "custom",
         path: ["telegram"],
-        message: "Например, @username",
+        message: text("validation.telegram_example"),
       });
     }
 
@@ -53,7 +54,7 @@ export const contactSchema = z
       context.addIssue({
         code: "custom",
         path: ["phone"],
-        message: "Проверьте формат телефона",
+        message: text("validation.phone_format"),
       });
     }
   });

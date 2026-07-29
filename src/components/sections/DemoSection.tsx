@@ -17,11 +17,21 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { DEMO_CLIENT, DEMO_STEPS } from "@/lib/constants";
 import { trackEvent } from "@/lib/analytics";
+import {
+  contentProps,
+  formatText,
+  text,
+  type ContentKey,
+} from "@/lib/content";
 import type { DemoStepId } from "@/types/demo";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const transcript = `Новый клиент: ${DEMO_CLIENT.fullName}, последние цифры телефона — ${DEMO_CLIENT.phoneLastDigits}. Сегодня первое обращение. Особенность: ${DEMO_CLIENT.issue.toLowerCase()}. Проведена обработка ногтевой пластины и бокового валика. Рекомендована ежедневная обработка и свободная обувь.`;
+const transcript = formatText("demo.transcript", {
+  fullName: DEMO_CLIENT.fullName,
+  phoneLastDigits: DEMO_CLIENT.phoneLastDigits,
+  issue: DEMO_CLIENT.issue.toLowerCase(),
+});
 
 const reviewStepIndex = DEMO_STEPS.findIndex(
   ({ id }) => id === "summary-preview",
@@ -149,12 +159,14 @@ function syncScrollDrivenMotion(
 
 function ChatShell({
   children,
-  status = "Готов к работе",
+  status = text("demo.ui.assistant_default_status"),
+  statusKey = "demo.ui.assistant_default_status",
   composer,
   bodyClassName,
 }: {
   children?: React.ReactNode;
   status?: string;
+  statusKey?: ContentKey;
   composer?: React.ReactNode;
   bodyClassName?: string;
 }) {
@@ -165,8 +177,8 @@ function ChatShell({
           <Sparkles size={18} />
         </div>
         <div>
-          <strong>Stark Assistant</strong>
-          <small>
+          <strong {...contentProps("demo.ui.assistant_name")}>{text("demo.ui.assistant_name")}</strong>
+          <small {...contentProps(statusKey)}>
             <i /> {status}
           </small>
         </div>
@@ -196,7 +208,9 @@ function MessageComposer({
     >
       <Paperclip size={18} />
       <div className="chat-input-copy">
-        <span>{message ?? "Сообщение для ассистента…"}</span>
+        <span {...(!message ? contentProps("demo.ui.composer_placeholder") : {})}>
+          {message ?? text("demo.ui.composer_placeholder")}
+        </span>
         {attachments && <Attachments />}
       </div>
       <Mic2 size={18} />
@@ -210,7 +224,7 @@ function MessageComposer({
 function VoiceRecorder() {
   return (
     <div className="voice-recorder">
-      <button type="button" aria-label="Отменить запись">
+      <button type="button" aria-label={text("demo.ui.cancel_recording_aria")}>
         <X size={17} />
       </button>
       <div className="wave" aria-hidden="true">
@@ -224,7 +238,7 @@ function VoiceRecorder() {
           />
         ))}
       </div>
-      <time>00:38</time>
+      <time {...contentProps("demo.ui.recording_time")}>{text("demo.ui.recording_time")}</time>
       <CirclePause size={23} />
       <span>
         <Send size={16} />
@@ -237,13 +251,13 @@ function Attachments() {
   return (
     <div className="demo-attachments">
       {[
-        ["/images/demo/before.webp", "До процедуры"],
-        ["/images/demo/after.webp", "После процедуры"],
-      ].map(([src, label]) => (
+        ["/images/demo/before.webp", "demo.ui.before_photo"],
+        ["/images/demo/after.webp", "demo.ui.after_photo"],
+      ].map(([src, labelKey]) => (
         <figure key={src}>
-          <Image src={src} alt={label} fill sizes="220px" />
-          <figcaption>
-            <ImageIcon size={14} /> {label}
+          <Image src={src} alt={text(labelKey as ContentKey)} fill sizes="220px" />
+          <figcaption {...contentProps(labelKey as ContentKey)}>
+            <ImageIcon size={14} /> {text(labelKey as ContentKey)}
           </figcaption>
         </figure>
       ))}
@@ -255,15 +269,25 @@ function ClientSummaryMessage() {
   return (
     <div className="client-summary-message">
       <p>
-        <strong>{DEMO_CLIENT.fullName}</strong>, телефон заканчивается на{" "}
-        {DEMO_CLIENT.phoneLastDigits}.
+        <span {...contentProps("demo.template.client_phone")}>
+          {formatText("demo.template.client_phone", {
+            fullName: DEMO_CLIENT.fullName,
+            phoneLastDigits: DEMO_CLIENT.phoneLastDigits,
+          })}
+        </span>
       </p>
-      <p>Особенности: {DEMO_CLIENT.issue.toLowerCase()}.</p>
-      <p>
-        Последний визит — {DEMO_CLIENT.date}. Проведена{" "}
-        {DEMO_CLIENT.procedure.toLowerCase()}. Рекомендованы{" "}
-        {DEMO_CLIENT.recommendation.toLowerCase()}. Следующий визит —{" "}
-        {DEMO_CLIENT.nextVisit}.
+      <p {...contentProps("demo.template.issue")}>
+        {formatText("demo.template.issue", {
+          issue: DEMO_CLIENT.issue.toLowerCase(),
+        })}
+      </p>
+      <p {...contentProps("demo.template.last_visit")}>
+        {formatText("demo.template.last_visit", {
+          date: DEMO_CLIENT.date,
+          procedure: DEMO_CLIENT.procedure.toLowerCase(),
+          recommendation: DEMO_CLIENT.recommendation.toLowerCase(),
+          nextVisit: DEMO_CLIENT.nextVisit,
+        })}
       </p>
     </div>
   );
@@ -273,45 +297,48 @@ function StructuredRecordPreview() {
   return (
     <div className="structured-record-preview">
       <section>
-        <h4>Новый клиент</h4>
-        <p>ФИО: {DEMO_CLIENT.fullName}</p>
-        <p>Последние цифры телефона: {DEMO_CLIENT.phoneLastDigits}</p>
-        <p>Особенности и диагнозы: {DEMO_CLIENT.issue.toLowerCase()}</p>
-        <p>Дата первого обращения: {DEMO_CLIENT.dateNumeric}</p>
-        <p>Комментарий: {DEMO_CLIENT.comment.toLowerCase()}</p>
+        <h4 {...contentProps("demo.ui.new_client")}>{text("demo.ui.new_client")}</h4>
+        <p {...contentProps("demo.table.full_name")}>{text("demo.table.full_name")}: {DEMO_CLIENT.fullName}</p>
+        <p {...contentProps("demo.table.phone_digits")}>{text("demo.table.phone_digits")}: {DEMO_CLIENT.phoneLastDigits}</p>
+        <p {...contentProps("demo.table.issues")}>{text("demo.table.issues")}: {DEMO_CLIENT.issue.toLowerCase()}</p>
+        <p {...contentProps("demo.table.first_contact")}>{text("demo.table.first_contact")}: {DEMO_CLIENT.dateNumeric}</p>
+        <p {...contentProps("demo.table.comment")}>{text("demo.table.comment")}: {DEMO_CLIENT.comment.toLowerCase()}</p>
       </section>
 
       <section>
-        <h4>Первый визит в базе</h4>
-        <p>
-          Клиент: {DEMO_CLIENT.fullName} ({DEMO_CLIENT.phoneLastDigits})
+        <h4 {...contentProps("demo.ui.first_visit")}>{text("demo.ui.first_visit")}</h4>
+        <p {...contentProps("demo.template.record_client")}>
+          {formatText("demo.template.record_client", {
+            fullName: DEMO_CLIENT.fullName,
+            phoneLastDigits: DEMO_CLIENT.phoneLastDigits,
+          })}
         </p>
-        <p>Дата визита: {DEMO_CLIENT.dateNumeric}</p>
+        <p {...contentProps("demo.table.visit_date")}>{text("demo.table.visit_date")} {DEMO_CLIENT.dateNumeric}</p>
       </section>
 
       <section>
-        <h4>Проведённые процедуры:</h4>
+        <h4 {...contentProps("demo.ui.procedures")}>{text("demo.ui.procedures")}</h4>
         <p>{DEMO_CLIENT.procedure}.</p>
       </section>
 
       <section>
-        <h4>Рекомендации:</h4>
+        <h4 {...contentProps("demo.ui.recommendations")}>{text("demo.ui.recommendations")}</h4>
         <p>{DEMO_CLIENT.recommendation}.</p>
       </section>
 
       <section>
-        <h4>Следующий визит:</h4>
+        <h4 {...contentProps("demo.ui.next_visit")}>{text("demo.ui.next_visit")}</h4>
         <p>{DEMO_CLIENT.nextVisit}.</p>
       </section>
 
       <section>
-        <h4>Фотографии:</h4>
-        <p>До процедуры: {DEMO_CLIENT.photos.before}</p>
-        <p>После процедуры: {DEMO_CLIENT.photos.after}</p>
-        <p>Дополнительные: {DEMO_CLIENT.photos.additional}</p>
+        <h4 {...contentProps("demo.ui.photos")}>{text("demo.ui.photos")}</h4>
+        <p {...contentProps("demo.template.before_count")}>{formatText("demo.template.before_count", { count: DEMO_CLIENT.photos.before })}</p>
+        <p {...contentProps("demo.template.after_count")}>{formatText("demo.template.after_count", { count: DEMO_CLIENT.photos.after })}</p>
+        <p {...contentProps("demo.template.additional_count")}>{formatText("demo.template.additional_count", { count: DEMO_CLIENT.photos.additional })}</p>
       </section>
 
-      <p className="record-confirmation">Подтвердите сохранение записи.</p>
+      <p className="record-confirmation" {...contentProps("demo.ui.confirm_save")}>{text("demo.ui.confirm_save")}</p>
     </div>
   );
 }
@@ -319,24 +346,22 @@ function StructuredRecordPreview() {
 function SavedRecordMessage() {
   return (
     <div className="saved-record-message">
-      <strong>Запись сохранена.</strong>
-      <p>
-        Клиент: {DEMO_CLIENT.fullName} ({DEMO_CLIENT.phoneLastDigits})
-      </p>
-      <p>Дата визита: {DEMO_CLIENT.dateNumeric}</p>
-      <p>Следующий визит: {DEMO_CLIENT.nextVisit}</p>
-      <p>Фотографий до: {DEMO_CLIENT.photos.before}</p>
-      <p>Фотографий после: {DEMO_CLIENT.photos.after}</p>
-      <p>Дополнительных фотографий: {DEMO_CLIENT.photos.additional}</p>
+      <strong {...contentProps("demo.ui.saved")}>{text("demo.ui.saved")}</strong>
+      <p {...contentProps("demo.template.record_client")}>{formatText("demo.template.record_client", { fullName: DEMO_CLIENT.fullName, phoneLastDigits: DEMO_CLIENT.phoneLastDigits })}</p>
+      <p {...contentProps("demo.template.saved_visit_date")}>{formatText("demo.template.saved_visit_date", { date: DEMO_CLIENT.dateNumeric })}</p>
+      <p {...contentProps("demo.template.saved_next_visit")}>{formatText("demo.template.saved_next_visit", { date: DEMO_CLIENT.nextVisit })}</p>
+      <p {...contentProps("demo.template.saved_before")}>{formatText("demo.template.saved_before", { count: DEMO_CLIENT.photos.before })}</p>
+      <p {...contentProps("demo.template.saved_after")}>{formatText("demo.template.saved_after", { count: DEMO_CLIENT.photos.after })}</p>
+      <p {...contentProps("demo.template.saved_additional")}>{formatText("demo.template.saved_additional", { count: DEMO_CLIENT.photos.additional })}</p>
     </div>
   );
 }
 
 function AssistantThinking() {
   return (
-    <div className="assistant-thinking" aria-label="Ассистент думает">
+    <div className="assistant-thinking" aria-label={text("demo.ui.thinking_aria")}>
       <Sparkles size={15} />
-      <span>Thinking</span>
+      <span {...contentProps("demo.ui.thinking")}>{text("demo.ui.thinking")}</span>
       <span className="assistant-thinking-dots" aria-hidden="true">
         <i />
         <i />
@@ -355,18 +380,18 @@ const clientRows = [
     DEMO_CLIENT.comment,
   ],
   [
-    "Марина Алексеевна Орлова",
+    text("demo.sample.marina_name"),
     "1164",
-    "Восстановление после травмы ногтя",
+    text("demo.sample.marina_issue"),
     "26.07.2026",
-    "Повторный осмотр",
+    text("demo.sample.marina_comment"),
   ],
   [
-    "Елена Викторовна Волкова",
+    text("demo.sample.elena_name"),
     "7732",
-    "Трещины и сухость кожи стоп",
+    text("demo.sample.elena_issue"),
     "25.07.2026",
-    "Домашний уход",
+    text("demo.sample.elena_comment"),
   ],
 ];
 
@@ -379,32 +404,44 @@ const visitColumns = [
         procedures: `${DEMO_CLIENT.procedure}.`,
         recommendations: `${DEMO_CLIENT.recommendation}.`,
         nextVisit: DEMO_CLIENT.nextVisit,
-        photos: `До: ${DEMO_CLIENT.photos.before} · После: ${DEMO_CLIENT.photos.after} · Дополнительные: ${DEMO_CLIENT.photos.additional}`,
+        photos: formatText("demo.template.photos_summary", {
+          before: DEMO_CLIENT.photos.before,
+          after: DEMO_CLIENT.photos.after,
+          additional: DEMO_CLIENT.photos.additional,
+        }),
       },
     ],
   },
   {
-    client: "Olga Shepetko (549)",
+    client: text("demo.sample.olga_client"),
     visits: [
       {
         date: "27.07.2026",
         procedures:
-          "Выполнена третья обработка бородавки. Сделана и выдана разгрузка.",
-        recommendations: "Не указаны.",
-        nextVisit: "Не назначен.",
-        photos: "До: 1 · После: 0 · Дополнительные: 0",
+          text("demo.sample.olga_procedure"),
+        recommendations: text("demo.sample.not_specified"),
+        nextVisit: text("demo.sample.not_scheduled"),
+        photos: formatText("demo.template.photos_summary", {
+          before: 1,
+          after: 0,
+          additional: 0,
+        }),
       },
     ],
   },
   {
-    client: "Марина Орлова (1164)",
+    client: text("demo.sample.marina_client"),
     visits: [
       {
         date: "26.07.2026",
-        procedures: "Обработка и консультация после травмы ногтя.",
-        recommendations: "Не травмировать ногтевую пластину.",
+        procedures: text("demo.sample.marina_procedure"),
+        recommendations: text("demo.sample.marina_recommendation"),
         nextVisit: "09.08.2026",
-        photos: "До: 1 · После: 0 · Дополнительные: 1",
+        photos: formatText("demo.template.photos_summary", {
+          before: 1,
+          after: 0,
+          additional: 1,
+        }),
       },
     ],
   },
@@ -421,11 +458,11 @@ function VisitCell({
 
   return (
     <div className="visit-cell-copy">
-      <p><strong>Дата визита:</strong> {visit.date}</p>
-      <p><strong>Проведённые процедуры:</strong> {visit.procedures}</p>
-      <p><strong>Рекомендации:</strong> {visit.recommendations}</p>
-      <p><strong>Следующий визит:</strong> {visit.nextVisit}</p>
-      <p><strong>Фотографии:</strong> {visit.photos}</p>
+      <p><strong {...contentProps("demo.table.visit_date")}>{text("demo.table.visit_date")}</strong> {visit.date}</p>
+      <p><strong {...contentProps("demo.ui.procedures")}>{text("demo.ui.procedures")}</strong> {visit.procedures}</p>
+      <p><strong {...contentProps("demo.ui.recommendations")}>{text("demo.ui.recommendations")}</strong> {visit.recommendations}</p>
+      <p><strong {...contentProps("demo.ui.next_visit")}>{text("demo.ui.next_visit")}</strong> {visit.nextVisit}</p>
+      <p><strong {...contentProps("demo.ui.photos")}>{text("demo.ui.photos")}</strong> {visit.photos}</p>
     </div>
   );
 }
@@ -437,7 +474,7 @@ function VisitsMatrix() {
     <table className="visits-matrix">
       <thead>
         <tr className="table-heading-row visits-heading-row">
-          <th>Визиты</th>
+          <th {...contentProps("demo.ui.visits")}>{text("demo.ui.visits")}</th>
           {visitColumns.map(({ client }) => (
             <th key={client}>{client}</th>
           ))}
@@ -446,7 +483,9 @@ function VisitsMatrix() {
       <tbody>
         {visitIndexes.map((visitIndex) => (
           <tr className="visit-matrix-row" key={visitIndex}>
-            <th className="visit-row-label">Визит {visitIndex + 1}</th>
+            <th className="visit-row-label" {...contentProps("demo.ui.visit")}>
+              {formatText("demo.ui.visit", { number: visitIndex + 1 })}
+            </th>
             {visitColumns.map(({ client, visits }) => (
               <td key={client}>
                 <VisitCell visit={visits[visitIndex]} />
@@ -461,7 +500,13 @@ function VisitsMatrix() {
 
 function DataTable({ step }: { step: "clients-table" | "visits-table" }) {
   const visits = step === "visits-table";
-  const headings = ["ФИО", "Последние цифры номера", "Особенности и диагнозы", "Дата первого обращения", "Комментарий"];
+  const headings = [
+    ["demo.table.full_name", text("demo.table.full_name")],
+    ["demo.table.phone_digits", text("demo.table.phone_digits")],
+    ["demo.table.issues", text("demo.table.issues")],
+    ["demo.table.first_contact", text("demo.table.first_contact")],
+    ["demo.table.comment", text("demo.table.comment")],
+  ] as const;
 
   return (
     <div className={`demo-window data-table-window${visits ? " visits-view" : ""}`}>
@@ -470,13 +515,13 @@ function DataTable({ step }: { step: "clients-table" | "visits-table" }) {
           <Table2 size={18} />
         </span>
         <div>
-          <strong>Клиентская база</strong>
-          <small>Данные обновлены</small>
+          <strong {...contentProps("demo.ui.database")}>{text("demo.ui.database")}</strong>
+          <small {...contentProps("demo.ui.updated")}>{text("demo.ui.updated")}</small>
         </div>
       </div>
-      <div className="table-view-tabs" aria-label="Разделы клиентской базы">
-        <span className={!visits ? "active" : ""}>Клиенты</span>
-        <span className={visits ? "active" : ""}>История визитов</span>
+      <div className="table-view-tabs" aria-label={text("demo.ui.database_sections_aria")}>
+        <span className={!visits ? "active" : ""} {...contentProps("demo.ui.clients")}>{text("demo.ui.clients")}</span>
+        <span className={visits ? "active" : ""} {...contentProps("demo.ui.visit_history")}>{text("demo.ui.visit_history")}</span>
       </div>
       <div className={`table-sheet${visits ? " visits-sheet" : ""}`}>
         {visits ? (
@@ -485,8 +530,8 @@ function DataTable({ step }: { step: "clients-table" | "visits-table" }) {
           <table>
             <thead>
               <tr className="table-heading-row">
-                {headings.map((heading) => (
-                  <th key={heading}>{heading}</th>
+                {headings.map(([key, heading]) => (
+                  <th key={key} {...contentProps(key)}>{heading}</th>
                 ))}
               </tr>
             </thead>
@@ -516,10 +561,15 @@ function DemoFrame({ step }: { step: DemoStepId }) {
 
   if (step === "visit-details") {
     return (
-      <ChatShell status="Данные из таблицы найдены">
-        <div className="chat-bubble user compact">
-          Покажи последний визит {DEMO_CLIENT.shortName}, телефон заканчивается
-          на {DEMO_CLIENT.phoneLastDigits}.
+      <ChatShell
+        status={text("demo.ui.found")}
+        statusKey="demo.ui.found"
+      >
+        <div className="chat-bubble user compact" {...contentProps("demo.template.last_visit_query")}>
+          {formatText("demo.template.last_visit_query", {
+            shortName: DEMO_CLIENT.shortName,
+            phoneLastDigits: DEMO_CLIENT.phoneLastDigits,
+          })}
         </div>
         <div className="chat-bubble assistant client-summary-bubble visit-result-message">
           <ClientSummaryMessage />
@@ -531,15 +581,16 @@ function DemoFrame({ step }: { step: DemoStepId }) {
   if (step === "voice-recording") {
     return (
       <ChatShell
-        status="Записываю голос"
+        status={text("demo.ui.voice_status")}
+        statusKey="demo.ui.voice_status"
         composer={<VoiceRecorder />}
       >
         <div className="empty-chat">
           <span className="mic-halo">
             <Mic2 />
           </span>
-          <strong>Говорите свободно</strong>
-          <p>Мы покажем текст перед отправкой</p>
+          <strong {...contentProps("demo.ui.speak")}>{text("demo.ui.speak")}</strong>
+          <p {...contentProps("demo.ui.preview_before_send")}>{text("demo.ui.preview_before_send")}</p>
         </div>
       </ChatShell>
     );
@@ -548,7 +599,8 @@ function DemoFrame({ step }: { step: DemoStepId }) {
   if (step === "transcription") {
     return (
       <ChatShell
-        status="Распознаю сообщение"
+        status={text("demo.ui.transcribing")}
+        statusKey="demo.ui.transcribing"
         composer={<MessageComposer message={transcript} />}
       />
     );
@@ -557,7 +609,8 @@ function DemoFrame({ step }: { step: DemoStepId }) {
   if (step === "attachments") {
     return (
       <ChatShell
-        status="2 файла готовы"
+        status={text("demo.ui.files_ready")}
+        statusKey="demo.ui.files_ready"
         composer={
           <MessageComposer message={transcript} attachments />
         }
@@ -567,7 +620,7 @@ function DemoFrame({ step }: { step: DemoStepId }) {
 
   if (step === "message-sent") {
     return (
-      <ChatShell status="Работаю с данными">
+      <ChatShell status={text("demo.ui.working")} statusKey="demo.ui.working">
         <div className="chat-bubble user sent-message">
           {transcript}
         </div>
@@ -580,11 +633,12 @@ function DemoFrame({ step }: { step: DemoStepId }) {
     return (
       <div className="confirmation-chat-wrap">
         <div className="chat-scroll-hint" aria-hidden="true">
-          <span>Прокрутите чат</span>
+          <span {...contentProps("demo.ui.scroll_chat")}>{text("demo.ui.scroll_chat")}</span>
           <ArrowDown size={22} />
         </div>
         <ChatShell
-          status="Запись подготовлена"
+          status={text("demo.ui.record_ready")}
+          statusKey="demo.ui.record_ready"
           bodyClassName="review-chat-scroll"
         >
           <div className="chat-bubble user summary-source-message">
@@ -602,14 +656,15 @@ function DemoFrame({ step }: { step: DemoStepId }) {
     return (
       <div className="confirmation-chat-wrap">
         <ChatShell
-          status="Ожидаю подтверждение"
+          status={text("demo.ui.waiting_confirmation")}
+          statusKey="demo.ui.waiting_confirmation"
           bodyClassName="review-chat-scroll"
         >
           <div className="chat-bubble assistant structured-summary-bubble confirmation-summary-bubble">
             <StructuredRecordPreview />
           </div>
           <div className="chat-bubble user compact confirm-message">
-            Подтверждаю
+            <span {...contentProps("demo.ui.confirm")}>{text("demo.ui.confirm")}</span>
           </div>
         </ChatShell>
       </div>
@@ -618,9 +673,9 @@ function DemoFrame({ step }: { step: DemoStepId }) {
 
   if (step === "saved") {
     return (
-      <ChatShell status="Готово">
+      <ChatShell status={text("demo.ui.done")} statusKey="demo.ui.done">
         <div className="chat-bubble user compact saved-user-message">
-          Подтверждаю
+          <span {...contentProps("demo.ui.confirm")}>{text("demo.ui.confirm")}</span>
         </div>
         <div className="chat-bubble assistant saved-record-bubble">
           <SavedRecordMessage />
@@ -635,8 +690,8 @@ function DemoFrame({ step }: { step: DemoStepId }) {
         <span>
           <Sparkles />
         </span>
-        <strong>С чего начнём?</strong>
-        <p>Расскажите о новом клиенте голосом или текстом</p>
+        <strong {...contentProps("demo.ui.start_question")}>{text("demo.ui.start_question")}</strong>
+        <p {...contentProps("demo.ui.start_hint")}>{text("demo.ui.start_hint")}</p>
       </div>
     </ChatShell>
   );
@@ -795,12 +850,9 @@ export function DemoSection() {
     <section className="demo-section" id="demo" ref={rootRef}>
       <div className="demo-stage" ref={stageRef}>
         <div className="demo-intro">
-          <span className="section-number light">03 / Как это работает</span>
-          <h2>Один разговор — готовая история клиента</h2>
-          <p>
-            Прокручивайте страницу: каждый этап показывает, что происходит с
-            вашей заметкой.
-          </p>
+          <span className="section-number light" {...contentProps("demo.section")}>{text("demo.section")}</span>
+          <h2 {...contentProps("demo.title")}>{text("demo.title")}</h2>
+          <p {...contentProps("demo.description")}>{text("demo.description")}</p>
         </div>
         <div
           className={`demo-layout desktop-demo ${
@@ -810,11 +862,11 @@ export function DemoSection() {
           }`}
         >
           <div className="demo-copy" ref={copyRef}>
-            <span data-demo-copy>{activeStep.eyebrow}</span>
-            <h3 data-demo-copy key={`title-${activeStep.id}`}>
+            <span data-demo-copy {...contentProps(activeStep.eyebrowKey)}>{activeStep.eyebrow}</span>
+            <h3 data-demo-copy {...contentProps(activeStep.titleKey)} key={`title-${activeStep.id}`}>
               {activeStep.title}
             </h3>
-            <p data-demo-copy key={`copy-${activeStep.id}`}>
+            <p data-demo-copy {...contentProps(activeStep.descriptionKey)} key={`copy-${activeStep.id}`}>
               {activeStep.description}
             </p>
             <div className="demo-progress">
@@ -834,8 +886,8 @@ export function DemoSection() {
               <header>
                 <span>{String(index + 1).padStart(2, "0")}</span>
                 <div>
-                  <h3>{step.title}</h3>
-                  <p>{step.description}</p>
+                  <h3 {...contentProps(step.titleKey)}>{step.title}</h3>
+                  <p {...contentProps(step.descriptionKey)}>{step.description}</p>
                 </div>
               </header>
               <DemoFrame step={step.id} />

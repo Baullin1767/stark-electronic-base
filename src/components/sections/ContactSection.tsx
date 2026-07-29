@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { CONTACTS } from "@/lib/constants";
 import { trackEvent } from "@/lib/analytics";
+import { contentProps, text } from "@/lib/content";
 import {
   contactSchema,
   type ContactInput,
@@ -20,15 +21,10 @@ import {
 
 type SubmitState = "idle" | "sending" | "success" | "error" | "rate-limited";
 
-const professionOptions = [
-  "Подолог",
-  "Косметолог",
-  "Массажист",
-  "Мастер красоты",
-  "Врач",
-  "Тренер",
-  "Консультант",
-] as const;
+const professionOptions = Array.from(
+  { length: 7 },
+  (_, index) => text(`contact.profession_option_${index + 1}` as Parameters<typeof text>[0]),
+);
 
 function getTimestamp() {
   return Date.now();
@@ -129,12 +125,9 @@ export function ContactSection() {
     <section className="contact-section" id="contact">
       <div className="contact-inner section-shell">
         <div className="contact-copy">
-          <span className="section-number light">06 / Связаться</span>
-          <h2>Обсудим, как база может работать именно у вас</h2>
-          <p>
-            Оставьте контакты и коротко расскажите о своей работе. Я свяжусь с
-            вами и помогу подобрать подходящий формат.
-          </p>
+          <span className="section-number light" {...contentProps("contact.section")}>{text("contact.section")}</span>
+          <h2 {...contentProps("contact.title")}>{text("contact.title")}</h2>
+          <p {...contentProps("contact.description")}>{text("contact.description")}</p>
           <div className="contact-list">
             <a
               href={CONTACTS.telegramUrl}
@@ -146,8 +139,8 @@ export function ContactSection() {
                 <MessageCircle />
               </span>
               <div>
-                <small>Telegram</small>
-                <strong>{CONTACTS.telegram}</strong>
+                <small {...contentProps("contact.telegram_label")}>{text("contact.telegram_label")}</small>
+                <strong {...contentProps("contacts.telegram")}>{CONTACTS.telegram}</strong>
               </div>
               <ArrowUpRight />
             </a>
@@ -156,8 +149,8 @@ export function ContactSection() {
                 <Phone />
               </span>
               <div>
-                <small>Телефон</small>
-                <strong>{CONTACTS.phone}</strong>
+                <small {...contentProps("contact.phone_label")}>{text("contact.phone_label")}</small>
+                <strong {...contentProps("contacts.phone")}>{CONTACTS.phone}</strong>
               </div>
               <ArrowUpRight />
             </a>
@@ -166,8 +159,8 @@ export function ContactSection() {
                 <Mail />
               </span>
               <div>
-                <small>Email</small>
-                <strong>{CONTACTS.email}</strong>
+                <small {...contentProps("contact.email_label")}>{text("contact.email_label")}</small>
+                <strong {...contentProps("contacts.email")}>{CONTACTS.email}</strong>
               </div>
               <ArrowUpRight />
             </a>
@@ -182,8 +175,8 @@ export function ContactSection() {
         >
           <div className="form-head">
             <div>
-              <small>Бесплатная консультация</small>
-              <h3>Оставить заявку</h3>
+              <small {...contentProps("contact.consultation")}>{text("contact.consultation")}</small>
+              <h3 {...contentProps("contact.form_title")}>{text("contact.form_title")}</h3>
             </div>
             <span>
               <Send />
@@ -192,67 +185,70 @@ export function ContactSection() {
 
           {selectedPlan && (
             <div className="selected-plan">
-              <Check size={15} /> Вы выбрали: <strong>{selectedPlan}</strong>
+              <Check size={15} /> <span {...contentProps("contact.selected_plan")}>{text("contact.selected_plan")}</span> <strong>{selectedPlan}</strong>
             </div>
           )}
 
           <div className="form-grid">
             <label>
-              <span>Имя *</span>
+              <span {...contentProps("contact.field.first_name")}>{text("contact.field.first_name")}</span>
               <input
                 {...register("firstName")}
                 autoComplete="given-name"
-                placeholder="Александр"
+                placeholder={text("contact.placeholder.first_name")}
+                {...contentProps("contact.placeholder.first_name")}
                 aria-invalid={Boolean(errors.firstName)}
               />
               {errors.firstName && <em>{errors.firstName.message}</em>}
             </label>
             <label>
-              <span>Фамилия</span>
+              <span {...contentProps("contact.field.last_name")}>{text("contact.field.last_name")}</span>
               <input
                 {...register("lastName")}
                 autoComplete="family-name"
-                placeholder="Иванов"
+                placeholder={text("contact.placeholder.last_name")}
+                {...contentProps("contact.placeholder.last_name")}
               />
             </label>
           </div>
 
           <label>
-            <span>Род деятельности</span>
+            <span {...contentProps("contact.field.profession")}>{text("contact.field.profession")}</span>
             <input
               {...register("profession")}
               list="profession-options"
               autoComplete="organization-title"
-              placeholder="Начните вводить профессию"
+              placeholder={text("contact.placeholder.profession")}
+              {...contentProps("contact.placeholder.profession")}
             />
             <datalist id="profession-options">
               {professionOptions.map((option) => (
                 <option value={option} key={option} />
               ))}
             </datalist>
-            <small className="field-hint">
-              Выберите подсказку или укажите свой вариант
-            </small>
+            <small className="field-hint" {...contentProps("contact.profession_hint")}>{text("contact.profession_hint")}</small>
           </label>
 
           <div className="form-grid">
             <label>
-              <span>Telegram</span>
+              <span {...contentProps("contact.field.telegram")}>{text("contact.field.telegram")}</span>
               <input
                 {...register("telegram")}
                 autoComplete="off"
-                placeholder="@username"
+                placeholder={text("contact.placeholder.telegram")}
+                {...contentProps("contact.placeholder.telegram")}
                 aria-invalid={Boolean(errors.telegram)}
               />
               {errors.telegram && <em>{errors.telegram.message}</em>}
             </label>
             <label>
-              <span>Телефон</span>
+              <span {...contentProps("contact.field.phone")}>{text("contact.field.phone")}</span>
               <input
                 {...register("phone")}
                 autoComplete="tel"
                 inputMode="tel"
-                placeholder="+381 62 000 0000"
+                placeholder={text("contact.placeholder.phone")}
+                {...contentProps("contact.placeholder.phone")}
                 aria-invalid={Boolean(errors.phone)}
               />
               {errors.phone && <em>{errors.phone.message}</em>}
@@ -260,11 +256,12 @@ export function ContactSection() {
           </div>
 
           <label>
-            <span>О вашей задаче</span>
+            <span {...contentProps("contact.field.message")}>{text("contact.field.message")}</span>
             <textarea
               {...register("message")}
               rows={4}
-              placeholder="Как вы сейчас ведёте клиентскую базу и какие данные хотите сохранять?"
+              placeholder={text("contact.placeholder.message")}
+              {...contentProps("contact.placeholder.message")}
             />
             {errors.message && <em>{errors.message.message}</em>}
           </label>
@@ -272,14 +269,14 @@ export function ContactSection() {
           <label className="consent">
             <input type="checkbox" {...register("consent")} />
             <span>
-              Я согласен на обработку контактных данных для связи по заявке.{" "}
-              <a href="/privacy">Политика конфиденциальности</a>
+              <span {...contentProps("contact.consent")}>{text("contact.consent")}</span>{" "}
+              <a href="/privacy" {...contentProps("contact.privacy_link")}>{text("contact.privacy_link")}</a>
             </span>
           </label>
           {errors.consent && <em className="consent-error">{errors.consent.message}</em>}
 
           <label className="honeypot" aria-hidden="true">
-            Ваш сайт
+            {text("contact.honeypot")}
             <input {...register("website")} tabIndex={-1} autoComplete="off" />
           </label>
           <input type="hidden" {...register("formStartedAt", { valueAsNumber: true })} />
@@ -290,26 +287,31 @@ export function ContactSection() {
             type="submit"
             disabled={submitState === "sending" || submitState === "success"}
           >
-            {submitState === "sending" ? "Отправляем…" : "Отправить заявку"}
+            <span
+              {...contentProps(
+                submitState === "sending" ? "contact.sending" : "contact.submit",
+              )}
+            >
+              {submitState === "sending"
+                ? text("contact.sending")
+                : text("contact.submit")}
+            </span>
             <Send size={17} />
           </button>
 
           <div className="form-status" aria-live="polite">
             {submitState === "success" && (
-              <p className="success">
-                <Check size={17} /> Заявка отправлена. Я свяжусь с вами по
-                указанному контакту.
+              <p className="success" {...contentProps("contact.success")}>
+                <Check size={17} /> {text("contact.success")}
               </p>
             )}
             {submitState === "rate-limited" && (
-              <p className="error">
-                Вы уже отправляли заявку. Попробуйте ещё раз немного позже.
-              </p>
+              <p className="error" {...contentProps("contact.rate_limited")}>{text("contact.rate_limited")}</p>
             )}
             {submitState === "error" && (
-              <p className="error">
-                Не удалось отправить заявку. Напишите напрямую в{" "}
-                <a href={CONTACTS.telegramUrl}>Telegram</a>.
+              <p className="error" {...contentProps("contact.error")}>
+                {text("contact.error").replace(/Telegram\.?$/, "")}
+                <a href={CONTACTS.telegramUrl}>{text("contact.telegram_label")}</a>.
               </p>
             )}
           </div>

@@ -3,8 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "content:sync": "node scripts/sync-content.mjs",
+    "predev": "npm run content:sync",
     "dev": "next dev",
+    "prebuild": "npm run content:sync",
     "build": "next build",
+    "prestart": "npm run content:sync",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
@@ -21,6 +25,7 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-hook-form": "^7.83.0",
+    "read-excel-file": "^9.3.5",
     "zod": "^4.4.3"
   },
   "devDependencies": {

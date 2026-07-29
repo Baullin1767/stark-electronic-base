@@ -1,3 +1,5 @@
+import type { ContentKey } from "@/generated/site-content";
+
 export type DemoStepId =
   | "empty-chat"
   | "voice-recording"
@@ -14,6 +16,9 @@ export type DemoStepId =
 export type DemoStep = {
   id: DemoStepId;
   eyebrow: string;
+  eyebrowKey: ContentKey;
   title: string;
+  titleKey: ContentKey;
   description: string;
+  descriptionKey: ContentKey;
 };

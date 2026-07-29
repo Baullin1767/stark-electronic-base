@@ -1,7 +1,8 @@
 import type { ContactData } from "@/lib/validation/contact-schema";
 import { normalizePhone } from "@/lib/validation/contact-schema";
+import { text } from "@/lib/content";
 
-function safeLine(value: string | undefined, fallback = "не указано") {
+function safeLine(value: string | undefined, fallback = text("telegram.empty")) {
   const safe = value?.replace(/[\u0000-\u001F\u007F]/g, " ").trim();
   return safe || fallback;
 }
@@ -11,19 +12,19 @@ export function buildTelegramMessage(
   now = new Date(),
 ) {
   return [
-    "Новая заявка — Stark Electronic Base",
+    text("telegram.title"),
     "",
-    `Имя: ${safeLine(data.firstName)}`,
-    `Фамилия: ${safeLine(data.lastName)}`,
-    `Род деятельности: ${safeLine(data.profession)}`,
-    `Telegram: ${safeLine(data.telegram)}`,
-    `Телефон: ${data.phone ? normalizePhone(data.phone) : "не указан"}`,
-    `Интересует: ${safeLine(data.selectedPlan)}`,
+    `${text("telegram.first_name")} ${safeLine(data.firstName)}`,
+    `${text("telegram.last_name")} ${safeLine(data.lastName)}`,
+    `${text("telegram.profession")} ${safeLine(data.profession)}`,
+    `${text("telegram.telegram")} ${safeLine(data.telegram)}`,
+    `${text("telegram.phone")} ${data.phone ? normalizePhone(data.phone) : text("telegram.empty")}`,
+    `${text("telegram.interest")} ${safeLine(data.selectedPlan)}`,
     "",
-    "Сообщение:",
-    safeLine(data.message, "без сообщения"),
+    text("telegram.message"),
+    safeLine(data.message, text("telegram.no_message")),
     "",
-    `Дата заявки: ${new Intl.DateTimeFormat("ru-RU", {
+    `${text("telegram.date")} ${new Intl.DateTimeFormat("ru-RU", {
       dateStyle: "short",
       timeStyle: "short",
       timeZone: "Europe/Belgrade",

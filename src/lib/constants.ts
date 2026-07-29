@@ -1,26 +1,31 @@
+import { text, type ContentKey } from "@/lib/content";
 import type { DemoStep } from "@/types/demo";
 
+const telegram = text("contacts.telegram");
+const phone = text("contacts.phone");
+const email = text("contacts.email");
+
 export const CONTACTS = {
-  telegram: "@Baullin",
-  telegramUrl: "https://t.me/Baullin",
-  phone: "+381 62 964 9901",
-  phoneUrl: "tel:+381629649901",
-  email: "alex.stark.rs@gmail.com",
-  emailUrl: "mailto:alex.stark.rs@gmail.com",
+  telegram,
+  telegramUrl: `https://t.me/${telegram.replace(/^@/, "")}`,
+  phone,
+  phoneUrl: `tel:${phone.replace(/[^\d+]/g, "")}`,
+  email,
+  emailUrl: `mailto:${email}`,
 } as const;
 
 export const DEMO_CLIENT = {
-  fullName: "Анна Сергеевна Петрова",
-  shortName: "Анна Петрова",
-  phone: "•••• 4821",
-  phoneLastDigits: "4821",
-  date: "28 июля 2026",
-  dateNumeric: "28.07.2026",
-  issue: "Болезненность в области большого пальца правой стопы",
-  procedure: "Обработка ногтевой пластины и бокового валика",
-  recommendation: "Ежедневная обработка назначенным средством, свободная обувь",
-  nextVisit: "11.08.2026",
-  comment: "Первое обращение.",
+  fullName: text("demo.client.full_name"),
+  shortName: text("demo.client.short_name"),
+  phone: text("demo.client.phone_masked"),
+  phoneLastDigits: text("demo.client.phone_last_digits"),
+  date: text("demo.client.date"),
+  dateNumeric: text("demo.client.date_numeric"),
+  issue: text("demo.client.issue"),
+  procedure: text("demo.client.procedure"),
+  recommendation: text("demo.client.recommendation"),
+  nextVisit: text("demo.client.next_visit"),
+  comment: text("demo.client.comment"),
   photos: {
     before: 1,
     after: 1,
@@ -28,169 +33,100 @@ export const DEMO_CLIENT = {
   },
 } as const;
 
-export const DEMO_STEPS: DemoStep[] = [
-  {
-    id: "empty-chat",
-    eyebrow: "Шаг 01",
-    title: "Привычный диалог вместо сложной формы",
-    description:
-      "Просто расскажите о клиенте так, как рассказали бы коллеге.",
-  },
-  {
-    id: "voice-recording",
-    eyebrow: "Шаг 02",
-    title: "Надиктуйте заметку сразу после приёма",
-    description:
-      "Свободная речь экономит время между клиентами и не ломает привычный рабочий ритм.",
-  },
-  {
-    id: "transcription",
-    eyebrow: "Шаг 03",
-    title: "Голос превращается в текст",
-    description:
-      "Система распознаёт сообщение и показывает результат до отправки.",
-  },
-  {
-    id: "attachments",
-    eyebrow: "Шаг 04",
-    title: "Фотографии остаются рядом с записью",
-    description:
-      "Материалы «до» и «после» прикрепляются к конкретному посещению.",
-  },
-  {
-    id: "message-sent",
-    eyebrow: "Шаг 05",
-    title: "Сообщение отправлено",
-    description:
-      "Ассистент анализирует запись, но ничего не сохраняет без подтверждения.",
-  },
-  {
-    id: "summary-preview",
-    eyebrow: "Шаг 06",
-    title: "Проверьте краткую сводку в чате",
-    description:
-      "Ассистент обычным сообщением повторяет основные данные перед сохранением в Excel.",
-  },
-  {
-    id: "confirmation",
-    eyebrow: "Шаг 07",
-    title: "Одно короткое подтверждение",
-    description:
-      "Специалист контролирует итог и сам решает, когда сохранять запись.",
-  },
-  {
-    id: "saved",
-    eyebrow: "Шаг 08",
-    title: "Готово — запись сохранена",
-    description:
-      "После подтверждения структурированная информация уже находится в ячейках Excel.",
-  },
-  {
-    id: "clients-table",
-    eyebrow: "Шаг 09",
-    title: "Данные клиента появились в таблице",
-    description:
-      "В раздел «Клиенты» добавляется строка с ФИО, телефоном, особенностями, датой первого обращения и комментарием.",
-  },
-  {
-    id: "visits-table",
-    eyebrow: "Шаг 10",
-    title: "Отдельная таблица хранит историю визитов",
-    description:
-      "В истории остаются дата, проведённые процедуры, рекомендации и дата следующего приёма.",
-  },
-  {
-    id: "visit-details",
-    eyebrow: "Шаг 11",
-    title: "Ассистент возвращает данные в чат",
-    description:
-      "Перед следующим приёмом специалист снова работает в привычном чате, а ассистент собирает ответ из двух листов Excel.",
-  },
-];
-
-export const BENEFITS = [
-  ["Голосовой ввод", "Надиктуйте информацию сразу после приёма."],
-  ["Автоматическая структура", "Данные распределяются по нужным полям."],
-  ["Проверка перед сохранением", "Ни одна запись не сохраняется без вас."],
-  ["История посещений", "Процедуры, советы и фото связаны с клиентом."],
-  ["Быстрый поиск", "Получите сводку по имени или цифрам телефона."],
-  ["Настройка под профессию", "Структура таблицы адаптируется под вашу работу."],
+const demoSteps = [
+  "empty-chat",
+  "voice-recording",
+  "transcription",
+  "attachments",
+  "message-sent",
+  "summary-preview",
+  "confirmation",
+  "saved",
+  "clients-table",
+  "visits-table",
+  "visit-details",
 ] as const;
+
+export const DEMO_STEPS: DemoStep[] = demoSteps.map((id) => {
+  const prefix = `demo.step.${id}` as const;
+  return {
+    id,
+    eyebrow: text(`${prefix}.eyebrow` as ContentKey),
+    eyebrowKey: `${prefix}.eyebrow` as ContentKey,
+    title: text(`${prefix}.title` as ContentKey),
+    titleKey: `${prefix}.title` as ContentKey,
+    description: text(`${prefix}.description` as ContentKey),
+    descriptionKey: `${prefix}.description` as ContentKey,
+  };
+});
+
+const benefitIds = [
+  "voice",
+  "structure",
+  "review",
+  "history",
+  "search",
+  "profession",
+] as const;
+
+export const BENEFITS = benefitIds.map((id) => ({
+  title: text(`benefits.${id}.title` as ContentKey),
+  titleKey: `benefits.${id}.title` as ContentKey,
+  description: text(`benefits.${id}.description` as ContentKey),
+  descriptionKey: `benefits.${id}.description` as ContentKey,
+}));
+
+function plan(id: "initial" | "online" | "onsite", featured: boolean) {
+  const prefix = `pricing.plan.${id}` as const;
+  return {
+    id,
+    name: text(`${prefix}.name` as ContentKey),
+    nameKey: `${prefix}.name` as ContentKey,
+    price: text(`${prefix}.price` as ContentKey),
+    priceKey: `${prefix}.price` as ContentKey,
+    euro: text(`${prefix}.euro` as ContentKey),
+    euroKey: `${prefix}.euro` as ContentKey,
+    description: text(`${prefix}.description` as ContentKey),
+    descriptionKey: `${prefix}.description` as ContentKey,
+    features: Array.from({ length: 5 }, (_, index) => {
+      const key = `${prefix}.feature_${index + 1}` as ContentKey;
+      return { value: text(key), key };
+    }),
+    cta: text(`${prefix}.cta` as ContentKey),
+    ctaKey: `${prefix}.cta` as ContentKey,
+    featured,
+  };
+}
 
 export const PRICING = [
-  {
-    id: "initial",
-    name: "Первичное подключение",
-    price: "10 000 RSD",
-    euro: "примерно 85 €",
-    description: "Соберём рабочую базу под ваш процесс и запустим её вместе.",
-    features: [
-      "Структура клиентской базы",
-      "Добавление клиентов и посещений",
-      "Поиск и хранение фотографий",
-      "Базовое тестирование",
-      "Инструкция и цикл исправлений",
-    ],
-    cta: "Заказать подключение",
-    featured: true,
-  },
-  {
-    id: "online",
-    name: "Онлайн-поддержка",
-    price: "4 000 RSD",
-    euro: "примерно 34 € / месяц",
-    description: "Помощь, консультации и небольшие улучшения без выезда.",
-    features: [
-      "Удалённая помощь",
-      "Проверка интеграций",
-      "Обновление инструкций",
-      "Адаптация формулировок",
-      "Помощь со структурой базы",
-    ],
-    cta: "Подключить поддержку",
-    featured: false,
-  },
-  {
-    id: "onsite",
-    name: "Поддержка с выездом",
-    price: "6 000 RSD",
-    euro: "примерно 51 € / месяц",
-    description: "Онлайн-поддержка и очная помощь в пределах Белграда.",
-    features: [
-      "Всё из онлайн-поддержки",
-      "Настройка на ваших устройствах",
-      "Помощь сотрудникам на месте",
-      "Выезд в Белграде",
-      "Дальние выезды — по согласованию",
-    ],
-    cta: "Обсудить выезд",
-    featured: false,
-  },
-] as const;
+  plan("initial", true),
+  plan("online", false),
+  plan("onsite", false),
+];
+
+function addOn(
+  id: "database-backup" | "table-customization" | "employee-account",
+) {
+  const prefix = `pricing.addon.${id}` as const;
+  const priceNoteKey =
+    id === "employee-account"
+      ? (`${prefix}.price_note` as ContentKey)
+      : undefined;
+  return {
+    id,
+    name: text(`${prefix}.name` as ContentKey),
+    nameKey: `${prefix}.name` as ContentKey,
+    price: text(`${prefix}.price` as ContentKey),
+    priceKey: `${prefix}.price` as ContentKey,
+    priceNote: priceNoteKey ? text(priceNoteKey) : "",
+    priceNoteKey,
+    description: text(`${prefix}.description` as ContentKey),
+    descriptionKey: `${prefix}.description` as ContentKey,
+  };
+}
 
 export const PRICING_ADD_ONS = [
-  {
-    id: "database-backup",
-    name: "Безопасность базы данных",
-    price: "2 000 RSD",
-    priceNote: "",
-    description:
-      "Автоматическое резервное копирование в удобное место: каждый день, раз в неделю или раз в месяц.",
-  },
-  {
-    id: "table-customization",
-    name: "Адаптация таблицы под ваши нужды",
-    price: "2 000 RSD",
-    priceNote: "",
-    description:
-      "Другие поля, страницы, данные и структура — под ваш рабочий процесс.",
-  },
-  {
-    id: "employee-account",
-    name: "Защищённые аккаунты для сотрудников",
-    price: "1 000 RSD",
-    priceNote: "за аккаунт",
-    description:
-      "Ограниченный доступ для сотрудников без возможности просмотра закрытых данных.",
-  },
-] as const;
+  addOn("database-backup"),
+  addOn("table-customization"),
+  addOn("employee-account"),
+];

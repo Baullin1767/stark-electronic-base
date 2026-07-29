@@ -1,27 +1,18 @@
 import { ArrowRight, Clock3, Lightbulb, Mic2 } from "lucide-react";
+import { contentProps, text } from "@/lib/content";
 
 export function StorySection() {
   return (
     <section className="story" id="story">
       <div className="story-inner section-shell">
         <div className="story-copy">
-          <span className="section-number light">02 / История</span>
-          <h2>Решение появилось из реальной рабочей ситуации</h2>
-          <p>
-            Моя жена работает подологом. Плотный график, большой поток клиентов
-            и почти нет пауз между приёмами. После каждой процедуры нужно
-            сохранить фотографии, особенности и рекомендации.
-          </p>
-          <p>
-            Тогда появилась простая идея: пусть специалист расскажет обо всём
-            обычными словами, а система сама подготовит строки для Excel.
-          </p>
+          <span className="section-number light" {...contentProps("story.section")}>{text("story.section")}</span>
+          <h2 {...contentProps("story.title")}>{text("story.title")}</h2>
+          <p {...contentProps("story.paragraph_1")}>{text("story.paragraph_1")}</p>
+          <p {...contentProps("story.paragraph_2")}>{text("story.paragraph_2")}</p>
           <div className="story-quote">
             <Lightbulb size={24} />
-            <p>
-              Она предложила идею, а я превратил её в инструмент, который
-              соединяет голос, привычный чат и структурированную базу.
-            </p>
+            <p {...contentProps("story.quote")}>{text("story.quote")}</p>
           </div>
         </div>
         <div className="story-flow">
@@ -30,8 +21,8 @@ export function StorySection() {
               <Clock3 />
             </span>
             <div>
-              <small>Было</small>
-              <strong>Заполнять таблицу после приёма</strong>
+              <small {...contentProps("story.before_label")}>{text("story.before_label")}</small>
+              <strong {...contentProps("story.before_text")}>{text("story.before_text")}</strong>
             </div>
           </article>
           <ArrowRight className="story-arrow" aria-hidden="true" />
@@ -40,8 +31,8 @@ export function StorySection() {
               <Mic2 />
             </span>
             <div>
-              <small>Стало</small>
-              <strong>Рассказать всё за минуту</strong>
+              <small {...contentProps("story.after_label")}>{text("story.after_label")}</small>
+              <strong {...contentProps("story.after_text")}>{text("story.after_text")}</strong>
             </div>
           </article>
         </div>

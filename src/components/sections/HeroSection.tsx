@@ -5,47 +5,45 @@ import {
   MessageCircleMore,
   Sparkles,
 } from "lucide-react";
+import { contentProps, text } from "@/lib/content";
 
 export function HeroSection() {
   return (
     <section className="hero section-shell" id="top">
       <div className="hero-copy">
-        <div className="eyebrow">
+        <div className="eyebrow" {...contentProps("hero.eyebrow")}>
           <span className="eyebrow-dot" />
-          Клиентская база без лишней рутины
+          {text("hero.eyebrow")}
         </div>
-        <h1>
-          Клиентская база, которую можно вести{" "}
-          <span>обычным голосом</span>
+        <h1 {...contentProps("hero.title_before")}>
+          {text("hero.title_before")}{" "}
+          <span {...contentProps("hero.title_accent")}>{text("hero.title_accent")}</span>
         </h1>
-        <p className="hero-lead">
-          Расскажите о новом клиенте, процедуре и рекомендациях. Система
-          подготовит структурированную запись — вам останется только проверить.
-        </p>
+        <p className="hero-lead" {...contentProps("hero.lead")}>{text("hero.lead")}</p>
         <div className="hero-actions">
-          <a className="button button-primary" href="#demo">
-            Посмотреть, как это работает
+          <a className="button button-primary" href="#demo" {...contentProps("hero.primary_cta")}>
+            {text("hero.primary_cta")}
             <ArrowDown size={18} aria-hidden="true" />
           </a>
-          <a className="button button-secondary" href="#contact">
-            Обсудить подключение
+          <a className="button button-secondary" href="#contact" {...contentProps("hero.secondary_cta")}>
+            {text("hero.secondary_cta")}
           </a>
         </div>
-        <ul className="hero-trust" aria-label="Ключевые свойства">
-          <li>
-            <Check size={15} /> Под вашим контролем
+        <ul className="hero-trust" aria-label={text("hero.trust_aria")}>
+          <li {...contentProps("hero.trust_control")}>
+            <Check size={15} /> {text("hero.trust_control")}
           </li>
-          <li>
-            <Check size={15} /> Настройка под профессию
+          <li {...contentProps("hero.trust_profession")}>
+            <Check size={15} /> {text("hero.trust_profession")}
           </li>
         </ul>
       </div>
 
-      <div className="hero-visual" aria-label="Схема работы сервиса">
+      <div className="hero-visual" aria-label={text("hero.visual_aria")}>
         <div className="hero-glow" />
-        <div className="floating-note note-one">
+        <div className="floating-note note-one" {...contentProps("hero.voice_note")}>
           <AudioLines size={17} />
-          Голосовая заметка
+          {text("hero.voice_note")}
         </div>
         <div className="assistant-card">
           <div className="assistant-card-head">
@@ -53,12 +51,12 @@ export function HeroSection() {
               <MessageCircleMore size={22} />
             </div>
             <div>
-              <strong>Stark Assistant</strong>
-              <span>
-                <i /> Готов к работе
+              <strong {...contentProps("hero.assistant_name")}>{text("hero.assistant_name")}</strong>
+              <span {...contentProps("hero.assistant_ready")}>
+                <i /> {text("hero.assistant_ready")}
               </span>
             </div>
-            <span className="online-label">online</span>
+            <span className="online-label" {...contentProps("hero.online")}>{text("hero.online")}</span>
           </div>
           <div className="hero-chat-feed">
             <div className="assistant-message user-message">
@@ -68,16 +66,13 @@ export function HeroSection() {
                   <i key={index} style={{ height: `${10 + (index % 5) * 4}px` }} />
                 ))}
               </div>
-              <small>0:38</small>
+              <small {...contentProps("hero.audio_long")}>{text("hero.audio_long")}</small>
             </div>
             <div className="assistant-message ai-message">
               <span className="hero-gpt-label">
-                <Sparkles size={13} /> GPT
+                <Sparkles size={13} /> <span {...contentProps("hero.gpt_label")}>{text("hero.gpt_label")}</span>
               </span>
-              <p className="ai-summary">
-                Нашёл Анну Петрову. Последний визит — обработка ногтевой
-                пластины. Следующий приём запланирован через две недели.
-              </p>
+              <p className="ai-summary" {...contentProps("hero.summary")}>{text("hero.summary")}</p>
             </div>
             <div className="assistant-message user-message secondary-message">
               <span className="audio-play">▶</span>
@@ -86,16 +81,13 @@ export function HeroSection() {
                   <i key={index} style={{ height: `${9 + (index % 4) * 4}px` }} />
                 ))}
               </div>
-              <small>0:12</small>
+              <small {...contentProps("hero.audio_short")}>{text("hero.audio_short")}</small>
             </div>
             <div className="assistant-message ai-message compact">
               <span className="hero-gpt-label">
-                <Sparkles size={13} /> GPT
+                <Sparkles size={13} /> <span {...contentProps("hero.gpt_label")}>{text("hero.gpt_label")}</span>
               </span>
-              <p className="ai-summary">
-                Понял. Добавил рекомендацию и напоминание перед следующим
-                визитом.
-              </p>
+              <p className="ai-summary" {...contentProps("hero.followup")}>{text("hero.followup")}</p>
             </div>
           </div>
         </div>
