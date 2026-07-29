@@ -533,24 +533,6 @@ img {
   transform: rotate(4deg);
 }
 
-.note-storage {
-  bottom: 2%;
-  left: 0;
-  transform: rotate(-3deg);
-}
-
-.storage-note-icons {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.storage-note-icons svg:last-child {
-  padding-left: 4px;
-  border-left: 1px solid var(--line);
-  box-sizing: content-box;
-}
-
 .problem {
   display: grid;
   grid-template-columns: 0.78fr 1.22fr;
@@ -759,6 +741,14 @@ img {
   background: var(--lime);
   color: var(--green-dark);
   transform: rotate(2deg);
+}
+
+.story-flow article > div {
+  transform: rotate(2deg);
+}
+
+.story-flow article.accent > div {
+  transform: rotate(-2deg);
 }
 
 .story-flow article > span {
@@ -2975,10 +2965,6 @@ img {
   .note-one {
     top: 1%;
     right: 0;
-  }
-
-  .note-storage {
-    left: 4px;
   }
 
   .problem,
