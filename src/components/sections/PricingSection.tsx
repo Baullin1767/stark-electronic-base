@@ -1,8 +1,16 @@
 "use client";
 
-import { ArrowRight, Check } from "lucide-react";
-import { PRICING } from "@/lib/constants";
+import {
+  ArrowRight,
+  Check,
+  DatabaseBackup,
+  SlidersHorizontal,
+  UserRoundCheck,
+} from "lucide-react";
+import { PRICING, PRICING_ADD_ONS } from "@/lib/constants";
 import { trackEvent } from "@/lib/analytics";
+
+const addOnIcons = [DatabaseBackup, SlidersHorizontal, UserRoundCheck];
 
 export function PricingSection() {
   const choosePlan = (name: string) => {
@@ -53,6 +61,43 @@ export function PricingSection() {
             </a>
           </article>
         ))}
+      </div>
+      <div className="pricing-add-ons">
+        <div className="add-ons-heading">
+          <p>Дополнительные опции</p>
+          <span>Можно добавить к первичному подключению</span>
+        </div>
+        <div className="add-ons-grid">
+          {PRICING_ADD_ONS.map((addOn, index) => {
+            const Icon = addOnIcons[index];
+
+            return (
+              <article className="add-on-card" key={addOn.id}>
+                <span className="add-on-icon" aria-hidden="true">
+                  <Icon size={21} />
+                </span>
+                <div className="add-on-copy">
+                  <h3>{addOn.name}</h3>
+                  <p>{addOn.description}</p>
+                </div>
+                <div className="add-on-action">
+                  <p>
+                    <strong>{addOn.price}</strong>
+                    {addOn.priceNote && <span>{addOn.priceNote}</span>}
+                  </p>
+                  <a
+                    href="#contact"
+                    aria-label={`Добавить опцию «${addOn.name}»`}
+                    onClick={() => choosePlan(addOn.name)}
+                  >
+                    Добавить
+                    <ArrowRight size={15} />
+                  </a>
+                </div>
+              </article>
+            );
+          })}
+        </div>
       </div>
       <p className="currency-note">
         Эквивалент в евро указан ориентировочно. Оплата производится в сербских

@@ -4,12 +4,12 @@ import Image from "next/image";
 import {
   ArrowDown,
   CirclePause,
-  ChevronDown,
   ImageIcon,
   Mic2,
   Paperclip,
   Send,
   Sparkles,
+  Table2,
   X,
 } from "lucide-react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -436,27 +436,17 @@ function VisitsMatrix() {
   return (
     <table className="visits-matrix">
       <thead>
-        <tr>
-          <th className="excel-corner" />
-          {Array.from({ length: visitColumns.length + 1 }, (_, index) => (
-            <th className="excel-column-letter" key={index}>
-              {String.fromCharCode(65 + index)}
-            </th>
+        <tr className="table-heading-row visits-heading-row">
+          <th>Визиты</th>
+          {visitColumns.map(({ client }) => (
+            <th key={client}>{client}</th>
           ))}
         </tr>
       </thead>
       <tbody>
-        <tr className="excel-heading-row visits-heading-row">
-          <th>1</th>
-          <td className="selected-cell">Клиенты</td>
-          {visitColumns.map(({ client }) => (
-            <td key={client}>{client}</td>
-          ))}
-        </tr>
         {visitIndexes.map((visitIndex) => (
           <tr className="visit-matrix-row" key={visitIndex}>
-            <th>{visitIndex + 2}</th>
-            <td className="visit-row-label">Визит {visitIndex + 1}</td>
+            <th className="visit-row-label">Визит {visitIndex + 1}</th>
             {visitColumns.map(({ client, visits }) => (
               <td key={client}>
                 <VisitCell visit={visits[visitIndex]} />
@@ -469,88 +459,48 @@ function VisitsMatrix() {
   );
 }
 
-function ExcelWorkbook({ step }: { step: "clients-table" | "visits-table" }) {
+function DataTable({ step }: { step: "clients-table" | "visits-table" }) {
   const visits = step === "visits-table";
   const headings = ["ФИО", "Последние цифры номера", "Особенности и диагнозы", "Дата первого обращения", "Комментарий"];
 
   return (
-    <div className={`demo-window excel-window${visits ? " visits-workbook" : ""}`}>
-      <div className="excel-titlebar">
-        <span className="excel-app-icon">X</span>
-        <strong>База клиентов.xlsx</strong>
-        <small>Сохранено</small>
-        <span className="excel-window-controls">—　□　×</span>
-      </div>
-      <div className="excel-ribbon">
-        <div className="excel-ribbon-tabs">
-          <b>Файл</b>
-          <span>Главная</span>
-          <span>Вставка</span>
-          <span>Разметка страницы</span>
-          <span>Данные</span>
-        </div>
-        <div className="excel-tools" aria-hidden="true">
-          <strong>Буфер обмена</strong>
-          <i />
-          <i />
-          <i />
-          <span />
-          <span />
-          <span />
+    <div className={`demo-window data-table-window${visits ? " visits-view" : ""}`}>
+      <div className="table-card-header">
+        <span className="table-card-icon">
+          <Table2 size={18} />
+        </span>
+        <div>
+          <strong>Клиентская база</strong>
+          <small>Данные обновлены</small>
         </div>
       </div>
-      <div className="excel-formula">
-        <span>A1</span>
-        <b>fx</b>
-        <p>{visits ? "Клиенты" : "ФИО"}</p>
+      <div className="table-view-tabs" aria-label="Разделы клиентской базы">
+        <span className={!visits ? "active" : ""}>Клиенты</span>
+        <span className={visits ? "active" : ""}>История визитов</span>
       </div>
-      <div className={`excel-sheet${visits ? " visits-sheet" : ""}`}>
+      <div className={`table-sheet${visits ? " visits-sheet" : ""}`}>
         {visits ? (
           <VisitsMatrix />
         ) : (
           <table>
-          <thead>
-            <tr>
-              <th className="excel-corner" />
-              {headings.map((_, index) => (
-                <th className="excel-column-letter" key={index}>
-                  {String.fromCharCode(65 + index)}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            <tr className="excel-heading-row">
-              <th>1</th>
-              {headings.map((heading, index) => (
-                <td className={index === 0 ? "selected-cell" : ""} key={heading}>
-                  {heading}
-                </td>
-              ))}
-            </tr>
-            {clientRows.map((row, rowIndex) => (
-              <tr className={rowIndex === 0 ? "new-excel-row" : ""} key={row[0]}>
-                <th>{rowIndex + 2}</th>
-                {row.map((cell) => (
-                  <td key={cell}>{cell}</td>
+            <thead>
+              <tr className="table-heading-row">
+                {headings.map((heading) => (
+                  <th key={heading}>{heading}</th>
                 ))}
               </tr>
-            ))}
-          </tbody>
+            </thead>
+            <tbody>
+              {clientRows.map((row, rowIndex) => (
+                <tr className={rowIndex === 0 ? "new-table-row" : ""} key={row[0]}>
+                  {row.map((cell) => (
+                    <td key={cell}>{cell}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
           </table>
         )}
-      </div>
-      <div className="excel-statusbar">
-        <button type="button">＋</button>
-        <button className={!visits ? "active" : ""} type="button">
-          Клиенты
-        </button>
-        <button className={visits ? "active" : ""} type="button">
-          Визиты
-        </button>
-        <ChevronDown size={13} />
-        <span>Готово</span>
-        <small>100%</small>
       </div>
     </div>
   );
@@ -561,7 +511,7 @@ function DemoFrame({ step }: { step: DemoStepId }) {
     step === "clients-table" ||
     step === "visits-table"
   ) {
-    return <ExcelWorkbook step={step} />;
+    return <DataTable step={step} />;
   }
 
   if (step === "visit-details") {
@@ -891,40 +841,6 @@ export function DemoSection() {
               <DemoFrame step={step.id} />
             </article>
           ))}
-        </div>
-      </div>
-      <div className="demo-flexibility">
-        <div className="demo-flexibility-copy">
-          <span>Настраивается под вас</span>
-          <h3>Форма таблицы может быть любой</h3>
-          <p>
-            Вы сами определяете, какие листы, поля и данные нужны в работе.
-            Структура базы подстраивается под ваш процесс, а не наоборот.
-          </p>
-        </div>
-        <div className="demo-flexibility-card">
-          <div>
-            <Sparkles size={20} />
-            <strong>Любые нужные данные</strong>
-          </div>
-          <p>
-            Добавим ваши названия колонок, категории, статусы, даты,
-            рекомендации, ссылки на файлы и другие параметры.
-          </p>
-          <div className="demo-flexibility-fields" aria-label="Примеры полей">
-            {[
-              "Контакты",
-              "Диагнозы",
-              "Процедуры",
-              "Рекомендации",
-              "Статусы",
-              "Фотографии",
-              "Следующий визит",
-              "Свои поля",
-            ].map((field) => (
-              <span key={field}>{field}</span>
-            ))}
-          </div>
         </div>
       </div>
     </section>

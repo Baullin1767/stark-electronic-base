@@ -9,10 +9,6 @@ test("landing page, navigation and privacy route are available", async ({
       name: /Клиентская база, которую можно вести/,
     }),
   ).toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: "Форма таблицы может быть любой" }),
-  ).toBeAttached();
-
   await page.getByRole("link", { name: "Посмотреть, как это работает" }).click();
   await expect(page.locator("#demo")).toBeInViewport();
 
