@@ -4,14 +4,16 @@ import {
   ArrowRight,
   Check,
   DatabaseBackup,
-  SlidersHorizontal,
   UserRoundCheck,
 } from "lucide-react";
 import { PRICING, PRICING_ADD_ONS } from "@/lib/constants";
 import { trackEvent } from "@/lib/analytics";
 import { contentProps, formatText, text } from "@/lib/content";
 
-const addOnIcons = [DatabaseBackup, SlidersHorizontal, UserRoundCheck];
+const addOnIcons = {
+  "database-backup": DatabaseBackup,
+  "employee-account": UserRoundCheck,
+} as const;
 
 export function PricingSection() {
   const choosePlan = (name: string) => {
@@ -49,6 +51,15 @@ export function PricingSection() {
                 </li>
               ))}
             </ul>
+            {plan.notes.length > 0 && (
+              <div className="plan-notes">
+                {plan.notes.map((note) => (
+                  <p key={note.key} {...contentProps(note.key)}>
+                    {note.value}
+                  </p>
+                ))}
+              </div>
+            )}
             <a
               className={`button ${plan.featured ? "button-primary" : "button-secondary"}`}
               href="#contact"
@@ -67,8 +78,8 @@ export function PricingSection() {
           <span {...contentProps("pricing.addons_note")}>{text("pricing.addons_note")}</span>
         </div>
         <div className="add-ons-grid">
-          {PRICING_ADD_ONS.map((addOn, index) => {
-            const Icon = addOnIcons[index];
+          {PRICING_ADD_ONS.map((addOn) => {
+            const Icon = addOnIcons[addOn.id];
 
             return (
               <article className="add-on-card" key={addOn.id}>

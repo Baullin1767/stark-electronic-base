@@ -1749,7 +1749,7 @@ img {
 
 .pricing-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 16px;
   margin-top: 60px;
 }
@@ -1841,6 +1841,23 @@ img {
   list-style: none;
 }
 
+.plan-notes {
+  display: grid;
+  gap: 10px;
+  margin: 0 0 24px;
+}
+
+.plan-notes p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.featured .plan-notes p {
+  color: rgba(255, 255, 255, 0.62);
+}
+
 .featured ul {
   border-color: rgba(255, 255, 255, 0.12);
 }
@@ -1902,7 +1919,7 @@ img {
 
 .add-ons-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 12px;
 }
 

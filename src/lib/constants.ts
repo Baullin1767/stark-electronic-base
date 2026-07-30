@@ -76,7 +76,12 @@ export const BENEFITS = benefitIds.map((id) => ({
   descriptionKey: `benefits.${id}.description` as ContentKey,
 }));
 
-function plan(id: "initial" | "online" | "onsite", featured: boolean) {
+function plan(
+  id: "initial" | "custom" | "online" | "onsite",
+  featured: boolean,
+  featureCount: number,
+  noteCount = 0,
+) {
   const prefix = `pricing.plan.${id}` as const;
   return {
     id,
@@ -88,8 +93,12 @@ function plan(id: "initial" | "online" | "onsite", featured: boolean) {
     euroKey: `${prefix}.euro` as ContentKey,
     description: text(`${prefix}.description` as ContentKey),
     descriptionKey: `${prefix}.description` as ContentKey,
-    features: Array.from({ length: 5 }, (_, index) => {
+    features: Array.from({ length: featureCount }, (_, index) => {
       const key = `${prefix}.feature_${index + 1}` as ContentKey;
+      return { value: text(key), key };
+    }),
+    notes: Array.from({ length: noteCount }, (_, index) => {
+      const key = `${prefix}.note_${index + 1}` as ContentKey;
       return { value: text(key), key };
     }),
     cta: text(`${prefix}.cta` as ContentKey),
@@ -99,14 +108,15 @@ function plan(id: "initial" | "online" | "onsite", featured: boolean) {
 }
 
 export const PRICING = [
-  plan("initial", true),
-  plan("online", false),
-  plan("onsite", false),
+  plan("initial", true, 5),
+  plan("custom", false, 6),
+  plan("online", false, 7, 1),
+  plan("onsite", false, 7, 2),
 ];
 
-function addOn(
-  id: "database-backup" | "table-customization" | "employee-account",
-) {
+function addOn<
+  T extends "database-backup" | "table-customization" | "employee-account",
+>(id: T) {
   const prefix = `pricing.addon.${id}` as const;
   const priceNoteKey =
     id === "employee-account"
@@ -127,6 +137,5 @@ function addOn(
 
 export const PRICING_ADD_ONS = [
   addOn("database-backup"),
-  addOn("table-customization"),
   addOn("employee-account"),
 ];

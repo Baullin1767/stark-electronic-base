@@ -24,7 +24,7 @@ test("pricing selection reaches the contact form", async ({ page }) => {
   await cta.click();
   await expect(page.locator("#contact")).toBeInViewport();
   await expect(page.locator(".selected-plan")).toContainText(
-    "Первичное подключение",
+    "Базовая интеграция",
   );
 });
 
