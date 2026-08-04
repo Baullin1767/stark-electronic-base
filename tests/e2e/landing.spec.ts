@@ -28,6 +28,20 @@ test("pricing selection reaches the contact form", async ({ page }) => {
   );
 });
 
+test("pricing uses rubles and offers remote support only", async ({ page }) => {
+  await page.goto("/#pricing");
+  const pricing = page.locator("#pricing");
+
+  await expect(pricing.locator(".price-card")).toHaveCount(3);
+  await expect(pricing).toContainText("10 000 ₽");
+  await expect(pricing).toContainText("12 000 ₽");
+  await expect(pricing).toContainText("4 000 ₽ / месяц");
+  await expect(pricing).toContainText("Удалённая поддержка");
+  await expect(pricing).not.toContainText(
+    /RSD|€|динар|евро|поддержка с выездом|обсудить выезд/i,
+  );
+});
+
 test("contact form validates required fields", async ({ page }) => {
   await page.goto("/#contact");
   await page.getByRole("button", { name: "Отправить заявку" }).click();

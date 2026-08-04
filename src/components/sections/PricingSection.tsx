@@ -40,7 +40,6 @@ export function PricingSection() {
             <p className="plan-name" {...contentProps(plan.nameKey)}>{plan.name}</p>
             <div className="price">
               <strong {...contentProps(plan.priceKey)}>{plan.price}</strong>
-              <span {...contentProps(plan.euroKey)}>{plan.euro}</span>
             </div>
             <p className="plan-description" {...contentProps(plan.descriptionKey)}>{plan.description}</p>
             <ul>

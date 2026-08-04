@@ -77,7 +77,7 @@ export const BENEFITS = benefitIds.map((id) => ({
 }));
 
 function plan(
-  id: "initial" | "custom" | "online" | "onsite",
+  id: "initial" | "custom" | "online",
   featured: boolean,
   featureCount: number,
   noteCount = 0,
@@ -89,8 +89,6 @@ function plan(
     nameKey: `${prefix}.name` as ContentKey,
     price: text(`${prefix}.price` as ContentKey),
     priceKey: `${prefix}.price` as ContentKey,
-    euro: text(`${prefix}.euro` as ContentKey),
-    euroKey: `${prefix}.euro` as ContentKey,
     description: text(`${prefix}.description` as ContentKey),
     descriptionKey: `${prefix}.description` as ContentKey,
     features: Array.from({ length: featureCount }, (_, index) => {
@@ -111,7 +109,6 @@ export const PRICING = [
   plan("initial", true, 5),
   plan("custom", false, 6),
   plan("online", false, 7, 1),
-  plan("onsite", false, 7, 2),
 ];
 
 function addOn<
