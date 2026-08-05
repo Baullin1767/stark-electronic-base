@@ -4,12 +4,15 @@ import type { DemoStep } from "@/types/demo";
 const telegram = text("contacts.telegram");
 const phone = text("contacts.phone");
 const email = text("contacts.email");
+const phoneInternational = phone.replace(/\D/g, "");
 
 export const CONTACTS = {
   telegram,
   telegramUrl: `https://t.me/${telegram.replace(/^@/, "")}`,
   phone,
-  phoneUrl: `tel:${phone.replace(/[^\d+]/g, "")}`,
+  whatsappUrl: `https://wa.me/${phoneInternational}`,
+  viberUrl: `viber://chat?number=${encodeURIComponent(`+${phoneInternational}`)}`,
+  phoneUrl: `tel:+${phoneInternational}`,
   email,
   emailUrl: `mailto:${email}`,
 } as const;

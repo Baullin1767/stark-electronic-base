@@ -7,7 +7,9 @@ export type AnalyticsEvent =
   | "form_start"
   | "form_success"
   | "form_error"
-  | "telegram_click";
+  | "telegram_click"
+  | "whatsapp_click"
+  | "viber_click";
 
 export function trackEvent(
   event: AnalyticsEvent,
