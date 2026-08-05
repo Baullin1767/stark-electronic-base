@@ -71,6 +71,34 @@ test("mobile layout has no horizontal overflow", async ({ page }) => {
   expect(overflow).toBeLessThanOrEqual(1);
 });
 
+test("mobile demo stays pinned and advances through one animated frame", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/#demo");
+
+  const stage = page.locator(".demo-stage");
+  const animatedDemo = page.locator(".desktop-demo");
+  await page.locator(".pin-spacer").waitFor();
+  await expect(animatedDemo).toBeVisible();
+  await expect(animatedDemo.locator(".demo-frame")).toHaveCount(1);
+  await expect(animatedDemo.locator(".demo-copy > small")).toHaveText("01 / 11");
+
+  const stageBox = await stage.boundingBox();
+  expect(stageBox?.height).toBeLessThanOrEqual(845);
+
+  await page.evaluate(() => {
+    const demo = document.querySelector<HTMLElement>("#demo");
+    window.scrollTo({
+      top: (demo?.offsetTop ?? window.scrollY) + 900,
+      behavior: "instant",
+    });
+  });
+  await expect(animatedDemo.locator(".demo-copy > small")).not.toHaveText(
+    "01 / 11",
+  );
+});
+
 test("reduced motion keeps the demonstration readable", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/#demo");

@@ -710,9 +710,8 @@ export function DemoSection() {
   const completed = useRef(false);
 
   useEffect(() => {
-    const media = window.matchMedia("(min-width: 1024px)");
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (!media.matches || reduced.matches || !rootRef.current || !stageRef.current) {
+    if (reduced.matches || !rootRef.current || !stageRef.current) {
       return;
     }
 
