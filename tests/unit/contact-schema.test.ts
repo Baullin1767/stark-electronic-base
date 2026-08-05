@@ -47,7 +47,28 @@ describe("contactSchema", () => {
     ).toBe(false);
   });
 
-  it("normalizes a phone while preserving the international prefix", () => {
-    expect(normalizePhone("+7 (999) 999 99-99")).toBe("+7 (999) 999 99-99");
+  it.each([
+    ["+7 (999) 999-99-99", "+79999999999"],
+    ["8 999 999 99 99", "+79999999999"],
+    ["999 999-99-99", "+79999999999"],
+  ])("normalizes a Russian phone %s", (phone, expected) => {
+    expect(normalizePhone(phone)).toBe(expected);
+  });
+
+  it.each(["+381 62 000 0000", "+8 999 999-99-99", "12345"])(
+    "rejects a non-Russian phone %s",
+    (phone) => {
+      expect(
+        contactSchema.safeParse({
+          ...validPayload,
+          telegram: "",
+          phone,
+        }).success,
+      ).toBe(false);
+    },
+  );
+
+  it("rejects letters in a Russian phone", () => {
+    expect(normalizePhone("+7 999 ABC-99-99")).toBe("");
   });
 });

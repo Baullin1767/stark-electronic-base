@@ -10,7 +10,33 @@ const optionalTrimmed = (max: number) =>
     .default("");
 
 const telegramPattern = /^@[A-Za-z0-9_]{5,32}$/;
-const phonePattern = /^\+?[0-9\s().-]{7,24}$/;
+const russianPhoneCharactersPattern = /^\+?[0-9\s().-]+$/;
+
+export function normalizePhone(value: string) {
+  const trimmed = value.trim();
+  if (!russianPhoneCharactersPattern.test(trimmed)) return "";
+
+  const digits = trimmed.replace(/\D/g, "");
+  let nationalNumber: string;
+
+  if (digits.length === 10) {
+    nationalNumber = digits;
+  } else if (digits.length === 11 && digits.startsWith("7")) {
+    nationalNumber = digits.slice(1);
+  } else if (
+    digits.length === 11 &&
+    digits.startsWith("8") &&
+    !trimmed.startsWith("+")
+  ) {
+    nationalNumber = digits.slice(1);
+  } else {
+    return "";
+  }
+
+  return /^[3489]\d{9}$/.test(nationalNumber)
+    ? `+7${nationalNumber}`
+    : "";
+}
 
 export const contactSchema = z
   .object({
@@ -50,7 +76,7 @@ export const contactSchema = z
       });
     }
 
-    if (data.phone && !phonePattern.test(data.phone)) {
+    if (data.phone && !normalizePhone(data.phone)) {
       context.addIssue({
         code: "custom",
         path: ["phone"],
@@ -61,9 +87,3 @@ export const contactSchema = z
 
 export type ContactInput = z.input<typeof contactSchema>;
 export type ContactData = z.output<typeof contactSchema>;
-
-export function normalizePhone(value: string) {
-  const trimmed = value.trim();
-  const prefix = trimmed.startsWith("+") ? "+" : "";
-  return `${prefix}${trimmed.replace(/\D/g, "")}`;
-}
