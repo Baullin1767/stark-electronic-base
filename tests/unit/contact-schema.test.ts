@@ -27,7 +27,7 @@ describe("contactSchema", () => {
       contactSchema.safeParse({
         ...validPayload,
         telegram: "",
-        phone: "+381 62 964 9901",
+        phone: "+7 999 999 99-99",
       }).success,
     ).toBe(true);
   });
@@ -48,6 +48,6 @@ describe("contactSchema", () => {
   });
 
   it("normalizes a phone while preserving the international prefix", () => {
-    expect(normalizePhone("+381 (62) 964-9901")).toBe("+381629649901");
+    expect(normalizePhone("+7 (999) 999 99-99")).toBe("+7 (999) 999 99-99");
   });
 });

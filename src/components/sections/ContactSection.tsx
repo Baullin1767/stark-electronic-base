@@ -144,34 +144,30 @@ export function ContactSection() {
               </div>
               <ArrowUpRight />
             </a>
-            <a
-              href={CONTACTS.whatsappUrl}
-              target="_blank"
-              rel="noreferrer"
-              onClick={() => trackEvent("whatsapp_click")}
-            >
-              <span>
-                <MessageCircle />
-              </span>
-              <div>
-                <small>WhatsApp</small>
-                <strong {...contentProps("contacts.phone")}>{CONTACTS.phone}</strong>
-              </div>
-              <ArrowUpRight />
-            </a>
-            <a
-              href={CONTACTS.viberUrl}
-              onClick={() => trackEvent("viber_click")}
-            >
-              <span>
-                <Phone />
-              </span>
-              <div>
-                <small>Viber</small>
-                <strong {...contentProps("contacts.phone")}>{CONTACTS.phone}</strong>
-              </div>
-              <ArrowUpRight />
-            </a>
+            <div className="contact-messenger-row">
+              <a
+                href={CONTACTS.whatsappUrl}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => trackEvent("whatsapp_click")}
+              >
+                <span>
+                  <MessageCircle />
+                </span>
+                <strong>WhatsApp</strong>
+                <ArrowUpRight />
+              </a>
+              <a
+                href={CONTACTS.viberUrl}
+                onClick={() => trackEvent("viber_click")}
+              >
+                <span>
+                  <Phone />
+                </span>
+                <strong>Viber</strong>
+                <ArrowUpRight />
+              </a>
+            </div>
             <a href={CONTACTS.emailUrl}>
               <span>
                 <Mail />
