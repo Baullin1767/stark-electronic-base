@@ -97,6 +97,28 @@ test("mobile demo stays pinned and advances through one animated frame", async (
   await expect(animatedDemo.locator(".demo-copy > small")).not.toHaveText(
     "01 / 11",
   );
+
+  await page.evaluate(() => {
+    const demo = document.querySelector<HTMLElement>("#demo");
+    window.scrollTo({
+      top: (demo?.offsetTop ?? window.scrollY) + 2400,
+      behavior: "instant",
+    });
+  });
+  await expect(animatedDemo.locator(".demo-copy > small")).toHaveText(
+    "06 / 11",
+  );
+
+  const reviewChat = animatedDemo.locator(".review-chat-scroll");
+  const composer = animatedDemo.locator(".chat-input");
+  await expect(composer).toBeInViewport();
+  await expect
+    .poll(() =>
+      reviewChat.evaluate(
+        (element) => element.scrollHeight > element.clientHeight,
+      ),
+    )
+    .toBe(true);
 });
 
 test("reduced motion keeps the demonstration readable", async ({ page }) => {

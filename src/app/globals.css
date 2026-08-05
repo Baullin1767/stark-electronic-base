@@ -3036,6 +3036,23 @@ img {
     height: 100%;
   }
 
+  .demo-frame {
+    overflow: hidden;
+  }
+
+  .confirmation-chat-wrap {
+    display: flex;
+    min-height: 0;
+    max-height: 100%;
+    overflow: hidden;
+  }
+
+  .confirmation-chat-wrap .chat-window {
+    min-height: 0;
+    max-height: 100%;
+    flex: 1 1 auto;
+  }
+
   .demo-window {
     max-height: 100%;
     border-radius: 17px;
@@ -3051,6 +3068,7 @@ img {
   }
 
   .window-head {
+    flex: 0 0 auto;
     padding: 4px 5px 8px;
   }
 
@@ -3062,6 +3080,22 @@ img {
     min-height: 0;
     flex: 1 1 auto;
     padding: 10px 7px;
+  }
+
+  .review-chat-scroll {
+    height: 0 !important;
+    min-height: 0;
+    flex: 1 1 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .chat-window > .chat-input,
+  .chat-window > .voice-recorder {
+    flex: 0 0 auto;
   }
 
   .chat-input.has-message:not(.has-attachments) {
