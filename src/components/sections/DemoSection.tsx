@@ -843,7 +843,7 @@ export function DemoSection() {
               <span />
             </div>
             <small>
-              {String(activeIndex + 1).padStart(2, "0")} / {DEMO_STEPS.length}
+              {String(activeIndex + 1).padStart(2, "0")} / {String(DEMO_STEPS.length).padStart(2, "0")}
             </small>
           </div>
           <div className="demo-frame" ref={frameRef} key={activeStep.id}>

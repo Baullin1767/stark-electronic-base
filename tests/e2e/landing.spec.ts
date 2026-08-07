@@ -82,7 +82,7 @@ test("mobile demo stays pinned and advances through one animated frame", async (
   await page.locator(".pin-spacer").waitFor();
   await expect(animatedDemo).toBeVisible();
   await expect(animatedDemo.locator(".demo-frame")).toHaveCount(1);
-  await expect(animatedDemo.locator(".demo-copy > small")).toHaveText("01 / 11");
+  await expect(animatedDemo.locator(".demo-copy > small")).toHaveText("01 / 09");
 
   const stageBox = await stage.boundingBox();
   expect(stageBox?.height).toBeLessThanOrEqual(845);
@@ -95,7 +95,7 @@ test("mobile demo stays pinned and advances through one animated frame", async (
     });
   });
   await expect(animatedDemo.locator(".demo-copy > small")).not.toHaveText(
-    "01 / 11",
+    "01 / 09",
   );
 
   await page.evaluate(() => {
@@ -106,7 +106,7 @@ test("mobile demo stays pinned and advances through one animated frame", async (
     });
   });
   await expect(animatedDemo.locator(".demo-copy > small")).toHaveText(
-    "06 / 11",
+    "05 / 09",
   );
 
   const reviewChat = animatedDemo.locator(".review-chat-scroll");
@@ -124,7 +124,7 @@ test("mobile demo stays pinned and advances through one animated frame", async (
 test("reduced motion keeps the demonstration readable", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/#demo");
-  await expect(page.locator(".mobile-demo-step")).toHaveCount(11);
+  await expect(page.locator(".mobile-demo-step")).toHaveCount(9);
 });
 
 test("the demo keeps the same client throughout the scenario", async ({
