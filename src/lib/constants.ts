@@ -41,11 +41,9 @@ const demoSteps = [
   "voice-recording",
   "transcription",
   "attachments",
-  "message-sent",
   "summary-preview",
   "confirmation",
   "saved",
-  "clients-table",
   "visits-table",
   "visit-details",
 ] as const;

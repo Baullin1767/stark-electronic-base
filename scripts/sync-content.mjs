@@ -125,10 +125,6 @@ async function main() {
     if (Object.hasOwn(content, key)) {
       throw new Error(`Строка ${rowNumber}: key «${key}» повторяется.`);
     }
-    if (!value.trim()) {
-      throw new Error(`Строка ${rowNumber}: текст для «${key}» пуст.`);
-    }
-
     content[key] = value;
     const style = {};
     for (const [column, validator] of Object.entries(cssValidators)) {

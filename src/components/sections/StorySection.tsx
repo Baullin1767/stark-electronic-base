@@ -1,5 +1,22 @@
-import { ArrowRight, Clock3, Lightbulb, Mic2 } from "lucide-react";
+import {
+  ArrowRight,
+  BadgeDollarSign,
+  Clock3,
+  Gauge,
+  Lightbulb,
+  Mic2,
+  ShieldCheck,
+  Wrench,
+} from "lucide-react";
 import { contentProps, text } from "@/lib/content";
+
+const storyMeanings = [
+  { key: "story.meaning_idea", icon: Lightbulb },
+  { key: "story.meaning_tool", icon: Wrench },
+  { key: "story.meaning_savings", icon: BadgeDollarSign },
+  { key: "story.meaning_speed", icon: Gauge },
+  { key: "story.meaning_safety", icon: ShieldCheck },
+] as const;
 
 export function StorySection() {
   return (
@@ -10,10 +27,15 @@ export function StorySection() {
           <h2 {...contentProps("story.title")}>{text("story.title")}</h2>
           <p {...contentProps("story.paragraph_1")}>{text("story.paragraph_1")}</p>
           <p {...contentProps("story.paragraph_2")}>{text("story.paragraph_2")}</p>
-          <div className="story-quote">
-            <Lightbulb size={24} />
-            <p {...contentProps("story.quote")}>{text("story.quote")}</p>
-          </div>
+          <ul className="story-meanings" aria-label="Главные принципы решения">
+            {storyMeanings.map(({ key, icon: Icon }, index) => (
+              <li key={key} {...contentProps(key)}>
+                <span className="story-meaning-number">0{index + 1}</span>
+                <Icon aria-hidden="true" />
+                <strong>{text(key)}</strong>
+              </li>
+            ))}
+          </ul>
         </div>
         <div className="story-flow">
           <article>

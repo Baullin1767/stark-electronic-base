@@ -722,27 +722,57 @@ img {
   line-height: 1.75;
 }
 
-.story-quote {
-  display: flex;
-  gap: 15px;
-  align-items: flex-start;
+.story-meanings {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
   margin-top: 34px;
-  padding: 20px;
+  padding: 0;
+  list-style: none;
+}
+
+.story-meanings li {
+  position: relative;
+  display: grid;
+  min-height: 92px;
+  grid-template-columns: 28px 1fr;
+  gap: 8px 12px;
+  align-content: center;
+  padding: 17px 18px;
+  overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.13);
   border-radius: 17px;
   background: rgba(255, 255, 255, 0.06);
 }
 
-.story-quote svg {
-  flex: 0 0 auto;
+.story-meanings li:last-child {
+  grid-column: 1 / -1;
+}
+
+.story-meaning-number {
+  position: absolute;
+  top: 10px;
+  right: 13px;
+  color: rgba(255, 255, 255, 0.18);
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.story-meanings svg {
+  width: 21px;
+  height: 21px;
+  align-self: center;
   color: var(--lime);
 }
 
-.story-quote p {
-  margin: 0;
-  color: rgba(255, 255, 255, 0.82);
+.story-meanings strong {
+  align-self: center;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: var(--font-display);
   font-size: 14px;
-  line-height: 1.65;
+  line-height: 1.35;
 }
 
 .story-flow {
@@ -843,13 +873,6 @@ img {
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-.demo-intro h2 {
-  max-width: 680px;
-  margin-top: 7px;
-  font-size: clamp(34px, 3.2vw, 44px);
-  line-height: 0.98;
-}
-
 .demo-intro > p {
   max-width: 300px;
   margin-top: 8px;
@@ -900,7 +923,7 @@ img {
 .demo-copy h3 {
   margin: 15px 0 0;
   font-family: var(--font-display);
-  font-size: clamp(34px, 3.4vw, 50px);
+  font-size: clamp(40px, 4vw, 58px);
   letter-spacing: -0.045em;
   line-height: 1.05;
 }
@@ -2765,11 +2788,6 @@ img {
     padding-bottom: 14px;
   }
 
-  .demo-intro h2 {
-    max-width: 520px;
-    font-size: clamp(28px, 4.8vw, 40px);
-  }
-
   .demo-layout,
   .demo-layout.frame-left,
   .demo-layout.frame-right {
@@ -2796,7 +2814,7 @@ img {
   }
 
   .demo-copy h3 {
-    font-size: clamp(28px, 4.3vw, 40px);
+    font-size: clamp(32px, 5vw, 46px);
   }
 
   .demo-copy > p {
@@ -2837,7 +2855,7 @@ img {
   .mobile-demo-step h3 {
     margin: 0;
     font-family: var(--font-display);
-    font-size: 26px;
+    font-size: 30px;
     line-height: 1.15;
   }
 
@@ -2959,11 +2977,29 @@ img {
   }
 
   .chaos-board {
-    min-height: 570px;
+    min-height: 0;
+    aspect-ratio: 1;
   }
 
   .chaos-card {
-    width: 190px;
+    width: min(44%, 160px);
+    padding: 13px;
+    border-radius: 14px;
+  }
+
+  .chaos-card > span {
+    width: 30px;
+    height: 30px;
+    margin-bottom: 9px;
+  }
+
+  .chaos-card strong {
+    font-size: 11px;
+  }
+
+  .chaos-card p {
+    margin-top: 3px;
+    font-size: 9px;
   }
 
   .chaos-a {
@@ -2971,7 +3007,7 @@ img {
   }
 
   .chaos-b {
-    top: 20%;
+    top: 15%;
     right: 0;
   }
 
@@ -2985,7 +3021,22 @@ img {
 
   .chaos-center {
     z-index: 2;
-    width: 155px;
+    width: min(38%, 135px);
+    padding: 13px;
+    border-radius: 15px;
+  }
+
+  .chaos-center span {
+    width: 32px;
+    height: 32px;
+  }
+
+  .chaos-center strong {
+    font-size: 12px;
+  }
+
+  .chaos-center small {
+    font-size: 9px;
   }
 
   .story {
@@ -3009,13 +3060,6 @@ img {
     grid-template-columns: 1fr;
     gap: 0;
     padding-bottom: 9px;
-  }
-
-  .demo-intro h2 {
-    max-width: 330px;
-    margin-top: 4px;
-    font-size: clamp(23px, 7.2vw, 30px);
-    line-height: 0.98;
   }
 
   .demo-intro > p {
@@ -3055,7 +3099,7 @@ img {
 
   .demo-copy h3 {
     margin-top: 3px;
-    font-size: clamp(19px, 5.8vw, 24px);
+    font-size: clamp(24px, 7.2vw, 32px);
     line-height: 1.02;
   }
 

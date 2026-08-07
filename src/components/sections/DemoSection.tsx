@@ -357,20 +357,6 @@ function SavedRecordMessage() {
   );
 }
 
-function AssistantThinking() {
-  return (
-    <div className="assistant-thinking" aria-label={text("demo.ui.thinking_aria")}>
-      <Sparkles size={15} />
-      <span {...contentProps("demo.ui.thinking")}>{text("demo.ui.thinking")}</span>
-      <span className="assistant-thinking-dots" aria-hidden="true">
-        <i />
-        <i />
-        <i />
-      </span>
-    </div>
-  );
-}
-
 const clientRows = [
   [
     DEMO_CLIENT.fullName,
@@ -618,17 +604,6 @@ function DemoFrame({ step }: { step: DemoStepId }) {
     );
   }
 
-  if (step === "message-sent") {
-    return (
-      <ChatShell status={text("demo.ui.working")} statusKey="demo.ui.working">
-        <div className="chat-bubble user sent-message">
-          {transcript}
-        </div>
-        <AssistantThinking />
-      </ChatShell>
-    );
-  }
-
   if (step === "summary-preview") {
     return (
       <div className="confirmation-chat-wrap">
@@ -850,7 +825,6 @@ export function DemoSection() {
       <div className="demo-stage" ref={stageRef}>
         <div className="demo-intro">
           <span className="section-number light" {...contentProps("demo.section")}>{text("demo.section")}</span>
-          <h2 {...contentProps("demo.title")}>{text("demo.title")}</h2>
           <p {...contentProps("demo.description")}>{text("demo.description")}</p>
         </div>
         <div
@@ -865,9 +839,11 @@ export function DemoSection() {
             <h3 data-demo-copy {...contentProps(activeStep.titleKey)} key={`title-${activeStep.id}`}>
               {activeStep.title}
             </h3>
-            <p data-demo-copy {...contentProps(activeStep.descriptionKey)} key={`copy-${activeStep.id}`}>
-              {activeStep.description}
-            </p>
+            {activeStep.description && (
+              <p data-demo-copy {...contentProps(activeStep.descriptionKey)} key={`copy-${activeStep.id}`}>
+                {activeStep.description}
+              </p>
+            )}
             <div className="demo-progress">
               <span />
             </div>
@@ -886,7 +862,9 @@ export function DemoSection() {
                 <span>{String(index + 1).padStart(2, "0")}</span>
                 <div>
                   <h3 {...contentProps(step.titleKey)}>{step.title}</h3>
-                  <p {...contentProps(step.descriptionKey)}>{step.description}</p>
+                  {step.description && (
+                    <p {...contentProps(step.descriptionKey)}>{step.description}</p>
+                  )}
                 </div>
               </header>
               <DemoFrame step={step.id} />
