@@ -839,11 +839,6 @@ export function DemoSection() {
             <h3 data-demo-copy {...contentProps(activeStep.titleKey)} key={`title-${activeStep.id}`}>
               {activeStep.title}
             </h3>
-            {activeStep.description && (
-              <p data-demo-copy {...contentProps(activeStep.descriptionKey)} key={`copy-${activeStep.id}`}>
-                {activeStep.description}
-              </p>
-            )}
             <div className="demo-progress">
               <span />
             </div>
@@ -862,9 +857,6 @@ export function DemoSection() {
                 <span>{String(index + 1).padStart(2, "0")}</span>
                 <div>
                   <h3 {...contentProps(step.titleKey)}>{step.title}</h3>
-                  {step.description && (
-                    <p {...contentProps(step.descriptionKey)}>{step.description}</p>
-                  )}
                 </div>
               </header>
               <DemoFrame step={step.id} />

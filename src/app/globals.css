@@ -721,30 +721,12 @@ img {
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 20px;
   background: rgba(255, 255, 255, 0.07);
-  transform: rotate(-2deg);
-}
-
-.story-flow article:nth-of-type(even) {
-  transform: rotate(2deg);
 }
 
 .story-flow article.accent {
   border-color: var(--lime);
   background: var(--lime);
   color: var(--green-dark);
-  transform: rotate(2deg);
-}
-
-.story-flow article > div {
-  transform: rotate(2deg);
-}
-
-.story-flow article:nth-of-type(even) > div {
-  transform: rotate(-2deg);
-}
-
-.story-flow article.accent > div {
-  transform: rotate(-2deg);
 }
 
 .story-flow article > span {
