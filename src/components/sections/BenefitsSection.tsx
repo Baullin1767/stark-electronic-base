@@ -1,15 +1,13 @@
 import {
-  CheckCheck,
   History,
   Mic2,
   Search,
   Settings2,
-  WandSparkles,
 } from "lucide-react";
 import { BENEFITS } from "@/lib/constants";
 import { contentProps, text } from "@/lib/content";
 
-const icons = [Mic2, WandSparkles, CheckCheck, History, Search, Settings2];
+const icons = [Mic2, History, Search, Settings2];
 
 export function BenefitsSection() {
   return (

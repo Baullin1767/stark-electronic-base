@@ -1,4 +1,4 @@
-import { ArrowDown, Check, Clock3, Quote, Star } from "lucide-react";
+import { ArrowDown, Check, Star } from "lucide-react";
 import { contentProps, text } from "@/lib/content";
 
 export function HeroSection() {
@@ -33,14 +33,6 @@ export function HeroSection() {
           <Star size={17} fill="currentColor" />{text("hero.voice_note")}
         </div>
         <div className="assistant-card testimonials-card">
-          <div className="assistant-card-head">
-            <div className="assistant-icon"><Quote size={20} /></div>
-            <div>
-              <strong {...contentProps("hero.assistant_name")}>{text("hero.assistant_name")}</strong>
-              <span {...contentProps("hero.assistant_ready")}><i /> {text("hero.assistant_ready")}</span>
-            </div>
-            <span className="online-label" {...contentProps("hero.online")}>{text("hero.online")}</span>
-          </div>
           <div className="testimonial-list">
             <article className="testimonial-item testimonial-featured">
               <div className="testimonial-stars" aria-hidden="true">
@@ -50,7 +42,6 @@ export function HeroSection() {
               <footer>
                 <span className="testimonial-avatar">А</span>
                 <div><strong {...contentProps("hero.review_1_name")}>{text("hero.review_1_name")}</strong><small {...contentProps("hero.review_1_role")}>{text("hero.review_1_role")}</small></div>
-                <b><Clock3 size={13} /><span {...contentProps("hero.review_1_metric")}>{text("hero.review_1_metric")}</span></b>
               </footer>
             </article>
             <article className="testimonial-item">
@@ -58,7 +49,6 @@ export function HeroSection() {
               <footer>
                 <span className="testimonial-avatar">М</span>
                 <div><strong {...contentProps("hero.review_2_name")}>{text("hero.review_2_name")}</strong><small {...contentProps("hero.review_2_role")}>{text("hero.review_2_role")}</small></div>
-                <b><span {...contentProps("hero.review_2_metric")}>{text("hero.review_2_metric")}</span></b>
               </footer>
             </article>
             <article className="testimonial-item testimonial-compact">
@@ -66,7 +56,6 @@ export function HeroSection() {
               <footer>
                 <span className="testimonial-avatar">Е</span>
                 <div><strong {...contentProps("hero.review_3_name")}>{text("hero.review_3_name")}</strong><small {...contentProps("hero.review_3_role")}>{text("hero.review_3_role")}</small></div>
-                <b><span {...contentProps("hero.review_3_metric")}>{text("hero.review_3_metric")}</span></b>
               </footer>
             </article>
           </div>

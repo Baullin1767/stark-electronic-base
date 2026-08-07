@@ -63,8 +63,6 @@ export const DEMO_STEPS: DemoStep[] = demoSteps.map((id) => {
 
 const benefitIds = [
   "voice",
-  "structure",
-  "review",
   "history",
   "search",
   "profession",
