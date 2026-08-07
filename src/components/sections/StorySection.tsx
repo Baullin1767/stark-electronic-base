@@ -30,16 +30,16 @@ export function StorySection() {
         <div className="story-flow" aria-label="Главные принципы решения">
           {storyMeanings.map(({ key, icon: Icon }, index) => (
             <Fragment key={key}>
-              <article className={index === storyMeanings.length - 1 ? "accent" : undefined}>
+              <article className={index === 1 ? "accent" : undefined}>
                 <span>
                   <Icon aria-hidden="true" />
                 </span>
                 <div>
-                  <small>0{index + 1}</small>
+                  {index < 2 && <small>0{index + 1}</small>}
                   <strong {...contentProps(key)}>{text(key)}</strong>
                 </div>
               </article>
-              {index < storyMeanings.length - 1 && (
+              {index === 0 && (
                 <ArrowRight className="story-arrow" aria-hidden="true" />
               )}
             </Fragment>
