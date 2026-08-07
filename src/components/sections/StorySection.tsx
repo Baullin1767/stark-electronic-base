@@ -1,10 +1,9 @@
+import { Fragment } from "react";
 import {
   ArrowRight,
   BadgeDollarSign,
-  Clock3,
   Gauge,
   Lightbulb,
-  Mic2,
   ShieldCheck,
   Wrench,
 } from "lucide-react";
@@ -27,36 +26,24 @@ export function StorySection() {
           <h2 {...contentProps("story.title")}>{text("story.title")}</h2>
           <p {...contentProps("story.paragraph_1")}>{text("story.paragraph_1")}</p>
           <p {...contentProps("story.paragraph_2")}>{text("story.paragraph_2")}</p>
-          <ul className="story-meanings" aria-label="Главные принципы решения">
-            {storyMeanings.map(({ key, icon: Icon }, index) => (
-              <li key={key} {...contentProps(key)}>
-                <span className="story-meaning-number">0{index + 1}</span>
-                <Icon aria-hidden="true" />
-                <strong>{text(key)}</strong>
-              </li>
-            ))}
-          </ul>
         </div>
-        <div className="story-flow">
-          <article>
-            <span>
-              <Clock3 />
-            </span>
-            <div>
-              <small {...contentProps("story.before_label")}>{text("story.before_label")}</small>
-              <strong {...contentProps("story.before_text")}>{text("story.before_text")}</strong>
-            </div>
-          </article>
-          <ArrowRight className="story-arrow" aria-hidden="true" />
-          <article className="accent">
-            <span>
-              <Mic2 />
-            </span>
-            <div>
-              <small {...contentProps("story.after_label")}>{text("story.after_label")}</small>
-              <strong {...contentProps("story.after_text")}>{text("story.after_text")}</strong>
-            </div>
-          </article>
+        <div className="story-flow" aria-label="Главные принципы решения">
+          {storyMeanings.map(({ key, icon: Icon }, index) => (
+            <Fragment key={key}>
+              <article className={index === storyMeanings.length - 1 ? "accent" : undefined}>
+                <span>
+                  <Icon aria-hidden="true" />
+                </span>
+                <div>
+                  <small>0{index + 1}</small>
+                  <strong {...contentProps(key)}>{text(key)}</strong>
+                </div>
+              </article>
+              {index < storyMeanings.length - 1 && (
+                <ArrowRight className="story-arrow" aria-hidden="true" />
+              )}
+            </Fragment>
+          ))}
         </div>
       </div>
     </section>
