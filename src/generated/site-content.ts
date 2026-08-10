@@ -310,7 +310,7 @@ export const SITE_CONTENT = {
   "telegram.no_message": "без сообщения",
   "telegram.date": "Дата заявки:",
   "pricing.plan.custom.name": "Индивидуальная интеграция",
-  "pricing.plan.custom.price": "12 000 ₽",
+  "pricing.plan.custom.price": "15 000 ₽",
   "pricing.plan.custom.description": "Индивидуальная настройка системы под ваш рабочий процесс.",
   "pricing.plan.custom.cta": "Обсудить подключение",
   "pricing.plan.custom.feature_1": "Настройка ассистента",
