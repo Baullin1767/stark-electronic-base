@@ -49,18 +49,19 @@ test("contact form validates required fields", async ({ page }) => {
   await expect(page.getByText("Необходимо согласие")).toBeVisible();
 });
 
-test("profession supports suggestions and a custom value", async ({ page }) => {
+test("profession supports dropdown options and a custom value", async ({ page }) => {
   await page.goto("/#contact");
-  const profession = page.getByLabel("Род деятельности");
+  const profession = page.getByTestId("profession-select");
 
-  await expect(profession).toHaveAttribute("list", "profession-options");
-  await expect(page.locator("#profession-options option")).toHaveCount(7);
+  await expect(profession.locator("option")).toHaveCount(9);
 
-  await profession.fill("Под");
-  await expect(profession).toHaveValue("Под");
+  await profession.selectOption({ label: "Подолог" });
+  await expect(profession).toHaveValue("Подолог");
 
-  await profession.fill("Фотограф");
-  await expect(profession).toHaveValue("Фотограф");
+  await profession.selectOption({ label: "Другое — указать свой вариант" });
+  const customProfession = page.getByTestId("custom-profession");
+  await customProfession.fill("Фотограф");
+  await expect(customProfession).toHaveValue("Фотограф");
 });
 
 test("mobile layout has no horizontal overflow", async ({ page }) => {

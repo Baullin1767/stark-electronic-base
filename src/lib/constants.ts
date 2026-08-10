@@ -106,7 +106,7 @@ function plan(
 
 export const PRICING = [
   plan("initial", true, 5),
-  plan("custom", false, 6),
+  plan("custom", false, 7),
   plan("online", false, 7, 1),
 ];
 
@@ -133,5 +133,4 @@ function addOn<
 
 export const PRICING_ADD_ONS = [
   addOn("database-backup"),
-  addOn("employee-account"),
 ];

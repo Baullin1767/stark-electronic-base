@@ -4,7 +4,6 @@ import {
   ArrowRight,
   Check,
   DatabaseBackup,
-  UserRoundCheck,
 } from "lucide-react";
 import { PRICING, PRICING_ADD_ONS } from "@/lib/constants";
 import { trackEvent } from "@/lib/analytics";
@@ -12,7 +11,6 @@ import { contentProps, formatText, text } from "@/lib/content";
 
 const addOnIcons = {
   "database-backup": DatabaseBackup,
-  "employee-account": UserRoundCheck,
 } as const;
 
 export function PricingSection() {
@@ -40,7 +38,9 @@ export function PricingSection() {
             <div className="price">
               <strong {...contentProps(plan.priceKey)}>{plan.price}</strong>
             </div>
-            <p className="plan-description" {...contentProps(plan.descriptionKey)}>{plan.description}</p>
+            {plan.description && (
+              <p className="plan-description" {...contentProps(plan.descriptionKey)}>{plan.description}</p>
+            )}
             <ul>
               {plan.features.map((feature) => (
                 <li key={feature.value} {...contentProps(feature.key)}>
