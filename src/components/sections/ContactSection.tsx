@@ -362,10 +362,12 @@ export function ContactSection() {
               <strong>Viber</strong>
               <ArrowUpRight />
             </a>
-            <a className="email-contact" href={CONTACTS.emailUrl}>
+            <a
+              className="email-contact"
+              href={CONTACTS.emailUrl}
+              aria-label="Написать по электронной почте"
+            >
               <span><Mail /></span>
-              <strong {...contentProps("contacts.email")}>{CONTACTS.email}</strong>
-              <ArrowUpRight />
             </a>
           </nav>
         </div>

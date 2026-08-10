@@ -75,6 +75,7 @@ test("mobile layout has no horizontal overflow", async ({ page }) => {
 test("mobile demo stays pinned and advances through one animated frame", async ({
   page,
 }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/#demo");
 
@@ -120,6 +121,13 @@ test("mobile demo stays pinned and advances through one animated frame", async (
       ),
     )
     .toBe(true);
+  await expect
+    .poll(() =>
+      reviewChat.evaluate(
+        (element) => getComputedStyle(element).overscrollBehaviorY,
+      ),
+    )
+    .toBe("auto");
 });
 
 test("reduced motion keeps the demonstration readable", async ({ page }) => {

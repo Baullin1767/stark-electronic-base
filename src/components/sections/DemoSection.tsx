@@ -83,10 +83,7 @@ function syncReviewChat(
       ? Math.max(scrollArea.scrollTop, targetScroll)
       : Math.min(scrollArea.scrollTop, targetScroll);
 
-  const hint = frame?.querySelector<HTMLElement>(".chat-scroll-hint");
-  if (hint) {
-    hint.style.opacity = scrollArea.scrollTop >= maxScroll - 1 ? "0" : "1";
-  }
+  syncReviewScrollHint(frame);
 
   return scrollArea.scrollTop >= maxScroll - 1;
 }
@@ -103,6 +100,20 @@ function isReviewChatAtEnd(frame: HTMLElement | null) {
     scrollArea.scrollTop >=
     scrollArea.scrollHeight - scrollArea.clientHeight - 1
   );
+}
+
+function syncReviewScrollHint(frame: HTMLElement | null) {
+  const scrollArea = frame?.querySelector<HTMLElement>(
+    ".review-chat-scroll",
+  );
+  const hint = frame?.querySelector<HTMLElement>(".chat-scroll-hint");
+
+  if (!scrollArea || !hint) {
+    return;
+  }
+
+  const maxScroll = scrollArea.scrollHeight - scrollArea.clientHeight;
+  hint.style.opacity = scrollArea.scrollTop >= maxScroll - 1 ? "0" : "1";
 }
 
 function syncScrollDrivenMotion(
@@ -791,6 +802,16 @@ export function DemoSection() {
       return;
     }
 
+    const scrollArea = frameRef.current.querySelector<HTMLElement>(
+      ".review-chat-scroll",
+    );
+    const handleReviewScroll = () => syncReviewScrollHint(frameRef.current);
+
+    scrollArea?.addEventListener("scroll", handleReviewScroll, {
+      passive: true,
+    });
+    handleReviewScroll();
+
     if (DEMO_STEPS[activeIndex].id === "summary-preview") {
       syncReviewChat(
         frameRef.current,
@@ -809,7 +830,8 @@ export function DemoSection() {
         y: 0,
         scale: 1,
       });
-      return;
+      return () =>
+        scrollArea?.removeEventListener("scroll", handleReviewScroll);
     }
 
     syncScrollDrivenMotion(
@@ -818,6 +840,9 @@ export function DemoSection() {
       demoProgressRef.current,
       activeIndex,
     );
+
+    return () =>
+      scrollArea?.removeEventListener("scroll", handleReviewScroll);
   }, [activeIndex]);
 
   return (

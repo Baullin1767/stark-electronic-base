@@ -4,6 +4,7 @@ import {
   ArrowRight,
   Check,
   DatabaseBackup,
+  Plus,
 } from "lucide-react";
 import { PRICING, PRICING_ADD_ONS } from "@/lib/constants";
 import { trackEvent } from "@/lib/analytics";
@@ -42,12 +43,22 @@ export function PricingSection() {
               <p className="plan-description" {...contentProps(plan.descriptionKey)}>{plan.description}</p>
             )}
             <ul>
-              {plan.features.map((feature) => (
-                <li key={feature.value} {...contentProps(feature.key)}>
-                  <Check size={16} />
-                  {feature.value}
-                </li>
-              ))}
+              {plan.features.map((feature) => {
+                const isAdditionalCustomFeature =
+                  feature.key === "pricing.plan.custom.feature_5" ||
+                  feature.key === "pricing.plan.custom.feature_6";
+
+                return (
+                  <li key={feature.value} {...contentProps(feature.key)}>
+                    {isAdditionalCustomFeature ? (
+                      <Plus size={16} />
+                    ) : (
+                      <Check size={16} />
+                    )}
+                    {feature.value}
+                  </li>
+                );
+              })}
             </ul>
             {plan.notes.length > 0 && (
               <div className="plan-notes">
@@ -109,6 +120,10 @@ export function PricingSection() {
         </div>
       </div>
       <p className="currency-note" {...contentProps("pricing.currency_note")}>{text("pricing.currency_note")}</p>
+      <div className="connection-note">
+        <span {...contentProps("benefits.connection_time")}>{text("benefits.connection_time")}</span>
+        <p {...contentProps("benefits.connection_note")}>{text("benefits.connection_note")}</p>
+      </div>
     </section>
   );
 }

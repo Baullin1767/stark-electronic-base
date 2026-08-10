@@ -342,7 +342,6 @@ img {
   border-radius: 28px;
   background: rgba(255, 255, 255, 0.93);
   box-shadow: var(--shadow);
-  transform: rotate(-1.5deg);
   backdrop-filter: blur(18px);
 }
 
@@ -724,6 +723,7 @@ img {
 }
 
 .story-flow article.accent {
+  margin-bottom: 18px;
   border-color: var(--lime);
   background: var(--lime);
   color: var(--green-dark);
@@ -1593,7 +1593,11 @@ img {
 }
 
 .benefits-grid article {
-  min-height: 220px;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 20px;
+  align-items: center;
+  min-height: 150px;
   padding: 27px;
   border: 1px solid var(--line);
   border-radius: 22px;
@@ -1620,10 +1624,20 @@ img {
   color: var(--green);
 }
 
+.benefits-grid article > span svg {
+  width: 24px;
+  height: 24px;
+}
+
+.benefit-copy {
+  min-width: 0;
+}
+
 .benefits-grid h3 {
-  margin: 28px 0 0;
+  margin: 0;
   font-family: var(--font-display);
   font-size: 18px;
+  line-height: 1.35;
   letter-spacing: -0.025em;
 }
 
@@ -1978,6 +1992,8 @@ img {
 
 .contact-list .email-contact {
   grid-column: 1 / -1;
+  grid-template-columns: auto;
+  justify-content: center;
 }
 
 .contact-list a > span {
@@ -2461,12 +2477,12 @@ img {
   }
 
   .benefits-grid article {
-    min-height: 190px;
+    min-height: 140px;
     padding: 22px;
   }
 
   .benefits-grid h3 {
-    margin-top: 20px;
+    margin-top: 0;
   }
 
   .connection-note {
@@ -3060,7 +3076,7 @@ img {
     min-height: 0;
     flex: 1 1 0;
     overflow-y: auto;
-    overscroll-behavior: contain;
+    overscroll-behavior-y: auto;
     scrollbar-gutter: stable;
     touch-action: pan-y;
     -webkit-overflow-scrolling: touch;
