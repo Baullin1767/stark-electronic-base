@@ -417,7 +417,6 @@ img {
 .testimonial-item footer strong { font-size: 10px; }
 .testimonial-item footer small { color: #71837e; font-size: 8px; }
 .testimonial-featured footer small { color: rgba(255, 255, 255, 0.58); }
-.testimonial-compact > p { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
 
 .user-message {
   display: flex;
@@ -723,7 +722,7 @@ img {
 }
 
 .story-flow article.accent {
-  margin-bottom: 18px;
+  margin-bottom: 60px;
   border-color: var(--lime);
   background: var(--lime);
   color: var(--green-dark);

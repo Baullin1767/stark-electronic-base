@@ -164,22 +164,9 @@ function syncScrollDrivenMotion(
 
   const localProgress = Math.max(0, Math.min(1, stepPosition - stepIndex));
   const isFirstFrameAtStart = stepIndex === 0 && stepPosition < 0.01;
-  const isLastFrame = stepIndex === DEMO_STEPS.length - 1;
-  const frameExitStart =
-    stepIndex === reviewStepIndex ? 0.9 : 0.74;
   const frameEnter = isFirstFrameAtStart
     ? 1
     : Math.max(0, Math.min(1, localProgress / 0.24));
-  const frameExit = isLastFrame
-    ? 0
-    : Math.max(
-        0,
-        Math.min(
-          1,
-          (localProgress - frameExitStart) / (1 - frameExitStart),
-        ),
-      );
-  const frameVisibility = Math.min(frameEnter, 1 - frameExit);
   const copyItems = [...copy.querySelectorAll<HTMLElement>("[data-demo-copy]")];
 
   copyItems.forEach((item, itemIndex) => {
@@ -189,18 +176,17 @@ function syncScrollDrivenMotion(
           0,
           Math.min(1, (localProgress - itemIndex * 0.025) / 0.22),
         );
-    const visibility = Math.min(itemEnter, 1 - frameExit);
 
     gsap.set(item, {
-      autoAlpha: 0.12 + visibility * 0.88,
-      y: (1 - itemEnter) * 18 - frameExit * 14,
+      autoAlpha: 0.12 + itemEnter * 0.88,
+      y: (1 - itemEnter) * 18,
     });
   });
 
   gsap.set(frame, {
-    autoAlpha: 0.12 + frameVisibility * 0.88,
-    scale: 0.975 + frameVisibility * 0.025,
-    y: (1 - frameEnter) * 26 - frameExit * 20,
+    autoAlpha: 0.12 + frameEnter * 0.88,
+    scale: 0.975 + frameEnter * 0.025,
+    y: (1 - frameEnter) * 26,
   });
 }
 
