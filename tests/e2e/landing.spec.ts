@@ -130,6 +130,64 @@ test("mobile demo stays pinned and advances through one animated frame", async (
     .toBe("auto");
 });
 
+test("one mobile swipe advances the demo by only one step", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/#demo");
+  await page.locator(".pin-spacer").waitFor();
+
+  const counter = page.locator(".desktop-demo .demo-copy > small");
+  await page.evaluate(() => {
+    const demo = document.querySelector<HTMLElement>("#demo");
+    window.scrollTo({ top: demo?.offsetTop ?? 0, behavior: "instant" });
+  });
+  await expect(counter).toHaveText("01 / 09");
+
+  const dispatchTouch = async (
+    type: "touchstart" | "touchmove" | "touchend",
+    clientY: number,
+  ) => {
+    await page.evaluate(
+      ({ eventType, y }) => {
+        const target = document.querySelector<HTMLElement>(".demo-stage");
+        if (!target) return;
+
+        const touch = new Touch({
+          identifier: 1,
+          target,
+          clientX: 195,
+          clientY: y,
+          pageX: 195,
+          pageY: y + window.scrollY,
+        });
+        target.dispatchEvent(
+          new TouchEvent(eventType, {
+            bubbles: true,
+            cancelable: true,
+            touches: eventType === "touchend" ? [] : [touch],
+            targetTouches: eventType === "touchend" ? [] : [touch],
+            changedTouches: [touch],
+          }),
+        );
+      },
+      { eventType: type, y: clientY },
+    );
+  };
+
+  await dispatchTouch("touchstart", 700);
+  await dispatchTouch("touchmove", 500);
+  await expect(counter).toHaveText("02 / 09");
+
+  await dispatchTouch("touchmove", 100);
+  await expect(counter).toHaveText("02 / 09");
+  await dispatchTouch("touchend", 100);
+
+  await dispatchTouch("touchstart", 700);
+  await dispatchTouch("touchmove", 400);
+  await expect(counter).toHaveText("03 / 09");
+  await dispatchTouch("touchend", 400);
+});
+
 test("reduced motion keeps the demonstration readable", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/#demo");

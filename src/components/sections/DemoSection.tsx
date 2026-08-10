@@ -59,6 +59,42 @@ function getStepPosition(progress: number) {
   return weightedPosition - (reviewScrollWeight - 1);
 }
 
+function getProgressForStepPosition(stepPosition: number) {
+  const clampedPosition = Math.max(
+    0,
+    Math.min(DEMO_STEPS.length, stepPosition),
+  );
+
+  if (clampedPosition <= reviewStepIndex) {
+    return clampedPosition / demoScrollUnits;
+  }
+
+  if (clampedPosition < reviewStepIndex + 1) {
+    return (
+      reviewStepIndex +
+      (clampedPosition - reviewStepIndex) * reviewScrollWeight
+    ) / demoScrollUnits;
+  }
+
+  return (
+    clampedPosition + reviewScrollWeight - 1
+  ) / demoScrollUnits;
+}
+
+function canScrollReviewChat(target: EventTarget | null, direction: number) {
+  const element = target instanceof Element ? target : null;
+  const scrollArea = element?.closest<HTMLElement>(".review-chat-scroll");
+
+  if (!scrollArea) {
+    return false;
+  }
+
+  const maxScroll = scrollArea.scrollHeight - scrollArea.clientHeight;
+  return direction > 0
+    ? scrollArea.scrollTop < maxScroll - 1
+    : scrollArea.scrollTop > 1;
+}
+
 function syncReviewChat(
   frame: HTMLElement | null,
   stepPosition: number,
@@ -701,8 +737,9 @@ export function DemoSection() {
       return;
     }
 
+    let demoTrigger: ReturnType<typeof ScrollTrigger.create> | null = null;
     const context = gsap.context(() => {
-      ScrollTrigger.create({
+      demoTrigger = ScrollTrigger.create({
         trigger: rootRef.current,
         start: "top top",
         end: () => {
@@ -792,7 +829,140 @@ export function DemoSection() {
       });
     }, rootRef);
 
-    return () => context.revert();
+    const mobileViewport = window.matchMedia("(max-width: 720px)");
+    const swipeThreshold = 24;
+    const stepActivationOffset = 0.01;
+    let touchStartX: number | null = null;
+    let touchStartY: number | null = null;
+    let touchStepIndex: number | null = null;
+    let stepLocked = false;
+
+    const resetTouch = () => {
+      touchStartX = null;
+      touchStartY = null;
+      touchStepIndex = null;
+      stepLocked = false;
+    };
+
+    const handleTouchStart = (event: TouchEvent) => {
+      if (!mobileViewport.matches || event.touches.length !== 1) {
+        resetTouch();
+        return;
+      }
+
+      const touch = event.touches[0];
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+      touchStepIndex = null;
+      stepLocked = false;
+
+      if (
+        demoTrigger &&
+        window.scrollY >= demoTrigger.start - 1 &&
+        window.scrollY <= demoTrigger.end + 1
+      ) {
+        touchStepIndex = activeIndexRef.current;
+      }
+    };
+
+    const handleTouchMove = (event: TouchEvent) => {
+      if (
+        !mobileViewport.matches ||
+        !demoTrigger ||
+        touchStartX === null ||
+        touchStartY === null ||
+        event.touches.length !== 1
+      ) {
+        return;
+      }
+
+      const currentScroll = window.scrollY;
+      const isInsideDemo =
+        currentScroll >= demoTrigger.start - 1 &&
+        currentScroll <= demoTrigger.end + 1;
+
+      if (!isInsideDemo) {
+        return;
+      }
+
+      if (stepLocked) {
+        if (event.cancelable) {
+          event.preventDefault();
+        }
+        return;
+      }
+
+      const touch = event.touches[0];
+      const deltaX = touchStartX - touch.clientX;
+      const deltaY = touchStartY - touch.clientY;
+
+      if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        return;
+      }
+
+      const direction = deltaY >= 0 ? 1 : -1;
+
+      if (canScrollReviewChat(event.target, direction)) {
+        return;
+      }
+
+      const isLeavingBeforeFirstStep =
+        direction < 0 && currentScroll <= demoTrigger.start + 1;
+      const isLeavingAfterLastStep =
+        direction > 0 && currentScroll >= demoTrigger.end - 1;
+
+      if (isLeavingBeforeFirstStep || isLeavingAfterLastStep) {
+        return;
+      }
+
+      if (event.cancelable) {
+        event.preventDefault();
+      }
+
+      if (Math.abs(deltaY) < swipeThreshold) {
+        return;
+      }
+
+      touchStepIndex ??= activeIndexRef.current;
+      const targetStep = Math.max(
+        0,
+        Math.min(DEMO_STEPS.length, touchStepIndex + direction),
+      );
+      const targetPosition =
+        targetStep > 0 && targetStep < DEMO_STEPS.length
+          ? targetStep + stepActivationOffset
+          : targetStep;
+      const targetProgress = getProgressForStepPosition(targetPosition);
+      const targetScroll =
+        demoTrigger.start +
+        (demoTrigger.end - demoTrigger.start) * targetProgress;
+
+      stepLocked = true;
+      window.scrollTo({
+        top: targetScroll,
+        left: window.scrollX,
+        behavior: "smooth",
+      });
+    };
+
+    window.addEventListener("touchstart", handleTouchStart, {
+      passive: true,
+      capture: true,
+    });
+    window.addEventListener("touchmove", handleTouchMove, {
+      passive: false,
+      capture: true,
+    });
+    window.addEventListener("touchend", resetTouch, { passive: true });
+    window.addEventListener("touchcancel", resetTouch, { passive: true });
+
+    return () => {
+      window.removeEventListener("touchstart", handleTouchStart, true);
+      window.removeEventListener("touchmove", handleTouchMove, true);
+      window.removeEventListener("touchend", resetTouch);
+      window.removeEventListener("touchcancel", resetTouch);
+      context.revert();
+    };
   }, []);
 
   const activeStep = DEMO_STEPS[activeIndex];

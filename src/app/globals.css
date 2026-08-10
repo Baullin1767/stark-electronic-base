@@ -1797,6 +1797,7 @@ img {
 }
 
 .price-card li svg {
+  flex: 0 0 auto;
   padding: 3px;
   box-sizing: content-box;
   border-radius: 50%;
@@ -1964,14 +1965,13 @@ img {
 
 .contact-list {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 9px;
 }
 
 .contact-list a {
   display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 13px;
+  place-items: center;
   align-items: center;
   min-height: 62px;
   padding: 10px;
@@ -1991,9 +1991,7 @@ img {
 }
 
 .contact-list .email-contact {
-  grid-column: 1 / -1;
-  grid-template-columns: auto;
-  justify-content: center;
+  place-items: center;
 }
 
 .contact-list a > span {
@@ -2013,22 +2011,6 @@ img {
 
 .contact-list a > span .messenger-icon {
   fill: currentColor;
-}
-
-.contact-list strong {
-  display: block;
-}
-
-.contact-list strong {
-  min-width: 0;
-  overflow: hidden;
-  font-size: 12px;
-  text-overflow: ellipsis;
-}
-
-.contact-list a > svg {
-  width: 16px;
-  color: rgba(255, 255, 255, 0.35);
 }
 
 .contact-form {
@@ -2778,11 +2760,7 @@ img {
 
 @media (max-width: 720px) {
   .contact-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .contact-list a:first-child {
-    grid-column: 1 / -1;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .section-shell,

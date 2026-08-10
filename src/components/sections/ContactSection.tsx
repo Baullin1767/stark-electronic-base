@@ -1,12 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  ArrowUpRight,
-  Check,
-  Mail,
-  Send,
-} from "lucide-react";
+import { Check, Mail, Send } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { CONTACTS } from "@/lib/constants";
@@ -339,8 +334,6 @@ export function ContactSection() {
               onClick={() => trackEvent("telegram_click")}
             >
               <span><MessengerIcon name="telegram" /></span>
-              <strong>Telegram</strong>
-              <ArrowUpRight />
             </a>
             <a
               href={CONTACTS.whatsappUrl}
@@ -350,8 +343,6 @@ export function ContactSection() {
               onClick={() => trackEvent("whatsapp_click")}
             >
               <span><MessengerIcon name="whatsapp" /></span>
-              <strong>WhatsApp</strong>
-              <ArrowUpRight />
             </a>
             <a
               href={CONTACTS.viberUrl}
@@ -359,8 +350,6 @@ export function ContactSection() {
               onClick={() => trackEvent("viber_click")}
             >
               <span><MessengerIcon name="viber" /></span>
-              <strong>Viber</strong>
-              <ArrowUpRight />
             </a>
             <a
               className="email-contact"
