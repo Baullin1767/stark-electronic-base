@@ -712,7 +712,7 @@ img {
 
 .story-flow article {
   display: flex;
-  width: min(100%, 390px);
+  width: min(calc(100% - 28px), 390px);
   gap: 15px;
   align-items: center;
   padding: 16px 20px;
@@ -722,7 +722,6 @@ img {
 }
 
 .story-flow article.accent {
-  margin-bottom: 60px;
   border-color: var(--lime);
   background: var(--lime);
   color: var(--green-dark);
@@ -768,6 +767,64 @@ img {
 .story-arrow {
   color: var(--lime);
   transform: rotate(90deg);
+}
+
+.story-step {
+  display: grid;
+  width: 100%;
+  gap: 14px;
+  place-items: center;
+}
+
+.story-branches {
+  position: relative;
+  display: grid;
+  width: min(100%, 418px);
+  gap: 60px;
+}
+
+.story-branches > article,
+.story-outcome {
+  margin-inline: auto;
+}
+
+.story-branch-line {
+  position: absolute;
+  top: 39px;
+  right: 0;
+  bottom: 39px;
+  width: 14px;
+  border-top: 2px solid var(--lime);
+  border-right: 2px solid var(--lime);
+  border-radius: 0 10px 0 0;
+  pointer-events: none;
+}
+
+.story-outcomes {
+  display: grid;
+  gap: 14px;
+}
+
+.story-outcome {
+  position: relative;
+  width: min(calc(100% - 28px), 390px);
+}
+
+.story-outcome article {
+  width: 100%;
+}
+
+.story-branch-arrow {
+  position: absolute;
+  top: 50%;
+  right: -17px;
+  z-index: 1;
+  width: 21px;
+  height: 21px;
+  color: var(--lime);
+  stroke-width: 1.8;
+  transform: translateY(-50%);
+  pointer-events: none;
 }
 
 .demo-section {

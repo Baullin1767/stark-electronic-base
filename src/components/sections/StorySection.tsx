@@ -1,5 +1,5 @@
-import { Fragment } from "react";
 import {
+  ArrowLeft,
   ArrowRight,
   BadgeDollarSign,
   Gauge,
@@ -28,21 +28,43 @@ export function StorySection() {
           <p {...contentProps("story.paragraph_2")}>{text("story.paragraph_2")}</p>
         </div>
         <div className="story-flow" aria-label="Главные принципы решения">
-          {storyMeanings.map(({ key, icon: Icon }, index) => (
-            <Fragment key={key}>
-              <article className={index === 1 ? "accent" : undefined}>
-                <span>
-                  <Icon aria-hidden="true" />
-                </span>
-                <div>
-                  {index < 2 && <small>0{index + 1}</small>}
-                  <strong {...contentProps(key)}>{text(key)}</strong>
-                </div>
-              </article>
-              {index === 0 && (
+          {storyMeanings.slice(0, 2).map(({ key, icon: Icon }, index) => (
+            index === 0 ? (
+              <div className="story-step" key={key}>
+                <article>
+                  <span><Icon aria-hidden="true" /></span>
+                  <div>
+                    <small>01</small>
+                    <strong {...contentProps(key)}>{text(key)}</strong>
+                  </div>
+                </article>
                 <ArrowRight className="story-arrow" aria-hidden="true" />
-              )}
-            </Fragment>
+              </div>
+            ) : (
+              <div className="story-branches" key={key}>
+                <article className="accent">
+                  <span><Icon aria-hidden="true" /></span>
+                  <div>
+                    <small>02</small>
+                    <strong {...contentProps(key)}>{text(key)}</strong>
+                  </div>
+                </article>
+                <span className="story-branch-line" aria-hidden="true" />
+                <div className="story-outcomes">
+                  {storyMeanings.slice(2).map(({ key: outcomeKey, icon: OutcomeIcon }) => (
+                    <div className="story-outcome" key={outcomeKey}>
+                      <article>
+                        <span><OutcomeIcon aria-hidden="true" /></span>
+                        <div>
+                          <strong {...contentProps(outcomeKey)}>{text(outcomeKey)}</strong>
+                        </div>
+                      </article>
+                      <ArrowLeft className="story-branch-arrow" aria-hidden="true" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
           ))}
         </div>
       </div>
