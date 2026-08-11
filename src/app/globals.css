@@ -1861,6 +1861,13 @@ img {
   color: var(--green);
 }
 
+.price-card li.bonus-feature svg {
+  background: var(--lime);
+  color: var(--green-dark);
+  stroke-width: 2.5;
+  box-shadow: 0 0 0 2px rgba(217, 248, 115, 0.35);
+}
+
 .price-card .button {
   width: 100%;
   margin-top: auto;
@@ -3023,7 +3030,8 @@ img {
   .demo-copy h3 {
     margin-top: 3px;
     font-size: clamp(24px, 7.2vw, 32px);
-    line-height: 1.02;
+    line-height: 1.3;
+    text-align: center;
   }
 
   .demo-copy > p {

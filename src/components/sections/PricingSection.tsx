@@ -44,13 +44,18 @@ export function PricingSection() {
             )}
             <ul>
               {plan.features.map((feature) => {
-                const isAdditionalCustomFeature =
+                const isBonusFeature =
                   feature.key === "pricing.plan.custom.feature_5" ||
-                  feature.key === "pricing.plan.custom.feature_6";
+                  feature.key === "pricing.plan.custom.feature_6" ||
+                  feature.key === "pricing.plan.custom.feature_7";
 
                 return (
-                  <li key={feature.value} {...contentProps(feature.key)}>
-                    {isAdditionalCustomFeature ? (
+                  <li
+                    className={isBonusFeature ? "bonus-feature" : undefined}
+                    key={feature.value}
+                    {...contentProps(feature.key)}
+                  >
+                    {isBonusFeature ? (
                       <Plus size={16} />
                     ) : (
                       <Check size={16} />
