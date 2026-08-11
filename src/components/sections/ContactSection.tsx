@@ -325,40 +325,43 @@ export function ContactSection() {
           </div>
           </form>
 
-          <nav className="contact-list" aria-label="Контакты">
-            <a
-              href={CONTACTS.telegramUrl}
-              target="_blank"
-              rel="noreferrer"
-              aria-label={`Telegram: ${CONTACTS.telegram}`}
-              onClick={() => trackEvent("telegram_click")}
-            >
-              <span><MessengerIcon name="telegram" /></span>
-            </a>
-            <a
-              href={CONTACTS.whatsappUrl}
-              target="_blank"
-              rel="noreferrer"
-              aria-label={`WhatsApp: ${CONTACTS.phone}`}
-              onClick={() => trackEvent("whatsapp_click")}
-            >
-              <span><MessengerIcon name="whatsapp" /></span>
-            </a>
-            <a
-              href={CONTACTS.viberUrl}
-              aria-label={`Viber: ${CONTACTS.phone}`}
-              onClick={() => trackEvent("viber_click")}
-            >
-              <span><MessengerIcon name="viber" /></span>
-            </a>
-            <a
-              className="email-contact"
-              href={CONTACTS.emailUrl}
-              aria-label="Написать по электронной почте"
-            >
-              <span><Mail /></span>
-            </a>
-          </nav>
+          <div className="contact-links">
+            <p className="contact-links-title">{"\u0421\u0432\u044f\u0437\u0430\u0442\u044c\u0441\u044f"}</p>
+            <nav className="contact-list" aria-label="Контакты">
+              <a
+                href={CONTACTS.telegramUrl}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={`Telegram: ${CONTACTS.telegram}`}
+                onClick={() => trackEvent("telegram_click")}
+              >
+                <span><MessengerIcon name="telegram" /></span>
+              </a>
+              <a
+                href={CONTACTS.whatsappUrl}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={`WhatsApp: ${CONTACTS.phone}`}
+                onClick={() => trackEvent("whatsapp_click")}
+              >
+                <span><MessengerIcon name="whatsapp" /></span>
+              </a>
+              <a
+                href={CONTACTS.viberUrl}
+                aria-label={`Viber: ${CONTACTS.phone}`}
+                onClick={() => trackEvent("viber_click")}
+              >
+                <span><MessengerIcon name="viber" /></span>
+              </a>
+              <a
+                className="email-contact"
+                href={CONTACTS.emailUrl}
+                aria-label="Написать по электронной почте"
+              >
+                <span><Mail /></span>
+              </a>
+            </nav>
+          </div>
         </div>
       </div>
     </section>

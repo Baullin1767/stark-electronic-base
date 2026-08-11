@@ -1,4 +1,4 @@
-import { ArrowDown, Check, Star } from "lucide-react";
+import { ArrowDown, Star } from "lucide-react";
 import { contentProps, text } from "@/lib/content";
 
 export function HeroSection() {
@@ -14,17 +14,13 @@ export function HeroSection() {
         </h1>
         <p className="hero-lead" {...contentProps("hero.lead")}>{text("hero.lead")}</p>
         <div className="hero-actions">
-          <a className="button button-primary" href="#demo" {...contentProps("hero.primary_cta")}>
-            {text("hero.primary_cta")}<ArrowDown size={18} aria-hidden="true" />
-          </a>
-          <a className="button button-secondary" href="#contact" {...contentProps("hero.secondary_cta")}>
+          <a className="button button-primary" href="#contact" {...contentProps("hero.secondary_cta")}>
             {text("hero.secondary_cta")}
           </a>
+          <a className="button button-secondary" href="#demo" {...contentProps("hero.primary_cta")}>
+            {text("hero.primary_cta")}<ArrowDown size={18} aria-hidden="true" />
+          </a>
         </div>
-        <ul className="hero-trust" aria-label={text("hero.trust_aria")}>
-          <li {...contentProps("hero.trust_control")}><Check size={15} /> {text("hero.trust_control")}</li>
-          <li {...contentProps("hero.trust_profession")}><Check size={15} /> {text("hero.trust_profession")}</li>
-        </ul>
       </div>
 
       <div className="hero-visual" aria-label={text("hero.visual_aria")}>
