@@ -107,7 +107,7 @@ function plan(
 export const PRICING = [
   plan("initial", true, 5),
   plan("custom", false, 7),
-  plan("online", false, 7, 1),
+  plan("online", false, 3, 1),
 ];
 
 function addOn<
