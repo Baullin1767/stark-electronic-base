@@ -37,6 +37,7 @@ const reviewStepIndex = DEMO_STEPS.findIndex(
   ({ id }) => id === "summary-preview",
 );
 const reviewScrollWeight = 1.75;
+const stepSettledProgress = 0.28;
 const demoScrollUnits =
   DEMO_STEPS.length + reviewScrollWeight - 1;
 
@@ -112,7 +113,15 @@ function syncReviewChat(
     0,
     Math.min(1, stepPosition - reviewStepIndex),
   );
-  const targetScroll = maxScroll * Math.min(1, localProgress / 0.85);
+  const reviewScrollProgress = Math.max(
+    0,
+    Math.min(
+      1,
+      (localProgress - stepSettledProgress) /
+        (0.85 - stepSettledProgress),
+    ),
+  );
+  const targetScroll = maxScroll * reviewScrollProgress;
 
   scrollArea.scrollTop =
     direction >= 0
@@ -817,7 +826,6 @@ export function DemoSection() {
 
     const mobileViewport = window.matchMedia("(max-width: 720px)");
     const swipeThreshold = 24;
-    const stepActivationOffset = 0.01;
     let touchStartX: number | null = null;
     let touchStartY: number | null = null;
     let touchStepIndex: number | null = null;
@@ -916,7 +924,7 @@ export function DemoSection() {
       );
       const targetPosition =
         targetStep > 0 && targetStep < DEMO_STEPS.length
-          ? targetStep + stepActivationOffset
+          ? targetStep + stepSettledProgress
           : targetStep;
       const targetProgress = getProgressForStepPosition(targetPosition);
       const targetScroll =

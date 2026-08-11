@@ -177,6 +177,14 @@ test("one mobile swipe advances the demo by only one step", async ({ page }) => 
   await dispatchTouch("touchstart", 700);
   await dispatchTouch("touchmove", 500);
   await expect(counter).toHaveText("02 / 09");
+  await expect(page.locator(".desktop-demo .demo-frame")).toHaveCSS(
+    "opacity",
+    "1",
+  );
+  await expect(page.locator(".desktop-demo .demo-copy h3")).toHaveCSS(
+    "opacity",
+    "1",
+  );
 
   await dispatchTouch("touchmove", 100);
   await expect(counter).toHaveText("02 / 09");
