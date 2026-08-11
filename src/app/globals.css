@@ -2065,14 +2065,12 @@ img {
   width: 41px;
   height: 41px;
   place-items: center;
-  border-radius: 12px;
-  background: rgba(217, 248, 115, 0.12);
   color: var(--lime);
 }
 
 .contact-list a > span svg {
-  width: 19px;
-  height: 19px;
+  width: 41px;
+  height: 41px;
 }
 
 .contact-list a > span .messenger-icon {
@@ -3018,7 +3016,9 @@ img {
   }
 
   .demo-copy > span {
+    display: block;
     font-size: 8px;
+    text-align: center;
   }
 
   .demo-copy h3 {
