@@ -86,6 +86,10 @@ export function PricingSection() {
           </article>
         ))}
       </div>
+      <div className="connection-note">
+        <span {...contentProps("benefits.connection_time")}>{text("benefits.connection_time")}</span>
+        <p {...contentProps("benefits.connection_note")}>{text("benefits.connection_note")}</p>
+      </div>
       <div className="pricing-add-ons">
         <div className="add-ons-heading">
           <p {...contentProps("pricing.addons_title")}>{text("pricing.addons_title")}</p>
@@ -125,10 +129,6 @@ export function PricingSection() {
         </div>
       </div>
       <p className="currency-note" {...contentProps("pricing.currency_note")}>{text("pricing.currency_note")}</p>
-      <div className="connection-note">
-        <span {...contentProps("benefits.connection_time")}>{text("benefits.connection_time")}</span>
-        <p {...contentProps("benefits.connection_note")}>{text("benefits.connection_note")}</p>
-      </div>
     </section>
   );
 }
