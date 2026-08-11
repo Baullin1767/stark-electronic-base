@@ -338,7 +338,10 @@ export const SITE_CONTENT = {
   "story.meaning_speed": "Удобство и скорость",
   "story.meaning_safety": "Простота и безопасность",
   "hero.review_3_role": "стоматолог",
-  "pricing.plan.custom.feature_7": "2 недели поддержки"
+  "pricing.plan.custom.feature_7": "2 недели поддержки",
+  "hero.review_4_text": "Я вообще не люблю CRM и сложные программы. Здесь просто пишу или говорю обычным языком — система сама сохраняет информацию куда нужно.",
+  "hero.review_4_name": "Алина",
+  "hero.review_4_role": "ветеринар"
 } as const;
 
 export type ContentKey = keyof typeof SITE_CONTENT;

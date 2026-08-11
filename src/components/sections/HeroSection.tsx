@@ -58,6 +58,13 @@ export function HeroSection() {
                 <div><strong {...contentProps("hero.review_3_name")}>{text("hero.review_3_name")}</strong><small {...contentProps("hero.review_3_role")}>{text("hero.review_3_role")}</small></div>
               </footer>
             </article>
+            <article className="testimonial-item testimonial-compact">
+              <p {...contentProps("hero.review_4_text")}>{text("hero.review_4_text")}</p>
+              <footer>
+                <span className="testimonial-avatar">А</span>
+                <div><strong {...contentProps("hero.review_4_name")}>{text("hero.review_4_name")}</strong><small {...contentProps("hero.review_4_role")}>{text("hero.review_4_role")}</small></div>
+              </footer>
+            </article>
           </div>
         </div>
       </div>

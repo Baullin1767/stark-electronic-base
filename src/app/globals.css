@@ -2815,8 +2815,9 @@ img {
 
   .assistant-card {
     top: 13%;
-    left: 0;
+    left: 50%;
     width: 92%;
+    transform: translateX(-50%);
   }
 
   .note-one {
