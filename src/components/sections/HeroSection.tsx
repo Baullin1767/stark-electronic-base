@@ -1,6 +1,16 @@
 import { ArrowDown, Star } from "lucide-react";
 import { contentProps, text } from "@/lib/content";
 
+function TestimonialStars() {
+  return (
+    <div className="testimonial-stars" aria-hidden="true">
+      {Array.from({ length: 5 }, (_, index) => (
+        <Star key={index} size={12} fill="currentColor" />
+      ))}
+    </div>
+  );
+}
+
 export function HeroSection() {
   return (
     <section className="hero section-shell" id="top">
@@ -14,7 +24,7 @@ export function HeroSection() {
         </h1>
         <p className="hero-lead" {...contentProps("hero.lead")}>{text("hero.lead")}</p>
         <div className="hero-actions">
-          <a className="button button-primary" href="#contact" {...contentProps("hero.secondary_cta")}>
+          <a className="button button-primary contact-cta" href="#contact" {...contentProps("hero.secondary_cta")}>
             {text("hero.secondary_cta")}
           </a>
           <a className="button button-secondary" href="#demo" {...contentProps("hero.primary_cta")}>
@@ -30,10 +40,8 @@ export function HeroSection() {
         </div>
         <div className="assistant-card testimonials-card">
           <div className="testimonial-list">
-            <article className="testimonial-item testimonial-featured">
-              <div className="testimonial-stars" aria-hidden="true">
-                {Array.from({ length: 5 }, (_, index) => <Star key={index} size={12} fill="currentColor" />)}
-              </div>
+            <article className="testimonial-item">
+              <TestimonialStars />
               <p {...contentProps("hero.summary")}>{text("hero.summary")}</p>
               <footer>
                 <span className="testimonial-avatar">А</span>
@@ -41,6 +49,7 @@ export function HeroSection() {
               </footer>
             </article>
             <article className="testimonial-item">
+              <TestimonialStars />
               <p {...contentProps("hero.followup")}>{text("hero.followup")}</p>
               <footer>
                 <span className="testimonial-avatar">М</span>
@@ -48,6 +57,7 @@ export function HeroSection() {
               </footer>
             </article>
             <article className="testimonial-item testimonial-compact">
+              <TestimonialStars />
               <p {...contentProps("hero.review_3_text")}>{text("hero.review_3_text")}</p>
               <footer>
                 <span className="testimonial-avatar">Е</span>
@@ -55,6 +65,7 @@ export function HeroSection() {
               </footer>
             </article>
             <article className="testimonial-item testimonial-compact">
+              <TestimonialStars />
               <p {...contentProps("hero.review_4_text")}>{text("hero.review_4_text")}</p>
               <footer>
                 <span className="testimonial-avatar">А</span>

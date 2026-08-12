@@ -75,7 +75,7 @@ export function PricingSection() {
               </div>
             )}
             <a
-              className={`button ${plan.featured ? "button-primary" : "button-secondary"}`}
+              className={`button contact-cta ${plan.featured ? "button-primary" : "button-secondary"}`}
               href="#contact"
               onClick={() => choosePlan(plan.name)}
               {...contentProps(plan.ctaKey)}
@@ -114,6 +114,7 @@ export function PricingSection() {
                     {addOn.priceNote && addOn.priceNoteKey && <span {...contentProps(addOn.priceNoteKey)}>{addOn.priceNote}</span>}
                   </p>
                   <a
+                    className="contact-cta"
                     href="#contact"
                     aria-label={formatText("pricing.addon_aria", { name: addOn.name })}
                     onClick={() => choosePlan(addOn.name)}

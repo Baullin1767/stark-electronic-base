@@ -283,6 +283,30 @@ img {
   border-color: var(--green);
 }
 
+.header-cta.contact-cta,
+.button.contact-cta,
+.add-on-action .contact-cta {
+  border-color: var(--lime);
+  background: var(--lime);
+  color: var(--green-dark);
+  box-shadow: 0 13px 30px rgba(217, 248, 115, 0.28);
+}
+
+.header-cta.contact-cta:hover,
+.button.contact-cta:hover,
+.add-on-action .contact-cta:hover {
+  border-color: #cce969;
+  background: #cce969;
+  color: var(--green-dark);
+}
+
+.add-on-action .contact-cta {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--lime);
+  border-radius: 12px;
+}
+
 .hero-visual {
   position: relative;
   min-height: 650px;
@@ -380,19 +404,16 @@ img {
   padding: 14px 15px;
   border: 1px solid var(--line);
   border-radius: 17px;
-  background: #fafcf9;
+  background: var(--white);
 }
 
-.testimonial-featured { background: var(--green-dark); color: var(--white); }
 .testimonial-stars { display: flex; gap: 3px; margin-bottom: 8px; color: var(--lime); }
 .testimonial-item > p { margin: 0; color: var(--ink-soft); font-size: 11px; line-height: 1.5; }
-.testimonial-featured > p { color: rgba(255, 255, 255, 0.88); }
 .testimonial-item footer { display: flex; align-items: center; gap: 8px; margin-top: 11px; }
 .testimonial-avatar { display: grid; width: 29px; height: 29px; flex: 0 0 auto; place-items: center; border-radius: 50%; background: var(--mint); color: var(--green-dark); font-size: 11px; font-weight: 800; }
 .testimonial-item footer div { display: grid; gap: 1px; }
 .testimonial-item footer strong { font-size: 10px; }
 .testimonial-item footer small { color: #71837e; font-size: 8px; }
-.testimonial-featured footer small { color: rgba(255, 255, 255, 0.58); }
 
 .user-message {
   display: flex;
@@ -783,7 +804,7 @@ img {
 
 .story-outcome {
   position: relative;
-  width: min(calc(100% - 28px), 390px);
+  width: min(calc(100% - 68px), 350px);
 }
 
 .story-outcome article {
@@ -793,10 +814,10 @@ img {
 .story-branch-arrow {
   position: absolute;
   top: 50%;
-  right: -17px;
+  right: -36px;
   z-index: 1;
-  width: 21px;
-  height: 21px;
+  width: 44px;
+  height: 22px;
   color: var(--lime);
   stroke-width: 1.8;
   transform: translateY(-50%);
@@ -2819,6 +2840,15 @@ img {
 }
 
 @media (max-width: 720px) {
+  .story-outcome {
+    width: min(calc(100% - 48px), 350px);
+  }
+
+  .story-branch-arrow {
+    right: -26px;
+    width: 34px;
+  }
+
   .contact-list {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
