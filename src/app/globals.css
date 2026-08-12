@@ -814,9 +814,9 @@ img {
 .story-branch-arrow {
   position: absolute;
   top: 50%;
-  right: -56px;
+  right: -76px;
   z-index: 1;
-  width: 64px;
+  width: 96px;
   height: 22px;
   color: var(--lime);
   stroke-width: 1.8;
@@ -2845,8 +2845,8 @@ img {
   }
 
   .story-branch-arrow {
-    right: -38px;
-    width: 46px;
+    right: -49px;
+    width: 64px;
   }
 
   .contact-list {
