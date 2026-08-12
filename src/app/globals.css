@@ -804,7 +804,7 @@ img {
 
 .story-outcome {
   position: relative;
-  width: min(calc(100% - 68px), 350px);
+  width: min(calc(100% - 108px), 310px);
 }
 
 .story-outcome article {
@@ -814,9 +814,9 @@ img {
 .story-branch-arrow {
   position: absolute;
   top: 50%;
-  right: -36px;
+  right: -56px;
   z-index: 1;
-  width: 44px;
+  width: 64px;
   height: 22px;
   color: var(--lime);
   stroke-width: 1.8;
@@ -2841,12 +2841,12 @@ img {
 
 @media (max-width: 720px) {
   .story-outcome {
-    width: min(calc(100% - 48px), 350px);
+    width: min(calc(100% - 72px), 310px);
   }
 
   .story-branch-arrow {
-    right: -26px;
-    width: 34px;
+    right: -38px;
+    width: 46px;
   }
 
   .contact-list {
