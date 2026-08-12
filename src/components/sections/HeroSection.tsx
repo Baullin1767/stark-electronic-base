@@ -35,9 +35,6 @@ export function HeroSection() {
 
       <div className="hero-visual" aria-label={text("hero.visual_aria")}>
         <div className="hero-glow" />
-        <div className="floating-note note-one" {...contentProps("hero.voice_note")}>
-          <Star size={17} fill="currentColor" />{text("hero.voice_note")}
-        </div>
         <div className="assistant-card testimonials-card">
           <div className="testimonial-list">
             <article className="testimonial-item">

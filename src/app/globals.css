@@ -345,6 +345,10 @@ img {
   backdrop-filter: blur(18px);
 }
 
+.testimonials-card {
+  top: 0;
+}
+
 .window-head {
   display: flex;
   align-items: center;
@@ -506,36 +510,6 @@ img {
   margin-top: 10px;
   padding-top: 14px;
   padding-bottom: 14px;
-}
-
-.floating-note {
-  position: absolute;
-  z-index: 4;
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 16px 38px rgba(20, 60, 53, 0.14);
-  backdrop-filter: blur(12px);
-}
-
-.floating-note {
-  padding: 10px 13px;
-  border-radius: 12px;
-  color: var(--green-dark);
-  font-size: 11px;
-  font-weight: 750;
-}
-
-.floating-note svg {
-  color: var(--green);
-}
-
-.note-one {
-  top: 5%;
-  right: 4%;
-  transform: rotate(4deg);
 }
 
 .problem {
@@ -820,7 +794,7 @@ img {
   left: calc(50% + min(calc(50% - 54px), 155px) - 1px);
   z-index: 1;
   border-top: 2px solid var(--lime);
-  transform: translateY(-50%);
+  transform: translateY(calc(-50% - 1px));
   pointer-events: none;
 }
 
@@ -2921,9 +2895,8 @@ img {
     transform: translateX(-50%);
   }
 
-  .note-one {
-    top: 1%;
-    right: 0;
+  .testimonials-card {
+    top: 0;
   }
 
   .problem,
