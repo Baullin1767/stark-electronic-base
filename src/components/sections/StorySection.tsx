@@ -1,5 +1,4 @@
 import {
-  ArrowLeft,
   ArrowRight,
   BadgeDollarSign,
   Gauge,
@@ -59,9 +58,7 @@ export function StorySection() {
                           <strong {...contentProps(outcomeKey)}>{text(outcomeKey)}</strong>
                         </div>
                       </article>
-                      <span className="story-branch-arrow" aria-hidden="true">
-                        <ArrowLeft />
-                      </span>
+                      <span className="story-branch-arrow" aria-hidden="true" />
                     </div>
                   ))}
                 </div>
