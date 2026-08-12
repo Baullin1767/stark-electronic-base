@@ -824,6 +824,10 @@ img {
   pointer-events: none;
 }
 
+.story-outcome:last-child .story-branch-arrow {
+  right: 14px;
+}
+
 .story-branch-arrow::before {
   position: absolute;
   top: -1px;
