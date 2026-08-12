@@ -804,24 +804,34 @@ img {
 
 .story-outcome {
   position: relative;
-  width: min(calc(100% - 108px), 310px);
+  width: 100%;
 }
 
 .story-outcome article {
-  width: 100%;
+  width: min(calc(100% - 108px), 310px);
+  margin-inline: auto;
 }
 
 .story-branch-arrow {
   position: absolute;
   top: 50%;
-  right: -76px;
+  right: -1px;
+  left: calc(50% + min(calc(50% - 54px), 155px) - 1px);
   z-index: 1;
-  width: 96px;
+  border-top: 2px solid var(--lime);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.story-branch-arrow svg {
+  position: absolute;
+  top: 50%;
+  left: -5px;
+  width: 22px;
   height: 22px;
   color: var(--lime);
   stroke-width: 1.8;
   transform: translateY(-50%);
-  pointer-events: none;
 }
 
 .demo-section {
@@ -2840,13 +2850,12 @@ img {
 }
 
 @media (max-width: 720px) {
-  .story-outcome {
+  .story-outcome article {
     width: min(calc(100% - 72px), 310px);
   }
 
   .story-branch-arrow {
-    right: -49px;
-    width: 64px;
+    left: calc(50% + min(calc(50% - 36px), 155px) - 1px);
   }
 
   .contact-list {

@@ -59,7 +59,9 @@ export function StorySection() {
                           <strong {...contentProps(outcomeKey)}>{text(outcomeKey)}</strong>
                         </div>
                       </article>
-                      <ArrowLeft className="story-branch-arrow" aria-hidden="true" />
+                      <span className="story-branch-arrow" aria-hidden="true">
+                        <ArrowLeft />
+                      </span>
                     </div>
                   ))}
                 </div>
