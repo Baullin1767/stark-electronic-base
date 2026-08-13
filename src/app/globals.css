@@ -763,7 +763,7 @@ img {
   position: absolute;
   top: 39px;
   right: 0;
-  bottom: 39px;
+  bottom: 40px;
   width: 14px;
   border-top: 2px solid var(--lime);
   border-right: 2px solid var(--lime);
