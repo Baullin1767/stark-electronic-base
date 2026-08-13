@@ -794,7 +794,7 @@ img {
   left: calc(50% + min(calc(50% - 54px), 155px) - 1px);
   z-index: 1;
   border-top: 2px solid var(--lime);
-  transform: translateY(calc(-50% - 1px));
+  transform: translateY(-50%);
   pointer-events: none;
 }
 
