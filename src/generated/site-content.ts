@@ -341,7 +341,9 @@ export const SITE_CONTENT = {
   "pricing.plan.custom.feature_7": "2 недели поддержки",
   "hero.review_4_text": "Я вообще не люблю CRM и сложные программы. Здесь просто пишу или говорю обычным языком — система сама сохраняет информацию туда, куда нужно.",
   "hero.review_4_name": "Алина",
-  "hero.review_4_role": "ветеринар"
+  "hero.review_4_role": "ветеринар",
+  "benefits.recommendations.title": "Фиксация рекомендаций",
+  "benefits.recommendations.description": "Специалист всегда видит, что рекомендовал клиенту делать дома, — без противоречий и повторных вопросов."
 } as const;
 
 export type ContentKey = keyof typeof SITE_CONTENT;

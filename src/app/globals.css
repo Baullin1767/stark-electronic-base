@@ -1657,6 +1657,12 @@ img {
   box-shadow: 0 18px 50px rgba(20, 60, 53, 0.08);
 }
 
+.benefits-grid article:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+  width: calc(50% - 8px);
+  justify-self: center;
+}
+
 .benefits-grid article > span {
   display: grid;
   width: 48px;
@@ -3188,6 +3194,12 @@ img {
   .benefits-grid,
   .pricing-grid {
     grid-template-columns: 1fr;
+  }
+
+  .benefits-grid article:last-child:nth-child(odd) {
+    grid-column: auto;
+    width: auto;
+    justify-self: stretch;
   }
 
   .add-ons-heading {

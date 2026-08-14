@@ -3,11 +3,18 @@ import {
   MessageCircle,
   Search,
   SlidersHorizontal,
+  StickyNoteCheck,
 } from "lucide-react";
 import { BENEFITS } from "@/lib/constants";
 import { contentProps, text } from "@/lib/content";
 
-const icons = [MessageCircle, Database, Search, SlidersHorizontal];
+const icons = [
+  MessageCircle,
+  Database,
+  Search,
+  SlidersHorizontal,
+  StickyNoteCheck,
+];
 
 export function BenefitsSection() {
   return (

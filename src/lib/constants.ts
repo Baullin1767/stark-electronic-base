@@ -66,6 +66,7 @@ const benefitIds = [
   "history",
   "search",
   "profession",
+  "recommendations",
 ] as const;
 
 export const BENEFITS = benefitIds.map((id) => ({
