@@ -86,6 +86,25 @@ export function PricingSection() {
           </article>
         ))}
       </div>
+      <aside className="chatgpt-plus-note" aria-labelledby="chatgpt-plus-title">
+        <h3
+          id="chatgpt-plus-title"
+          {...contentProps("pricing.chatgpt_plus.title")}
+        >
+          {text("pricing.chatgpt_plus.title")}
+        </h3>
+        <div className="chatgpt-plus-copy">
+          <p {...contentProps("pricing.chatgpt_plus.requirement")}>
+            {text("pricing.chatgpt_plus.requirement")}
+          </p>
+          <p {...contentProps("pricing.chatgpt_plus.options")}>
+            {text("pricing.chatgpt_plus.options")}
+          </p>
+          <p {...contentProps("pricing.chatgpt_plus.help")}>
+            {text("pricing.chatgpt_plus.help")}
+          </p>
+        </div>
+      </aside>
       <div className="connection-note">
         <span {...contentProps("benefits.connection_time")}>{text("benefits.connection_time")}</span>
         <p {...contentProps("benefits.connection_note")}>{text("benefits.connection_note")}</p>

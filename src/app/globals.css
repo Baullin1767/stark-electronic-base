@@ -1866,6 +1866,43 @@ img {
   margin-top: auto;
 }
 
+.chatgpt-plus-note {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.78fr) minmax(0, 1.22fr);
+  gap: clamp(28px, 5vw, 70px);
+  align-items: start;
+  margin-top: 24px;
+  padding: clamp(28px, 3.5vw, 44px);
+  border: 1px solid #d8e6d7;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 0 0, rgba(217, 248, 115, 0.2), transparent 18rem),
+    #f0f7ed;
+}
+
+.chatgpt-plus-note h3 {
+  margin: 0;
+  color: var(--green-dark);
+  font-family: var(--font-display);
+  font-size: clamp(25px, 2.4vw, 34px);
+  font-weight: 750;
+  letter-spacing: -0.045em;
+  line-height: 1.14;
+  text-wrap: balance;
+}
+
+.chatgpt-plus-copy {
+  display: grid;
+  gap: 14px;
+}
+
+.chatgpt-plus-copy p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.68;
+}
+
 .featured .button-primary {
   background: var(--lime);
   color: var(--green-dark);
@@ -2582,6 +2619,20 @@ img {
     margin-top: 18px;
   }
 
+  .chatgpt-plus-note {
+    margin-top: 18px;
+    padding: 24px 28px;
+  }
+
+  .chatgpt-plus-copy {
+    gap: 10px;
+  }
+
+  .chatgpt-plus-copy p {
+    font-size: 12px;
+    line-height: 1.55;
+  }
+
   .add-on-card {
     padding: 14px;
   }
@@ -2820,6 +2871,11 @@ img {
 
   .add-ons-grid {
     grid-template-columns: 1fr;
+  }
+
+  .chatgpt-plus-note {
+    grid-template-columns: 1fr;
+    gap: 18px;
   }
 
   .price-card.featured {
@@ -3209,6 +3265,20 @@ img {
 
   .connection-note {
     grid-template-columns: 1fr;
+  }
+
+  .chatgpt-plus-note {
+    padding: 25px 22px;
+    border-radius: 20px;
+  }
+
+  .chatgpt-plus-note h3 {
+    font-size: 26px;
+  }
+
+  .chatgpt-plus-copy p {
+    font-size: 13px;
+    line-height: 1.65;
   }
 
   .price-card {
