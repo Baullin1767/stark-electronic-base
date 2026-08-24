@@ -1780,7 +1780,7 @@ img {
 
 .price {
   display: grid;
-  gap: 2px;
+  gap: 4px;
   margin-top: 20px;
 }
 
@@ -1788,6 +1788,17 @@ img {
   font-family: var(--font-display);
   font-size: 32px;
   letter-spacing: -0.045em;
+}
+
+.payment-note {
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+.featured .payment-note {
+  color: rgba(255, 255, 255, 0.62);
 }
 
 .plan-description {

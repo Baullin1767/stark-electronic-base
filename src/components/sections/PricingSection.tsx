@@ -14,6 +14,19 @@ const addOnIcons = {
   "database-backup": DatabaseBackup,
 } as const;
 
+function splitPrice(price: string) {
+  const separatorIndex = price.indexOf("·");
+
+  if (separatorIndex === -1) {
+    return { amount: price, paymentNote: "" };
+  }
+
+  return {
+    amount: price.slice(0, separatorIndex).trim(),
+    paymentNote: price.slice(separatorIndex + 1).trim(),
+  };
+}
+
 export function PricingSection() {
   const choosePlan = (name: string) => {
     window.dispatchEvent(
@@ -29,62 +42,67 @@ export function PricingSection() {
         <h2 {...contentProps("pricing.title")}>{text("pricing.title")}</h2>
       </div>
       <div className="pricing-grid">
-        {PRICING.map((plan) => (
-          <article
-            className={`price-card ${plan.featured ? "featured" : ""}`}
-            key={plan.id}
-          >
-            {plan.featured && <span className="popular" {...contentProps("pricing.popular")}>{text("pricing.popular")}</span>}
-            <p className="plan-name" {...contentProps(plan.nameKey)}>{plan.name}</p>
-            <div className="price">
-              <strong {...contentProps(plan.priceKey)}>{plan.price}</strong>
-            </div>
-            {plan.description && (
-              <p className="plan-description" {...contentProps(plan.descriptionKey)}>{plan.description}</p>
-            )}
-            <ul>
-              {plan.features.map((feature) => {
-                const isBonusFeature =
-                  feature.key === "pricing.plan.custom.feature_5" ||
-                  feature.key === "pricing.plan.custom.feature_6" ||
-                  feature.key === "pricing.plan.custom.feature_7";
+        {PRICING.map((plan) => {
+          const { amount, paymentNote } = splitPrice(plan.price);
 
-                return (
-                  <li
-                    className={isBonusFeature ? "bonus-feature" : undefined}
-                    key={feature.value}
-                    {...contentProps(feature.key)}
-                  >
-                    {isBonusFeature ? (
-                      <Plus size={16} />
-                    ) : (
-                      <Check size={16} />
-                    )}
-                    {feature.value}
-                  </li>
-                );
-              })}
-            </ul>
-            {plan.notes.length > 0 && (
-              <div className="plan-notes">
-                {plan.notes.map((note) => (
-                  <p key={note.key} {...contentProps(note.key)}>
-                    {note.value}
-                  </p>
-                ))}
-              </div>
-            )}
-            <a
-              className={`button contact-cta ${plan.featured ? "button-primary" : "button-secondary"}`}
-              href="#contact"
-              onClick={() => choosePlan(plan.name)}
-              {...contentProps(plan.ctaKey)}
+          return (
+            <article
+              className={`price-card ${plan.featured ? "featured" : ""}`}
+              key={plan.id}
             >
-              {plan.cta}
-              <ArrowRight size={17} />
-            </a>
-          </article>
-        ))}
+              {plan.featured && <span className="popular" {...contentProps("pricing.popular")}>{text("pricing.popular")}</span>}
+              <p className="plan-name" {...contentProps(plan.nameKey)}>{plan.name}</p>
+              <div className="price" {...contentProps(plan.priceKey)}>
+                <strong>{amount}</strong>
+                {paymentNote && <span className="payment-note">{paymentNote}</span>}
+              </div>
+              {plan.description && (
+                <p className="plan-description" {...contentProps(plan.descriptionKey)}>{plan.description}</p>
+              )}
+              <ul>
+                {plan.features.map((feature) => {
+                  const isBonusFeature =
+                    feature.key === "pricing.plan.custom.feature_5" ||
+                    feature.key === "pricing.plan.custom.feature_6" ||
+                    feature.key === "pricing.plan.custom.feature_7";
+
+                  return (
+                    <li
+                      className={isBonusFeature ? "bonus-feature" : undefined}
+                      key={feature.value}
+                      {...contentProps(feature.key)}
+                    >
+                      {isBonusFeature ? (
+                        <Plus size={16} />
+                      ) : (
+                        <Check size={16} />
+                      )}
+                      {feature.value}
+                    </li>
+                  );
+                })}
+              </ul>
+              {plan.notes.length > 0 && (
+                <div className="plan-notes">
+                  {plan.notes.map((note) => (
+                    <p key={note.key} {...contentProps(note.key)}>
+                      {note.value}
+                    </p>
+                  ))}
+                </div>
+              )}
+              <a
+                className={`button contact-cta ${plan.featured ? "button-primary" : "button-secondary"}`}
+                href="#contact"
+                onClick={() => choosePlan(plan.name)}
+                {...contentProps(plan.ctaKey)}
+              >
+                {plan.cta}
+                <ArrowRight size={17} />
+              </a>
+            </article>
+          );
+        })}
       </div>
       <aside className="chatgpt-plus-note" aria-labelledby="chatgpt-plus-title">
         <h3

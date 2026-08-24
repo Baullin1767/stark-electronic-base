@@ -35,7 +35,8 @@ test("pricing uses rubles and offers remote support only", async ({ page }) => {
   await expect(pricing.locator(".price-card")).toHaveCount(3);
   await expect(pricing).toContainText("10 000 ₽");
   await expect(pricing).toContainText("15 000 ₽");
-  await expect(pricing).toContainText("4 000 ₽ / месяц");
+  await expect(pricing).toContainText("4 000 ₽");
+  await expect(pricing).toContainText("оплата не чаще, чем раз в месяц");
   await expect(pricing).toContainText("Удалённая поддержка");
   await expect(pricing).not.toContainText(
     /RSD|€|динар|евро|поддержка с выездом|обсудить выезд/i,
