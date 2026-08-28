@@ -28,18 +28,20 @@ test("pricing selection reaches the contact form", async ({ page }) => {
   );
 });
 
-test("pricing uses rubles and offers remote support only", async ({ page }) => {
+test("pricing uses Belarusian rubles and offers remote support only", async ({ page }) => {
   await page.goto("/#pricing");
   const pricing = page.locator("#pricing");
 
   await expect(pricing.locator(".price-card")).toHaveCount(3);
-  await expect(pricing).toContainText("10 000 ₽");
-  await expect(pricing).toContainText("15 000 ₽");
-  await expect(pricing).toContainText("4 000 ₽");
+  await expect(pricing).toContainText("360 Br");
+  await expect(pricing).toContainText("530 Br");
+  await expect(pricing).toContainText("140 Br");
+  await expect(pricing).toContainText("70 Br");
+  await expect(pricing).toContainText("40 Br");
   await expect(pricing).toContainText("оплата не чаще, чем раз в месяц");
   await expect(pricing).toContainText("Удалённая поддержка");
   await expect(pricing).not.toContainText(
-    /RSD|€|динар|евро|поддержка с выездом|обсудить выезд/i,
+    /RSD|₽|€|динар|евро|поддержка с выездом|обсудить выезд/i,
   );
 });
 
