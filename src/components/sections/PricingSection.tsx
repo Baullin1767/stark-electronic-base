@@ -4,7 +4,7 @@ import {
   ArrowRight,
   Check,
   DatabaseBackup,
-  UserRoundCheck,
+  Plus,
 } from "lucide-react";
 import { PRICING, PRICING_ADD_ONS } from "@/lib/constants";
 import { trackEvent } from "@/lib/analytics";
@@ -12,8 +12,20 @@ import { contentProps, formatText, text } from "@/lib/content";
 
 const addOnIcons = {
   "database-backup": DatabaseBackup,
-  "employee-account": UserRoundCheck,
 } as const;
+
+function splitPrice(price: string) {
+  const separatorIndex = price.indexOf("·");
+
+  if (separatorIndex === -1) {
+    return { amount: price, paymentNote: "" };
+  }
+
+  return {
+    amount: price.slice(0, separatorIndex).trim(),
+    paymentNote: price.slice(separatorIndex + 1).trim(),
+  };
+}
 
 export function PricingSection() {
   const choosePlan = (name: string) => {
@@ -28,48 +40,92 @@ export function PricingSection() {
       <div className="section-heading centered">
         <span className="section-number" {...contentProps("pricing.section")}>{text("pricing.section")}</span>
         <h2 {...contentProps("pricing.title")}>{text("pricing.title")}</h2>
-        <p {...contentProps("pricing.description")}>{text("pricing.description")}</p>
       </div>
       <div className="pricing-grid">
-        {PRICING.map((plan) => (
-          <article
-            className={`price-card ${plan.featured ? "featured" : ""}`}
-            key={plan.id}
-          >
-            {plan.featured && <span className="popular" {...contentProps("pricing.popular")}>{text("pricing.popular")}</span>}
-            <p className="plan-name" {...contentProps(plan.nameKey)}>{plan.name}</p>
-            <div className="price">
-              <strong {...contentProps(plan.priceKey)}>{plan.price}</strong>
-            </div>
-            <p className="plan-description" {...contentProps(plan.descriptionKey)}>{plan.description}</p>
-            <ul>
-              {plan.features.map((feature) => (
-                <li key={feature.value} {...contentProps(feature.key)}>
-                  <Check size={16} />
-                  {feature.value}
-                </li>
-              ))}
-            </ul>
-            {plan.notes.length > 0 && (
-              <div className="plan-notes">
-                {plan.notes.map((note) => (
-                  <p key={note.key} {...contentProps(note.key)}>
-                    {note.value}
-                  </p>
-                ))}
-              </div>
-            )}
-            <a
-              className={`button ${plan.featured ? "button-primary" : "button-secondary"}`}
-              href="#contact"
-              onClick={() => choosePlan(plan.name)}
-              {...contentProps(plan.ctaKey)}
+        {PRICING.map((plan) => {
+          const { amount, paymentNote } = splitPrice(plan.price);
+
+          return (
+            <article
+              className={`price-card ${plan.featured ? "featured" : ""}`}
+              key={plan.id}
             >
-              {plan.cta}
-              <ArrowRight size={17} />
-            </a>
-          </article>
-        ))}
+              {plan.featured && <span className="popular" {...contentProps("pricing.popular")}>{text("pricing.popular")}</span>}
+              <p className="plan-name" {...contentProps(plan.nameKey)}>{plan.name}</p>
+              <div className="price" {...contentProps(plan.priceKey)}>
+                <strong>{amount}</strong>
+                {paymentNote && <span className="payment-note">{paymentNote}</span>}
+              </div>
+              {plan.description && (
+                <p className="plan-description" {...contentProps(plan.descriptionKey)}>{plan.description}</p>
+              )}
+              <ul>
+                {plan.features.map((feature) => {
+                  const isBonusFeature =
+                    feature.key === "pricing.plan.custom.feature_5" ||
+                    feature.key === "pricing.plan.custom.feature_6" ||
+                    feature.key === "pricing.plan.custom.feature_7";
+
+                  return (
+                    <li
+                      className={isBonusFeature ? "bonus-feature" : undefined}
+                      key={feature.value}
+                      {...contentProps(feature.key)}
+                    >
+                      {isBonusFeature ? (
+                        <Plus size={16} />
+                      ) : (
+                        <Check size={16} />
+                      )}
+                      {feature.value}
+                    </li>
+                  );
+                })}
+              </ul>
+              {plan.notes.length > 0 && (
+                <div className="plan-notes">
+                  {plan.notes.map((note) => (
+                    <p key={note.key} {...contentProps(note.key)}>
+                      {note.value}
+                    </p>
+                  ))}
+                </div>
+              )}
+              <a
+                className={`button contact-cta ${plan.featured ? "button-primary" : "button-secondary"}`}
+                href="#contact"
+                onClick={() => choosePlan(plan.name)}
+                {...contentProps(plan.ctaKey)}
+              >
+                {plan.cta}
+                <ArrowRight size={17} />
+              </a>
+            </article>
+          );
+        })}
+      </div>
+      <aside className="chatgpt-plus-note" aria-labelledby="chatgpt-plus-title">
+        <h3
+          id="chatgpt-plus-title"
+          {...contentProps("pricing.chatgpt_plus.title")}
+        >
+          {text("pricing.chatgpt_plus.title")}
+        </h3>
+        <div className="chatgpt-plus-copy">
+          <p {...contentProps("pricing.chatgpt_plus.requirement")}>
+            {text("pricing.chatgpt_plus.requirement")}
+          </p>
+          <p {...contentProps("pricing.chatgpt_plus.options")}>
+            {text("pricing.chatgpt_plus.options")}
+          </p>
+          <p {...contentProps("pricing.chatgpt_plus.help")}>
+            {text("pricing.chatgpt_plus.help")}
+          </p>
+        </div>
+      </aside>
+      <div className="connection-note">
+        <span {...contentProps("benefits.connection_time")}>{text("benefits.connection_time")}</span>
+        <p {...contentProps("benefits.connection_note")}>{text("benefits.connection_note")}</p>
       </div>
       <div className="pricing-add-ons">
         <div className="add-ons-heading">
@@ -95,6 +151,7 @@ export function PricingSection() {
                     {addOn.priceNote && addOn.priceNoteKey && <span {...contentProps(addOn.priceNoteKey)}>{addOn.priceNote}</span>}
                   </p>
                   <a
+                    className="contact-cta"
                     href="#contact"
                     aria-label={formatText("pricing.addon_aria", { name: addOn.name })}
                     onClick={() => choosePlan(addOn.name)}

@@ -37,6 +37,7 @@ const reviewStepIndex = DEMO_STEPS.findIndex(
   ({ id }) => id === "summary-preview",
 );
 const reviewScrollWeight = 1.75;
+const stepSettledProgress = 0.28;
 const demoScrollUnits =
   DEMO_STEPS.length + reviewScrollWeight - 1;
 
@@ -59,6 +60,42 @@ function getStepPosition(progress: number) {
   return weightedPosition - (reviewScrollWeight - 1);
 }
 
+function getProgressForStepPosition(stepPosition: number) {
+  const clampedPosition = Math.max(
+    0,
+    Math.min(DEMO_STEPS.length, stepPosition),
+  );
+
+  if (clampedPosition <= reviewStepIndex) {
+    return clampedPosition / demoScrollUnits;
+  }
+
+  if (clampedPosition < reviewStepIndex + 1) {
+    return (
+      reviewStepIndex +
+      (clampedPosition - reviewStepIndex) * reviewScrollWeight
+    ) / demoScrollUnits;
+  }
+
+  return (
+    clampedPosition + reviewScrollWeight - 1
+  ) / demoScrollUnits;
+}
+
+function canScrollReviewChat(target: EventTarget | null, direction: number) {
+  const element = target instanceof Element ? target : null;
+  const scrollArea = element?.closest<HTMLElement>(".review-chat-scroll");
+
+  if (!scrollArea) {
+    return false;
+  }
+
+  const maxScroll = scrollArea.scrollHeight - scrollArea.clientHeight;
+  return direction > 0
+    ? scrollArea.scrollTop < maxScroll - 1
+    : scrollArea.scrollTop > 1;
+}
+
 function syncReviewChat(
   frame: HTMLElement | null,
   stepPosition: number,
@@ -76,17 +113,22 @@ function syncReviewChat(
     0,
     Math.min(1, stepPosition - reviewStepIndex),
   );
-  const targetScroll = maxScroll * Math.min(1, localProgress / 0.85);
+  const reviewScrollProgress = Math.max(
+    0,
+    Math.min(
+      1,
+      (localProgress - stepSettledProgress) /
+        (0.85 - stepSettledProgress),
+    ),
+  );
+  const targetScroll = maxScroll * reviewScrollProgress;
 
   scrollArea.scrollTop =
     direction >= 0
       ? Math.max(scrollArea.scrollTop, targetScroll)
       : Math.min(scrollArea.scrollTop, targetScroll);
 
-  const hint = frame?.querySelector<HTMLElement>(".chat-scroll-hint");
-  if (hint) {
-    hint.style.opacity = scrollArea.scrollTop >= maxScroll - 1 ? "0" : "1";
-  }
+  syncReviewScrollHint(frame);
 
   return scrollArea.scrollTop >= maxScroll - 1;
 }
@@ -105,6 +147,20 @@ function isReviewChatAtEnd(frame: HTMLElement | null) {
   );
 }
 
+function syncReviewScrollHint(frame: HTMLElement | null) {
+  const scrollArea = frame?.querySelector<HTMLElement>(
+    ".review-chat-scroll",
+  );
+  const hint = frame?.querySelector<HTMLElement>(".chat-scroll-hint");
+
+  if (!scrollArea || !hint) {
+    return;
+  }
+
+  const maxScroll = scrollArea.scrollHeight - scrollArea.clientHeight;
+  hint.style.opacity = scrollArea.scrollTop >= maxScroll - 1 ? "0" : "1";
+}
+
 function syncScrollDrivenMotion(
   copy: HTMLElement | null,
   frame: HTMLElement | null,
@@ -117,22 +173,9 @@ function syncScrollDrivenMotion(
 
   const localProgress = Math.max(0, Math.min(1, stepPosition - stepIndex));
   const isFirstFrameAtStart = stepIndex === 0 && stepPosition < 0.01;
-  const isLastFrame = stepIndex === DEMO_STEPS.length - 1;
-  const frameExitStart =
-    stepIndex === reviewStepIndex ? 0.9 : 0.74;
   const frameEnter = isFirstFrameAtStart
     ? 1
     : Math.max(0, Math.min(1, localProgress / 0.24));
-  const frameExit = isLastFrame
-    ? 0
-    : Math.max(
-        0,
-        Math.min(
-          1,
-          (localProgress - frameExitStart) / (1 - frameExitStart),
-        ),
-      );
-  const frameVisibility = Math.min(frameEnter, 1 - frameExit);
   const copyItems = [...copy.querySelectorAll<HTMLElement>("[data-demo-copy]")];
 
   copyItems.forEach((item, itemIndex) => {
@@ -142,18 +185,17 @@ function syncScrollDrivenMotion(
           0,
           Math.min(1, (localProgress - itemIndex * 0.025) / 0.22),
         );
-    const visibility = Math.min(itemEnter, 1 - frameExit);
 
     gsap.set(item, {
-      autoAlpha: 0.12 + visibility * 0.88,
-      y: (1 - itemEnter) * 18 - frameExit * 14,
+      autoAlpha: 0.12 + itemEnter * 0.88,
+      y: (1 - itemEnter) * 18,
     });
   });
 
   gsap.set(frame, {
-    autoAlpha: 0.12 + frameVisibility * 0.88,
-    scale: 0.975 + frameVisibility * 0.025,
-    y: (1 - frameEnter) * 26 - frameExit * 20,
+    autoAlpha: 0.12 + frameEnter * 0.88,
+    scale: 0.975 + frameEnter * 0.025,
+    y: (1 - frameEnter) * 26,
   });
 }
 
@@ -353,20 +395,6 @@ function SavedRecordMessage() {
       <p {...contentProps("demo.template.saved_before")}>{formatText("demo.template.saved_before", { count: DEMO_CLIENT.photos.before })}</p>
       <p {...contentProps("demo.template.saved_after")}>{formatText("demo.template.saved_after", { count: DEMO_CLIENT.photos.after })}</p>
       <p {...contentProps("demo.template.saved_additional")}>{formatText("demo.template.saved_additional", { count: DEMO_CLIENT.photos.additional })}</p>
-    </div>
-  );
-}
-
-function AssistantThinking() {
-  return (
-    <div className="assistant-thinking" aria-label={text("demo.ui.thinking_aria")}>
-      <Sparkles size={15} />
-      <span {...contentProps("demo.ui.thinking")}>{text("demo.ui.thinking")}</span>
-      <span className="assistant-thinking-dots" aria-hidden="true">
-        <i />
-        <i />
-        <i />
-      </span>
     </div>
   );
 }
@@ -618,17 +646,6 @@ function DemoFrame({ step }: { step: DemoStepId }) {
     );
   }
 
-  if (step === "message-sent") {
-    return (
-      <ChatShell status={text("demo.ui.working")} statusKey="demo.ui.working">
-        <div className="chat-bubble user sent-message">
-          {transcript}
-        </div>
-        <AssistantThinking />
-      </ChatShell>
-    );
-  }
-
   if (step === "summary-preview") {
     return (
       <div className="confirmation-chat-wrap">
@@ -710,14 +727,14 @@ export function DemoSection() {
   const completed = useRef(false);
 
   useEffect(() => {
-    const media = window.matchMedia("(min-width: 1024px)");
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (!media.matches || reduced.matches || !rootRef.current || !stageRef.current) {
+    if (reduced.matches || !rootRef.current || !stageRef.current) {
       return;
     }
 
+    let demoTrigger: ReturnType<typeof ScrollTrigger.create> | null = null;
     const context = gsap.context(() => {
-      ScrollTrigger.create({
+      demoTrigger = ScrollTrigger.create({
         trigger: rootRef.current,
         start: "top top",
         end: () => {
@@ -807,7 +824,139 @@ export function DemoSection() {
       });
     }, rootRef);
 
-    return () => context.revert();
+    const mobileViewport = window.matchMedia("(max-width: 720px)");
+    const swipeThreshold = 24;
+    let touchStartX: number | null = null;
+    let touchStartY: number | null = null;
+    let touchStepIndex: number | null = null;
+    let stepLocked = false;
+
+    const resetTouch = () => {
+      touchStartX = null;
+      touchStartY = null;
+      touchStepIndex = null;
+      stepLocked = false;
+    };
+
+    const handleTouchStart = (event: TouchEvent) => {
+      if (!mobileViewport.matches || event.touches.length !== 1) {
+        resetTouch();
+        return;
+      }
+
+      const touch = event.touches[0];
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+      touchStepIndex = null;
+      stepLocked = false;
+
+      if (
+        demoTrigger &&
+        window.scrollY >= demoTrigger.start - 1 &&
+        window.scrollY <= demoTrigger.end + 1
+      ) {
+        touchStepIndex = activeIndexRef.current;
+      }
+    };
+
+    const handleTouchMove = (event: TouchEvent) => {
+      if (
+        !mobileViewport.matches ||
+        !demoTrigger ||
+        touchStartX === null ||
+        touchStartY === null ||
+        event.touches.length !== 1
+      ) {
+        return;
+      }
+
+      const currentScroll = window.scrollY;
+      const isInsideDemo =
+        currentScroll >= demoTrigger.start - 1 &&
+        currentScroll <= demoTrigger.end + 1;
+
+      if (!isInsideDemo) {
+        return;
+      }
+
+      if (stepLocked) {
+        if (event.cancelable) {
+          event.preventDefault();
+        }
+        return;
+      }
+
+      const touch = event.touches[0];
+      const deltaX = touchStartX - touch.clientX;
+      const deltaY = touchStartY - touch.clientY;
+
+      if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        return;
+      }
+
+      const direction = deltaY >= 0 ? 1 : -1;
+
+      if (canScrollReviewChat(event.target, direction)) {
+        return;
+      }
+
+      const isLeavingBeforeFirstStep =
+        direction < 0 && currentScroll <= demoTrigger.start + 1;
+      const isLeavingAfterLastStep =
+        direction > 0 && currentScroll >= demoTrigger.end - 1;
+
+      if (isLeavingBeforeFirstStep || isLeavingAfterLastStep) {
+        return;
+      }
+
+      if (event.cancelable) {
+        event.preventDefault();
+      }
+
+      if (Math.abs(deltaY) < swipeThreshold) {
+        return;
+      }
+
+      touchStepIndex ??= activeIndexRef.current;
+      const targetStep = Math.max(
+        0,
+        Math.min(DEMO_STEPS.length, touchStepIndex + direction),
+      );
+      const targetPosition =
+        targetStep > 0 && targetStep < DEMO_STEPS.length
+          ? targetStep + stepSettledProgress
+          : targetStep;
+      const targetProgress = getProgressForStepPosition(targetPosition);
+      const targetScroll =
+        demoTrigger.start +
+        (demoTrigger.end - demoTrigger.start) * targetProgress;
+
+      stepLocked = true;
+      window.scrollTo({
+        top: targetScroll,
+        left: window.scrollX,
+        behavior: "smooth",
+      });
+    };
+
+    window.addEventListener("touchstart", handleTouchStart, {
+      passive: true,
+      capture: true,
+    });
+    window.addEventListener("touchmove", handleTouchMove, {
+      passive: false,
+      capture: true,
+    });
+    window.addEventListener("touchend", resetTouch, { passive: true });
+    window.addEventListener("touchcancel", resetTouch, { passive: true });
+
+    return () => {
+      window.removeEventListener("touchstart", handleTouchStart, true);
+      window.removeEventListener("touchmove", handleTouchMove, true);
+      window.removeEventListener("touchend", resetTouch);
+      window.removeEventListener("touchcancel", resetTouch);
+      context.revert();
+    };
   }, []);
 
   const activeStep = DEMO_STEPS[activeIndex];
@@ -816,6 +965,16 @@ export function DemoSection() {
     if (!copyRef.current || !frameRef.current) {
       return;
     }
+
+    const scrollArea = frameRef.current.querySelector<HTMLElement>(
+      ".review-chat-scroll",
+    );
+    const handleReviewScroll = () => syncReviewScrollHint(frameRef.current);
+
+    scrollArea?.addEventListener("scroll", handleReviewScroll, {
+      passive: true,
+    });
+    handleReviewScroll();
 
     if (DEMO_STEPS[activeIndex].id === "summary-preview") {
       syncReviewChat(
@@ -835,7 +994,8 @@ export function DemoSection() {
         y: 0,
         scale: 1,
       });
-      return;
+      return () =>
+        scrollArea?.removeEventListener("scroll", handleReviewScroll);
     }
 
     syncScrollDrivenMotion(
@@ -844,6 +1004,9 @@ export function DemoSection() {
       demoProgressRef.current,
       activeIndex,
     );
+
+    return () =>
+      scrollArea?.removeEventListener("scroll", handleReviewScroll);
   }, [activeIndex]);
 
   return (
@@ -851,7 +1014,6 @@ export function DemoSection() {
       <div className="demo-stage" ref={stageRef}>
         <div className="demo-intro">
           <span className="section-number light" {...contentProps("demo.section")}>{text("demo.section")}</span>
-          <h2 {...contentProps("demo.title")}>{text("demo.title")}</h2>
           <p {...contentProps("demo.description")}>{text("demo.description")}</p>
         </div>
         <div
@@ -866,14 +1028,11 @@ export function DemoSection() {
             <h3 data-demo-copy {...contentProps(activeStep.titleKey)} key={`title-${activeStep.id}`}>
               {activeStep.title}
             </h3>
-            <p data-demo-copy {...contentProps(activeStep.descriptionKey)} key={`copy-${activeStep.id}`}>
-              {activeStep.description}
-            </p>
             <div className="demo-progress">
               <span />
             </div>
             <small>
-              {String(activeIndex + 1).padStart(2, "0")} / {DEMO_STEPS.length}
+              {String(activeIndex + 1).padStart(2, "0")} / {String(DEMO_STEPS.length).padStart(2, "0")}
             </small>
           </div>
           <div className="demo-frame" ref={frameRef} key={activeStep.id}>
@@ -887,7 +1046,6 @@ export function DemoSection() {
                 <span>{String(index + 1).padStart(2, "0")}</span>
                 <div>
                   <h3 {...contentProps(step.titleKey)}>{step.title}</h3>
-                  <p {...contentProps(step.descriptionKey)}>{step.description}</p>
                 </div>
               </header>
               <DemoFrame step={step.id} />

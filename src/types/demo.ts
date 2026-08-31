@@ -5,7 +5,6 @@ export type DemoStepId =
   | "voice-recording"
   | "transcription"
   | "attachments"
-  | "message-sent"
   | "summary-preview"
   | "confirmation"
   | "saved"

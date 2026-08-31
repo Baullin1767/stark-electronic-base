@@ -19,7 +19,7 @@ export function Header() {
         <Link href="/#demo" {...contentProps("header.nav_demo")}>{text("header.nav_demo")}</Link>
         <Link href="/#pricing" {...contentProps("header.nav_pricing")}>{text("header.nav_pricing")}</Link>
       </nav>
-      <Link className="header-cta" href="/#contact" {...contentProps("header.cta")}>
+      <Link className="header-cta contact-cta" href="/#contact" {...contentProps("header.cta")}>
         {text("header.cta")}
         <ArrowUpRight size={16} aria-hidden="true" />
       </Link>

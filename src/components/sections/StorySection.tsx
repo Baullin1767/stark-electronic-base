@@ -1,5 +1,20 @@
-import { ArrowRight, Clock3, Lightbulb, Mic2 } from "lucide-react";
+import {
+  ArrowRight,
+  BadgeDollarSign,
+  Gauge,
+  Lightbulb,
+  ShieldCheck,
+  Wrench,
+} from "lucide-react";
 import { contentProps, text } from "@/lib/content";
+
+const storyMeanings = [
+  { key: "story.meaning_idea", icon: Lightbulb },
+  { key: "story.meaning_tool", icon: Wrench },
+  { key: "story.meaning_savings", icon: BadgeDollarSign },
+  { key: "story.meaning_speed", icon: Gauge },
+  { key: "story.meaning_safety", icon: ShieldCheck },
+] as const;
 
 export function StorySection() {
   return (
@@ -10,31 +25,46 @@ export function StorySection() {
           <h2 {...contentProps("story.title")}>{text("story.title")}</h2>
           <p {...contentProps("story.paragraph_1")}>{text("story.paragraph_1")}</p>
           <p {...contentProps("story.paragraph_2")}>{text("story.paragraph_2")}</p>
-          <div className="story-quote">
-            <Lightbulb size={24} />
-            <p {...contentProps("story.quote")}>{text("story.quote")}</p>
-          </div>
         </div>
-        <div className="story-flow">
-          <article>
-            <span>
-              <Clock3 />
-            </span>
-            <div>
-              <small {...contentProps("story.before_label")}>{text("story.before_label")}</small>
-              <strong {...contentProps("story.before_text")}>{text("story.before_text")}</strong>
-            </div>
-          </article>
-          <ArrowRight className="story-arrow" aria-hidden="true" />
-          <article className="accent">
-            <span>
-              <Mic2 />
-            </span>
-            <div>
-              <small {...contentProps("story.after_label")}>{text("story.after_label")}</small>
-              <strong {...contentProps("story.after_text")}>{text("story.after_text")}</strong>
-            </div>
-          </article>
+        <div className="story-flow" aria-label="Главные принципы решения">
+          {storyMeanings.slice(0, 2).map(({ key, icon: Icon }, index) => (
+            index === 0 ? (
+              <div className="story-step" key={key}>
+                <article>
+                  <span><Icon aria-hidden="true" /></span>
+                  <div>
+                    <small>01</small>
+                    <strong {...contentProps(key)}>{text(key)}</strong>
+                  </div>
+                </article>
+                <ArrowRight className="story-arrow" aria-hidden="true" />
+              </div>
+            ) : (
+              <div className="story-branches" key={key}>
+                <article className="accent">
+                  <span><Icon aria-hidden="true" /></span>
+                  <div>
+                    <small>02</small>
+                    <strong {...contentProps(key)}>{text(key)}</strong>
+                  </div>
+                </article>
+                <span className="story-branch-line" aria-hidden="true" />
+                <div className="story-outcomes">
+                  {storyMeanings.slice(2).map(({ key: outcomeKey, icon: OutcomeIcon }) => (
+                    <div className="story-outcome" key={outcomeKey}>
+                      <article>
+                        <span><OutcomeIcon aria-hidden="true" /></span>
+                        <div>
+                          <strong {...contentProps(outcomeKey)}>{text(outcomeKey)}</strong>
+                        </div>
+                      </article>
+                      <span className="story-branch-arrow" aria-hidden="true" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
+          ))}
         </div>
       </div>
     </section>
