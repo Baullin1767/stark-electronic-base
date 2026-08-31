@@ -1,15 +1,20 @@
 import {
-  CheckCheck,
-  History,
-  Mic2,
+  Database,
+  MessageCircle,
   Search,
-  Settings2,
-  WandSparkles,
+  SlidersHorizontal,
+  StickyNoteCheck,
 } from "lucide-react";
 import { BENEFITS } from "@/lib/constants";
 import { contentProps, text } from "@/lib/content";
 
-const icons = [Mic2, WandSparkles, CheckCheck, History, Search, Settings2];
+const icons = [
+  MessageCircle,
+  Database,
+  Search,
+  SlidersHorizontal,
+  StickyNoteCheck,
+];
 
 export function BenefitsSection() {
   return (
@@ -27,15 +32,15 @@ export function BenefitsSection() {
               <span>
                 <Icon />
               </span>
-              <h3 {...contentProps(benefit.titleKey)}>{benefit.title}</h3>
-              <p {...contentProps(benefit.descriptionKey)}>{benefit.description}</p>
+              <div className="benefit-copy">
+                <h3 {...contentProps(benefit.titleKey)}>{benefit.title}</h3>
+                {benefit.description ? (
+                  <p {...contentProps(benefit.descriptionKey)}>{benefit.description}</p>
+                ) : null}
+              </div>
             </article>
           );
         })}
-      </div>
-      <div className="connection-note">
-        <span {...contentProps("benefits.connection_time")}>{text("benefits.connection_time")}</span>
-        <p {...contentProps("benefits.connection_note")}>{text("benefits.connection_note")}</p>
       </div>
     </section>
   );

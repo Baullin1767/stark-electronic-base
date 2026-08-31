@@ -28,6 +28,21 @@ test("pricing selection reaches the contact form", async ({ page }) => {
   );
 });
 
+test("pricing uses rubles and offers remote support only", async ({ page }) => {
+  await page.goto("/#pricing");
+  const pricing = page.locator("#pricing");
+
+  await expect(pricing.locator(".price-card")).toHaveCount(3);
+  await expect(pricing).toContainText("10 000 ₽");
+  await expect(pricing).toContainText("15 000 ₽");
+  await expect(pricing).toContainText("4 000 ₽");
+  await expect(pricing).toContainText("оплата не чаще, чем раз в месяц");
+  await expect(pricing).toContainText("Удалённая поддержка");
+  await expect(pricing).not.toContainText(
+    /RSD|€|динар|евро|поддержка с выездом|обсудить выезд/i,
+  );
+});
+
 test("contact form validates required fields", async ({ page }) => {
   await page.goto("/#contact");
   await page.getByRole("button", { name: "Отправить заявку" }).click();
@@ -35,18 +50,19 @@ test("contact form validates required fields", async ({ page }) => {
   await expect(page.getByText("Необходимо согласие")).toBeVisible();
 });
 
-test("profession supports suggestions and a custom value", async ({ page }) => {
+test("profession supports dropdown options and a custom value", async ({ page }) => {
   await page.goto("/#contact");
-  const profession = page.getByLabel("Род деятельности");
+  const profession = page.getByTestId("profession-select");
 
-  await expect(profession).toHaveAttribute("list", "profession-options");
-  await expect(page.locator("#profession-options option")).toHaveCount(7);
+  await expect(profession.locator("option")).toHaveCount(9);
 
-  await profession.fill("Под");
-  await expect(profession).toHaveValue("Под");
+  await profession.selectOption({ label: "Подолог" });
+  await expect(profession).toHaveValue("Подолог");
 
-  await profession.fill("Фотограф");
-  await expect(profession).toHaveValue("Фотограф");
+  await profession.selectOption({ label: "Другое — указать свой вариант" });
+  const customProfession = page.getByTestId("custom-profession");
+  await customProfession.fill("Фотограф");
+  await expect(customProfession).toHaveValue("Фотограф");
 });
 
 test("mobile layout has no horizontal overflow", async ({ page }) => {
@@ -57,10 +73,134 @@ test("mobile layout has no horizontal overflow", async ({ page }) => {
   expect(overflow).toBeLessThanOrEqual(1);
 });
 
+test("mobile demo stays pinned and advances through one animated frame", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/#demo");
+
+  const stage = page.locator(".demo-stage");
+  const animatedDemo = page.locator(".desktop-demo");
+  await page.locator(".pin-spacer").waitFor();
+  await expect(animatedDemo).toBeVisible();
+  await expect(animatedDemo.locator(".demo-frame")).toHaveCount(1);
+  await expect(animatedDemo.locator(".demo-copy > small")).toHaveText("01 / 09");
+
+  const stageBox = await stage.boundingBox();
+  expect(stageBox?.height).toBeLessThanOrEqual(845);
+
+  await page.evaluate(() => {
+    const demo = document.querySelector<HTMLElement>("#demo");
+    window.scrollTo({
+      top: (demo?.offsetTop ?? window.scrollY) + 900,
+      behavior: "instant",
+    });
+  });
+  await expect(animatedDemo.locator(".demo-copy > small")).not.toHaveText(
+    "01 / 09",
+  );
+
+  await page.evaluate(() => {
+    const demo = document.querySelector<HTMLElement>("#demo");
+    window.scrollTo({
+      top: (demo?.offsetTop ?? window.scrollY) + 2400,
+      behavior: "instant",
+    });
+  });
+  await expect(animatedDemo.locator(".demo-copy > small")).toHaveText(
+    "05 / 09",
+  );
+
+  const reviewChat = animatedDemo.locator(".review-chat-scroll");
+  const composer = animatedDemo.locator(".chat-input");
+  await expect(composer).toBeInViewport();
+  await expect
+    .poll(() =>
+      reviewChat.evaluate(
+        (element) => element.scrollHeight > element.clientHeight,
+      ),
+    )
+    .toBe(true);
+  await expect
+    .poll(() =>
+      reviewChat.evaluate(
+        (element) => getComputedStyle(element).overscrollBehaviorY,
+      ),
+    )
+    .toBe("auto");
+});
+
+test("one mobile swipe advances the demo by only one step", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/#demo");
+  await page.locator(".pin-spacer").waitFor();
+
+  const counter = page.locator(".desktop-demo .demo-copy > small");
+  await page.evaluate(() => {
+    const demo = document.querySelector<HTMLElement>("#demo");
+    window.scrollTo({ top: demo?.offsetTop ?? 0, behavior: "instant" });
+  });
+  await expect(counter).toHaveText("01 / 09");
+
+  const dispatchTouch = async (
+    type: "touchstart" | "touchmove" | "touchend",
+    clientY: number,
+  ) => {
+    await page.evaluate(
+      ({ eventType, y }) => {
+        const target = document.querySelector<HTMLElement>(".demo-stage");
+        if (!target) return;
+
+        const touch = new Touch({
+          identifier: 1,
+          target,
+          clientX: 195,
+          clientY: y,
+          pageX: 195,
+          pageY: y + window.scrollY,
+        });
+        target.dispatchEvent(
+          new TouchEvent(eventType, {
+            bubbles: true,
+            cancelable: true,
+            touches: eventType === "touchend" ? [] : [touch],
+            targetTouches: eventType === "touchend" ? [] : [touch],
+            changedTouches: [touch],
+          }),
+        );
+      },
+      { eventType: type, y: clientY },
+    );
+  };
+
+  await dispatchTouch("touchstart", 700);
+  await dispatchTouch("touchmove", 500);
+  await expect(counter).toHaveText("02 / 09");
+  await expect(page.locator(".desktop-demo .demo-frame")).toHaveCSS(
+    "opacity",
+    "1",
+  );
+  await expect(page.locator(".desktop-demo .demo-copy h3")).toHaveCSS(
+    "opacity",
+    "1",
+  );
+
+  await dispatchTouch("touchmove", 100);
+  await expect(counter).toHaveText("02 / 09");
+  await dispatchTouch("touchend", 100);
+
+  await dispatchTouch("touchstart", 700);
+  await dispatchTouch("touchmove", 400);
+  await expect(counter).toHaveText("03 / 09");
+  await dispatchTouch("touchend", 400);
+});
+
 test("reduced motion keeps the demonstration readable", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/#demo");
-  await expect(page.locator(".mobile-demo-step")).toHaveCount(11);
+  await expect(page.locator(".mobile-demo-step")).toHaveCount(9);
 });
 
 test("the demo keeps the same client throughout the scenario", async ({

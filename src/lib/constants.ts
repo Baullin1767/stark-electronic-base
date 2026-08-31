@@ -4,12 +4,15 @@ import type { DemoStep } from "@/types/demo";
 const telegram = text("contacts.telegram");
 const phone = text("contacts.phone");
 const email = text("contacts.email");
+const phoneInternational = phone.replace(/\D/g, "");
 
 export const CONTACTS = {
   telegram,
   telegramUrl: `https://t.me/${telegram.replace(/^@/, "")}`,
   phone,
-  phoneUrl: `tel:${phone.replace(/[^\d+]/g, "")}`,
+  whatsappUrl: `https://wa.me/${phoneInternational}`,
+  viberUrl: `viber://chat?number=${encodeURIComponent(`+${phoneInternational}`)}`,
+  phoneUrl: `tel:+${phoneInternational}`,
   email,
   emailUrl: `mailto:${email}`,
 } as const;
@@ -38,11 +41,9 @@ const demoSteps = [
   "voice-recording",
   "transcription",
   "attachments",
-  "message-sent",
   "summary-preview",
   "confirmation",
   "saved",
-  "clients-table",
   "visits-table",
   "visit-details",
 ] as const;
@@ -62,11 +63,10 @@ export const DEMO_STEPS: DemoStep[] = demoSteps.map((id) => {
 
 const benefitIds = [
   "voice",
-  "structure",
-  "review",
   "history",
   "search",
   "profession",
+  "recommendations",
 ] as const;
 
 export const BENEFITS = benefitIds.map((id) => ({
@@ -77,7 +77,7 @@ export const BENEFITS = benefitIds.map((id) => ({
 }));
 
 function plan(
-  id: "initial" | "custom" | "online" | "onsite",
+  id: "initial" | "custom" | "online",
   featured: boolean,
   featureCount: number,
   noteCount = 0,
@@ -89,8 +89,6 @@ function plan(
     nameKey: `${prefix}.name` as ContentKey,
     price: text(`${prefix}.price` as ContentKey),
     priceKey: `${prefix}.price` as ContentKey,
-    euro: text(`${prefix}.euro` as ContentKey),
-    euroKey: `${prefix}.euro` as ContentKey,
     description: text(`${prefix}.description` as ContentKey),
     descriptionKey: `${prefix}.description` as ContentKey,
     features: Array.from({ length: featureCount }, (_, index) => {
@@ -109,9 +107,8 @@ function plan(
 
 export const PRICING = [
   plan("initial", true, 5),
-  plan("custom", false, 6),
+  plan("custom", false, 7),
   plan("online", false, 7, 1),
-  plan("onsite", false, 7, 2),
 ];
 
 function addOn<
@@ -137,5 +134,4 @@ function addOn<
 
 export const PRICING_ADD_ONS = [
   addOn("database-backup"),
-  addOn("employee-account"),
 ];
