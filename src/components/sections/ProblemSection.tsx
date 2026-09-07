@@ -43,7 +43,7 @@ const chaosItems = [
 
 export function ProblemSection() {
   return (
-    <section className="problem section-shell">
+    <section className="problem section-shell" id="problem">
       <div className="section-heading">
         <span className="section-number" {...contentProps("problem.section")}>{text("problem.section")}</span>
         <h2 {...contentProps("problem.title")}>{text("problem.title")}</h2>

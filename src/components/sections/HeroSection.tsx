@@ -1,15 +1,5 @@
-import { ArrowDown, Star } from "lucide-react";
+import { ArrowDown, Check, Mic2, Sparkles } from "lucide-react";
 import { contentProps, text } from "@/lib/content";
-
-function TestimonialStars() {
-  return (
-    <div className="testimonial-stars" aria-hidden="true">
-      {Array.from({ length: 5 }, (_, index) => (
-        <Star key={index} size={12} fill="currentColor" />
-      ))}
-    </div>
-  );
-}
 
 export function HeroSection() {
   return (
@@ -33,43 +23,23 @@ export function HeroSection() {
         </div>
       </div>
 
-      <div className="hero-visual" aria-label={text("hero.visual_aria")}>
+      <div className="hero-visual hero-product" aria-label={text("hero.visual_aria")}>
         <div className="hero-glow" />
-        <div className="assistant-card testimonials-card">
-          <div className="testimonial-list">
-            <article className="testimonial-item">
-              <TestimonialStars />
-              <p {...contentProps("hero.summary")}>{text("hero.summary")}</p>
-              <footer>
-                <span className="testimonial-avatar">А</span>
-                <div><strong {...contentProps("hero.review_1_name")}>{text("hero.review_1_name")}</strong><small {...contentProps("hero.review_1_role")}>{text("hero.review_1_role")}</small></div>
-              </footer>
-            </article>
-            <article className="testimonial-item">
-              <TestimonialStars />
-              <p {...contentProps("hero.followup")}>{text("hero.followup")}</p>
-              <footer>
-                <span className="testimonial-avatar">М</span>
-                <div><strong {...contentProps("hero.review_2_name")}>{text("hero.review_2_name")}</strong><small {...contentProps("hero.review_2_role")}>{text("hero.review_2_role")}</small></div>
-              </footer>
-            </article>
-            <article className="testimonial-item testimonial-compact">
-              <TestimonialStars />
-              <p {...contentProps("hero.review_3_text")}>{text("hero.review_3_text")}</p>
-              <footer>
-                <span className="testimonial-avatar">Е</span>
-                <div><strong {...contentProps("hero.review_3_name")}>{text("hero.review_3_name")}</strong><small {...contentProps("hero.review_3_role")}>{text("hero.review_3_role")}</small></div>
-              </footer>
-            </article>
-            <article className="testimonial-item testimonial-compact">
-              <TestimonialStars />
-              <p {...contentProps("hero.review_4_text")}>{text("hero.review_4_text")}</p>
-              <footer>
-                <span className="testimonial-avatar">А</span>
-                <div><strong {...contentProps("hero.review_4_name")}>{text("hero.review_4_name")}</strong><small {...contentProps("hero.review_4_role")}>{text("hero.review_4_role")}</small></div>
-              </footer>
-            </article>
+        <div className="hero-product-card">
+          <div className="window-head">
+            <span className="window-avatar"><Sparkles size={20} aria-hidden="true" /></span>
+            <div><strong>Stark Electronic Base</strong><small {...contentProps("hero.preview_label")}>{text("hero.preview_label")}</small></div>
           </div>
+          <div className="hero-voice-preview">
+            <strong><Mic2 size={18} aria-hidden="true" /><span {...contentProps("hero.preview_voice")}>{text("hero.preview_voice")}</span></strong>
+            <p {...contentProps("hero.preview_note")}>{text("hero.preview_note")}</p>
+          </div>
+          <ArrowDown className="hero-product-arrow" size={24} aria-hidden="true" />
+          <div className="hero-record-preview">
+            <strong {...contentProps("hero.preview_result")}>{text("hero.preview_result")}</strong>
+            <ul>{(["visit", "recommendations", "photos"] as const).map((item) => <li key={item}><Check size={17} aria-hidden="true" /><span {...contentProps(`hero.preview_${item}`)}>{text(`hero.preview_${item}`)}</span></li>)}</ul>
+          </div>
+          <p className="hero-product-footer" {...contentProps("hero.preview_footer")}>{text("hero.preview_footer")}</p>
         </div>
       </div>
     </section>

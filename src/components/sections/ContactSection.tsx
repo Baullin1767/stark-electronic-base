@@ -47,6 +47,7 @@ export function ContactSection() {
   const [selectedPlan, setSelectedPlan] = useState("");
   const [professionSelection, setProfessionSelection] = useState("");
   const [customProfession, setCustomProfession] = useState("");
+  const [contactMethod, setContactMethod] = useState<"telegram" | "phone">("telegram");
   const [hasStarted, setHasStarted] = useState(false);
 
   const {
@@ -54,6 +55,7 @@ export function ContactSection() {
     handleSubmit,
     reset,
     setValue,
+    clearErrors,
     formState: { errors },
   } = useForm<ContactInput>({
     resolver: zodResolver(contactSchema),
@@ -121,6 +123,7 @@ export function ContactSection() {
         setSelectedPlan("");
         setProfessionSelection("");
         setCustomProfession("");
+        setContactMethod("telegram");
         setHasStarted(false);
         return;
       }
@@ -169,7 +172,7 @@ export function ContactSection() {
             </div>
           )}
 
-          <div className="form-grid">
+          <div>
             <label>
               <span {...contentProps("contact.field.first_name")}>{text("contact.field.first_name")}</span>
               <input
@@ -180,15 +183,6 @@ export function ContactSection() {
                 aria-invalid={Boolean(errors.firstName)}
               />
               {errors.firstName && <em>{errors.firstName.message}</em>}
-            </label>
-            <label>
-              <span {...contentProps("contact.field.last_name")}>{text("contact.field.last_name")}</span>
-              <input
-                {...register("lastName")}
-                autoComplete="family-name"
-                placeholder={text("contact.placeholder.last_name")}
-                {...contentProps("contact.placeholder.last_name")}
-              />
             </label>
           </div>
 
@@ -239,40 +233,30 @@ export function ContactSection() {
 
           <div className="form-grid">
             <label>
-              <span {...contentProps("contact.field.telegram")}>{text("contact.field.telegram")}</span>
-              <input
-                {...register("telegram")}
-                autoComplete="off"
-                placeholder={text("contact.placeholder.telegram")}
-                {...contentProps("contact.placeholder.telegram")}
-                aria-invalid={Boolean(errors.telegram)}
-              />
-              {errors.telegram && <em>{errors.telegram.message}</em>}
+              <span {...contentProps("contact.field.method")}>{text("contact.field.method")}</span>
+              <select value={contactMethod} onChange={(event) => {
+                setValue(contactMethod, "");
+                clearErrors(["telegram", "phone"]);
+                setContactMethod(event.target.value as "telegram" | "phone");
+              }}>
+                <option value="telegram">{text("contact.telegram_label")}</option>
+                <option value="phone">{text("contact.phone_label")}</option>
+              </select>
             </label>
             <label>
-              <span {...contentProps("contact.field.phone")}>{text("contact.field.phone")}</span>
+              <span {...contentProps(`contact.field.${contactMethod}`)}>{text(`contact.field.${contactMethod}`)}</span>
               <input
-                {...register("phone")}
-                autoComplete="tel"
-                inputMode="tel"
-                placeholder={text("contact.placeholder.phone")}
-                {...contentProps("contact.placeholder.phone")}
-                aria-invalid={Boolean(errors.phone)}
+                key={contactMethod}
+                {...register(contactMethod)}
+                autoComplete={contactMethod === "phone" ? "tel" : "off"}
+                inputMode={contactMethod === "phone" ? "tel" : "text"}
+                placeholder={text(`contact.placeholder.${contactMethod}`)}
+                {...contentProps(`contact.placeholder.${contactMethod}`)}
+                aria-invalid={Boolean(errors[contactMethod])}
               />
-              {errors.phone && <em>{errors.phone.message}</em>}
+              {errors[contactMethod] && <em>{errors[contactMethod]?.message}</em>}
             </label>
           </div>
-
-          <label>
-            <span {...contentProps("contact.field.message")}>{text("contact.field.message")}</span>
-            <textarea
-              {...register("message")}
-              rows={4}
-              placeholder={text("contact.placeholder.message")}
-              {...contentProps("contact.placeholder.message")}
-            />
-            {errors.message && <em>{errors.message.message}</em>}
-          </label>
 
           <label className="consent">
             <input type="checkbox" {...register("consent")} />

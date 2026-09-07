@@ -40,6 +40,7 @@ export function PricingSection() {
       <div className="section-heading centered">
         <span className="section-number" {...contentProps("pricing.section")}>{text("pricing.section")}</span>
         <h2 {...contentProps("pricing.title")}>{text("pricing.title")}</h2>
+        <p className="pricing-promise" {...contentProps("pricing.description")}>{text("pricing.description")}</p>
       </div>
       <div className="pricing-grid">
         {PRICING.map((plan) => {

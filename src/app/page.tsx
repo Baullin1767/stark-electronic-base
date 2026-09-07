@@ -7,6 +7,10 @@ import { DemoSection } from "@/components/sections/DemoSection";
 import { BenefitsSection } from "@/components/sections/BenefitsSection";
 import { PricingSection } from "@/components/sections/PricingSection";
 import { ContactSection } from "@/components/sections/ContactSection";
+import { SolutionSection } from "@/components/sections/SolutionSection";
+import { ChangesSection } from "@/components/sections/ChangesSection";
+import { ExampleSection } from "@/components/sections/ExampleSection";
+import { ReviewsSection } from "@/components/sections/ReviewsSection";
 
 export default function Home() {
   return (
@@ -14,10 +18,14 @@ export default function Home() {
       <Header />
       <main>
         <HeroSection />
-        <StorySection />
         <ProblemSection />
+        <SolutionSection />
         <DemoSection />
         <BenefitsSection />
+        <ChangesSection />
+        <ExampleSection />
+        <StorySection />
+        <ReviewsSection />
         <PricingSection />
         <ContactSection />
       </main>

@@ -37,14 +37,8 @@ export const DEMO_CLIENT = {
 } as const;
 
 const demoSteps = [
-  "empty-chat",
-  "voice-recording",
-  "transcription",
   "attachments",
   "summary-preview",
-  "confirmation",
-  "saved",
-  "visits-table",
   "visit-details",
 ] as const;
 

@@ -1014,6 +1014,7 @@ export function DemoSection() {
       <div className="demo-stage" ref={stageRef}>
         <div className="demo-intro">
           <span className="section-number light" {...contentProps("demo.section")}>{text("demo.section")}</span>
+          <h2 className="sr-only" {...contentProps("demo.title")}>{text("demo.title")}</h2>
           <p {...contentProps("demo.description")}>{text("demo.description")}</p>
         </div>
         <div
@@ -1028,6 +1029,7 @@ export function DemoSection() {
             <h3 data-demo-copy {...contentProps(activeStep.titleKey)} key={`title-${activeStep.id}`}>
               {activeStep.title}
             </h3>
+            <p data-demo-copy {...contentProps(activeStep.descriptionKey)}>{activeStep.description}</p>
             <div className="demo-progress">
               <span />
             </div>
@@ -1046,6 +1048,7 @@ export function DemoSection() {
                 <span>{String(index + 1).padStart(2, "0")}</span>
                 <div>
                   <h3 {...contentProps(step.titleKey)}>{step.title}</h3>
+                  <p {...contentProps(step.descriptionKey)}>{step.description}</p>
                 </div>
               </header>
               <DemoFrame step={step.id} />

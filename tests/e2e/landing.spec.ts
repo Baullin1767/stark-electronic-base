@@ -6,7 +6,7 @@ test("landing page, navigation and privacy route are available", async ({
   await page.goto("/");
   await expect(
     page.getByRole("heading", {
-      name: /Клиентская база, которую можно вести/,
+      name: /Клиентская база, которую не нужно заполнять/,
     }),
   ).toBeVisible();
   await page.getByRole("link", { name: "Посмотреть, как это работает" }).click();
@@ -36,7 +36,9 @@ test("pricing uses rubles and offers remote support only", async ({ page }) => {
   await expect(pricing).toContainText("10 000 ₽");
   await expect(pricing).toContainText("15 000 ₽");
   await expect(pricing).toContainText("4 000 ₽");
-  await expect(pricing).toContainText("оплата не чаще, чем раз в месяц");
+  await expect(pricing).toContainText("Подключать её каждый месяц не нужно");
+  await expect(pricing).toContainText("Обязательной ежемесячной платы за базу нет");
+  await expect(pricing).toContainText("Резервная копия базы");
   await expect(pricing).toContainText("Удалённая поддержка");
   await expect(pricing).not.toContainText(
     /RSD|€|динар|евро|поддержка с выездом|обсудить выезд/i,
@@ -45,7 +47,7 @@ test("pricing uses rubles and offers remote support only", async ({ page }) => {
 
 test("contact form validates required fields", async ({ page }) => {
   await page.goto("/#contact");
-  await page.getByRole("button", { name: "Отправить заявку" }).click();
+  await page.getByRole("button", { name: "Показать, как это работает" }).click();
   await expect(page.getByText("Укажите имя")).toBeVisible();
   await expect(page.getByText("Необходимо согласие")).toBeVisible();
 });
@@ -85,7 +87,7 @@ test("mobile demo stays pinned and advances through one animated frame", async (
   await page.locator(".pin-spacer").waitFor();
   await expect(animatedDemo).toBeVisible();
   await expect(animatedDemo.locator(".demo-frame")).toHaveCount(1);
-  await expect(animatedDemo.locator(".demo-copy > small")).toHaveText("01 / 09");
+  await expect(animatedDemo.locator(".demo-copy > small")).toHaveText("01 / 03");
 
   const stageBox = await stage.boundingBox();
   expect(stageBox?.height).toBeLessThanOrEqual(845);
@@ -93,23 +95,23 @@ test("mobile demo stays pinned and advances through one animated frame", async (
   await page.evaluate(() => {
     const demo = document.querySelector<HTMLElement>("#demo");
     window.scrollTo({
-      top: (demo?.offsetTop ?? window.scrollY) + 900,
+      top: (demo?.offsetTop ?? window.scrollY) + 550,
       behavior: "instant",
     });
   });
   await expect(animatedDemo.locator(".demo-copy > small")).not.toHaveText(
-    "01 / 09",
+    "01 / 03",
   );
 
   await page.evaluate(() => {
     const demo = document.querySelector<HTMLElement>("#demo");
     window.scrollTo({
-      top: (demo?.offsetTop ?? window.scrollY) + 2400,
+      top: (demo?.offsetTop ?? window.scrollY) + 650,
       behavior: "instant",
     });
   });
   await expect(animatedDemo.locator(".demo-copy > small")).toHaveText(
-    "05 / 09",
+    "02 / 03",
   );
 
   const reviewChat = animatedDemo.locator(".review-chat-scroll");
@@ -142,7 +144,7 @@ test("one mobile swipe advances the demo by only one step", async ({ page }) => 
     const demo = document.querySelector<HTMLElement>("#demo");
     window.scrollTo({ top: demo?.offsetTop ?? 0, behavior: "instant" });
   });
-  await expect(counter).toHaveText("01 / 09");
+  await expect(counter).toHaveText("01 / 03");
 
   const dispatchTouch = async (
     type: "touchstart" | "touchmove" | "touchend",
@@ -177,7 +179,7 @@ test("one mobile swipe advances the demo by only one step", async ({ page }) => 
 
   await dispatchTouch("touchstart", 700);
   await dispatchTouch("touchmove", 500);
-  await expect(counter).toHaveText("02 / 09");
+  await expect(counter).toHaveText("02 / 03");
   await expect(page.locator(".desktop-demo .demo-frame")).toHaveCSS(
     "opacity",
     "1",
@@ -188,19 +190,20 @@ test("one mobile swipe advances the demo by only one step", async ({ page }) => 
   );
 
   await dispatchTouch("touchmove", 100);
-  await expect(counter).toHaveText("02 / 09");
+  await expect(counter).toHaveText("02 / 03");
   await dispatchTouch("touchend", 100);
 
   await dispatchTouch("touchstart", 700);
   await dispatchTouch("touchmove", 400);
-  await expect(counter).toHaveText("03 / 09");
+  await expect(counter).toHaveText("03 / 03");
   await dispatchTouch("touchend", 400);
 });
 
 test("reduced motion keeps the demonstration readable", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/#demo");
-  await expect(page.locator(".mobile-demo-step")).toHaveCount(9);
+  await expect(page.locator(".mobile-demo-step")).toHaveCount(3);
+  await expect(page.locator(".mobile-demo-step").last()).toBeVisible();
 });
 
 test("the demo keeps the same client throughout the scenario", async ({
@@ -209,8 +212,40 @@ test("the demo keeps the same client throughout the scenario", async ({
   await page.goto("/#demo");
   const steps = page.locator(".mobile-demo-step");
 
-  for (let index = 2; index <= 8; index += 1) {
+  for (let index = 0; index < 3; index += 1) {
     await expect(steps.nth(index)).toContainText("Анна");
     await expect(steps.nth(index)).toContainText("4821");
   }
+});
+
+test("the landing follows the new section order", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator("main > section")).toHaveCount(11);
+  expect(await page.locator("main > section").evaluateAll((sections) => sections.map((section) => section.id))).toEqual([
+    "top", "problem", "solution", "demo", "benefits", "changes", "example", "story", "reviews", "pricing", "contact",
+  ]);
+  await expect(page.locator("#top .testimonial-item")).toHaveCount(0);
+  await expect(page.locator("#reviews .testimonial-item")).toHaveCount(4);
+});
+
+test("the short form submits only the chosen contact method", async ({ page }) => {
+  await page.route("**/api/contact", async (route) => {
+    const data = route.request().postDataJSON();
+    expect(data.firstName).toBe("Анна");
+    expect(data.profession).toBe("Подолог");
+    expect(data.telegram).toBe("");
+    expect(data.phone).toBe("+7 (999) 123-45-67");
+    expect(data.lastName).toBe("");
+    expect(data.message).toBe("");
+    await route.fulfill({ json: { ok: true } });
+  });
+  await page.goto("/#contact");
+  await page.getByLabel("Имя *", { exact: true }).fill("Анна");
+  await page.getByTestId("profession-select").selectOption("Подолог");
+  await page.getByLabel("Telegram", { exact: true }).fill("@annatest");
+  await page.getByRole("combobox", { name: "Способ связи", exact: true }).selectOption("phone");
+  await page.getByLabel("Телефон", { exact: true }).fill("+7 (999) 123-45-67");
+  await page.getByRole("checkbox").check();
+  await page.getByRole("button", { name: "Показать, как это работает" }).click();
+  await expect(page.locator(".form-status")).toContainText("Заявка отправлена");
 });

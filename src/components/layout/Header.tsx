@@ -15,8 +15,8 @@ export function Header() {
         </span>
       </Link>
       <nav aria-label={text("header.nav_aria")}>
-        <Link href="/#story" {...contentProps("header.nav_story")}>{text("header.nav_story")}</Link>
         <Link href="/#demo" {...contentProps("header.nav_demo")}>{text("header.nav_demo")}</Link>
+        <Link href="/#story" {...contentProps("header.nav_story")}>{text("header.nav_story")}</Link>
         <Link href="/#pricing" {...contentProps("header.nav_pricing")}>{text("header.nav_pricing")}</Link>
       </nav>
       <Link className="header-cta contact-cta" href="/#contact" {...contentProps("header.cta")}>

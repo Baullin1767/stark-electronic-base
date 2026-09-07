@@ -18,7 +18,7 @@ const icons = [
 
 export function BenefitsSection() {
   return (
-    <section className="benefits section-shell">
+    <section className="benefits section-shell" id="benefits">
       <div className="section-heading centered">
         <span className="section-number" {...contentProps("benefits.section")}>{text("benefits.section")}</span>
         <h2 {...contentProps("benefits.title")}>{text("benefits.title")}</h2>
